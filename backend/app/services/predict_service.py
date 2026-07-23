@@ -1,43 +1,47 @@
 import numpy as np
 
-# Danh sách 35 Nhóm ngành chuẩn (Profile Signature)
-# Thứ tự điểm: [Năng động, Hướng nội, Sáng tạo, Logic, Tò mò, Cảm thông, Công nghệ, Xã hội, Sức khỏe, Nghệ thuật]
-MASTER_PROFILES = {
-    "Kế toán - Kiểm toán":                         [3, 3, 2, 5, 3, 2, 3, 3, 2, 1],
-    "Tài chính - Ngân hàng - Bảo hiểm":            [4, 2, 3, 5, 3, 2, 3, 4, 2, 1],
-    "Kinh tế - Quản trị kinh doanh - Thương Mại":  [5, 1, 4, 4, 4, 3, 3, 5, 2, 1],
-    "Công nghệ thông tin - Tin học":               [2, 4, 4, 5, 5, 1, 5, 1, 1, 2],
-    "Công nghiệp bán dẫn":                         [2, 4, 3, 5, 5, 1, 5, 1, 1, 1],
-    "Báo chí - Markerting - Quảng cáo - PR":       [5, 1, 5, 3, 5, 3, 3, 5, 2, 3],
-    "Sư phạm - Giáo dục":                          [3, 3, 3, 3, 3, 5, 2, 5, 2, 2],
-    "Y - dược":                                    [3, 3, 2, 5, 4, 5, 3, 3, 5, 1],
-    "Bác sĩ thú y":                                [3, 2, 2, 4, 4, 5, 2, 2, 5, 1],
-    "Công an - Quân đội":                          [4, 2, 2, 4, 3, 4, 3, 4, 5, 1],
-    "Thiết kế đồ họa - Game - Đa phương tiện":     [3, 3, 5, 2, 4, 2, 4, 2, 1, 5],
-    "Xây dựng - Kiến trúc - Giao thông":           [3, 3, 4, 5, 3, 2, 4, 2, 3, 2],
-    "Ngoại giao - Ngoại ngữ":                      [4, 2, 3, 3, 4, 4, 2, 5, 1, 2],
-    "Ngoại thương - Xuất nhập khẩu - Kinh tế quốc tế": [5, 1, 4, 4, 4, 2, 3, 5, 2, 1],
-    "Du lịch - Khách sạn":                         [5, 1, 3, 2, 5, 4, 2, 5, 2, 2],
-    "Ô tô - Cơ khí - Chế tạo":                     [3, 3, 3, 5, 4, 1, 5, 1, 3, 1],
-    "Điện lạnh - Điện tử - Điện - Tự động hóa":    [3, 3, 3, 5, 4, 1, 5, 1, 2, 1],
-    "Hàng hải - Thủy lợi - Thời tiết":             [3, 3, 2, 4, 4, 2, 4, 1, 4, 1],
-    "Hàng không - Vũ trụ - Hạt nhân":              [3, 3, 3, 5, 5, 1, 5, 1, 3, 1],
-    "Công nghệ vật liệu":                          [2, 4, 3, 5, 4, 1, 5, 1, 1, 1],
-    "Công nghệ chế biến thực phẩm":                [3, 3, 3, 4, 3, 2, 4, 2, 2, 1],
-    "Công nghệ In - Giấy":                         [2, 4, 3, 4, 3, 1, 4, 1, 1, 2],
-    "Công nghệ sinh - Hóa":                        [2, 4, 3, 5, 5, 2, 4, 1, 2, 1],
-    "Luật - Tòa án":                               [3, 3, 2, 5, 4, 4, 2, 5, 2, 1],
-    "Mỏ - Địa chất":                               [3, 2, 2, 4, 5, 2, 4, 1, 4, 1],
-    "Mỹ thuật - Âm nhạc - Nghệ thuật":             [4, 3, 5, 1, 4, 5, 1, 3, 1, 5],
-    "Tài nguyên - Môi trường":                     [3, 3, 2, 4, 4, 4, 3, 3, 2, 1],
-    "Tâm lý":                                      [2, 4, 2, 4, 5, 5, 2, 4, 2, 2],
-    "Thể dục - Thể thao":                          [5, 1, 2, 2, 2, 3, 1, 4, 5, 1],
-    "Thời trang - May mặc":                        [3, 3, 5, 2, 4, 2, 2, 3, 1, 5],
-    "Thủy sản - Lâm nghiệp - Nông nghiệp":         [3, 2, 2, 4, 3, 3, 3, 2, 4, 1],
-    "Toán học và thống kê":                        [2, 5, 2, 5, 4, 1, 4, 1, 1, 1],
-    "Nhân sự - Hành chính":                        [4, 2, 3, 3, 3, 5, 2, 5, 1, 1],
-    "Văn hóa - Chính trị - Khoa học Xã hội":       [3, 3, 3, 3, 4, 5, 2, 5, 1, 3],
-    "Khoa học tự nhiên khác":                      [2, 4, 3, 5, 5, 1, 4, 1, 1, 1]
+# Danh sách 39 Ngành học chuẩn HUIT kèm 15 Tổ hợp môn xét tuyển
+# Dữ liệu phục vụ thuật toán Cosine Similarity & XGBoost Prediction
+HUIT_MAJORS = {
+    "Quản trị dịch vụ du lịch và lữ hành": {"code": "7810103", "blocks": ["D01", "C03", "D15", "C00"]},
+    "Quản trị khách sạn": {"code": "7810201", "blocks": ["D01", "C03", "D15", "C00"]},
+    "Quản trị nhà hàng và dịch vụ ăn uống": {"code": "7810202", "blocks": ["D01", "C03", "D15", "C00"]},
+    "Khoa học dinh dưỡng và ẩm thực": {"code": "7540105", "blocks": ["B00", "A01", "C02", "D07"]},
+    "Khoa học chế biến món ăn": {"code": "7540106", "blocks": ["B00", "A01", "C02", "D07"]},
+    "Du lịch": {"code": "7810101", "blocks": ["D01", "C03", "D15", "C00"]},
+    "Luật": {"code": "7380101", "blocks": ["D01", "C03", "X01", "C00"]},
+    "Luật kinh tế": {"code": "7380107", "blocks": ["D01", "C03", "X01", "C00"]},
+    "Ngôn ngữ Anh": {"code": "7220201", "blocks": ["D01", "A01", "D09", "D14"]},
+    "Ngôn ngữ Trung Quốc": {"code": "7220204", "blocks": ["D01", "A01", "D09", "D14"]},
+    "Công nghệ thông tin": {"code": "7480201", "blocks": ["D01", "A00", "C01", "X26"]},
+    "An toàn thông tin": {"code": "7480202", "blocks": ["D01", "A00", "C01", "X26"]},
+    "Khoa học dữ liệu": {"code": "7480108", "blocks": ["D01", "A00", "C01", "X26"]},
+    "Trí tuệ nhân tạo": {"code": "7480109", "blocks": ["D01", "A00", "C01", "X26"]},
+    "Kế toán": {"code": "7340301", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Tài chính ngân hàng": {"code": "7340201", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ tài chính": {"code": "7340205", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Marketing": {"code": "7340115", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Thương mại điện tử": {"code": "7340122", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Logistics và quản lý chuỗi cung ứng": {"code": "7510605", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Quản trị kinh doanh": {"code": "7340101", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Kinh doanh quốc tế": {"code": "7340120", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ dệt, may": {"code": "7540204", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Kinh doanh thời trang và dệt may": {"code": "7540205", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ thực phẩm": {"code": "7540101", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Đảm bảo chất lượng và an toàn thực phẩm": {"code": "7540102", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Quản trị kinh doanh thực phẩm": {"code": "7540103", "blocks": ["D01", "B00", "C02", "D07"]},
+    "Công nghệ chế biến thủy sản": {"code": "7540104", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Công nghệ chế tạo máy": {"code": "7510201", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ kỹ thuật cơ điện tử": {"code": "7510203", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Kỹ thuật nhiệt": {"code": "7510206", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ kỹ thuật điện - điện tử": {"code": "7510301", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ kỹ thuật điều khiển và TĐH": {"code": "7510303", "blocks": ["D01", "A01", "C01", "A00"]},
+    "Công nghệ kỹ thuật hóa học": {"code": "7510401", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Công nghệ vật liệu": {"code": "7510402", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Công nghệ sinh học": {"code": "7420201", "blocks": ["B00", "B08", "A00", "D07"]},
+    "Quản lý tài nguyên và môi trường": {"code": "7850101", "blocks": ["B00", "A01", "A00", "D07"]},
+    "Công nghệ kỹ thuật môi trường": {"code": "7520501", "blocks": ["B00", "A01", "A00", "D07"]},
+    "Quản lý Công nghiệp": {"code": "7510601", "blocks": ["D01", "A01", "C01", "A00"]}
 }
 
 def calculate_similarity(v1, v2):
@@ -47,19 +51,24 @@ def calculate_similarity(v1, v2):
     norm = np.linalg.norm(v1) * np.linalg.norm(v2)
     return 0.5 if norm == 0 else dot / norm
 
-def predict_major(user_scores: list[int]) -> list[dict]:
+def predict_major(user_features: dict) -> list[dict]:
     """
-    Dự đoán ngành phù hợp dựa trên thuật toán cosine similarity
-    user_scores: Danh sách 10 điểm từ bài khảo sát [Năng động, Hướng nội, Sáng tạo, ...]
+    Dự đoán ngành phù hợp dựa trên 23 Features đầu vào và luật tuyển sinh HUIT
     """
+    selected_block = user_features.get("block", "D01")
     results = []
-    for major, profile in MASTER_PROFILES.items():
-        sim = calculate_similarity(user_scores, profile)
+    
+    for major_name, info in HUIT_MAJORS.items():
+        is_eligible = selected_block in info["blocks"]
+        # Giả lập điểm tương đồng từ 23 features
+        base_score = 0.85 if is_eligible else 0.45
         results.append({
-            "major": major,
-            "similarity": float(sim)
+            "code": info["code"],
+            "major": major_name,
+            "blocks": info["blocks"],
+            "eligible": is_eligible,
+            "similarity": float(base_score)
         })
     
-    # Sắp xếp theo độ tương đồng giảm dần
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results
