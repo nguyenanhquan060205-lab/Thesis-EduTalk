@@ -1,1 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime`nfrom sqlalchemy.sql import func`nfrom app.models.base import Base`n`nclass User(Base):`n    __tablename__ = "users"`n    id = Column(Integer, primary_key=True, index=True)`n    username = Column(String, unique=True, index=True, nullable=False)`n    hashed_password = Column(String, nullable=False)`n    created_at = Column(DateTime(timezone=True), server_default=func.now())`n
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import func
+from app.models.base import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

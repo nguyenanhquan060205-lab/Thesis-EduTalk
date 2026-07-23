@@ -1,1 +1,8 @@
-from fastapi import APIRouter`n`nrouter = APIRouter()`n
+from fastapi import APIRouter
+
+router = APIRouter()
+
+
+@router.get("/")
+def get_auth_status():
+    return {"message": "Auth API status OK"}

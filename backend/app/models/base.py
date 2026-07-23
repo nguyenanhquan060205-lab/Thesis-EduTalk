@@ -1,1 +1,5 @@
-from sqlalchemy.orm import DeclarativeBase`n`nclass Base(DeclarativeBase):`n    pass`n
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    pass
