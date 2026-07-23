@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { BookOpen, Search, Filter, CheckCircle2, GraduationCap, Building2 } from "lucide-react";
+import { BookOpen, Search, CheckCircle2, GraduationCap, Building2 } from "lucide-react";
 import { useState } from "react";
 
 // Danh sách 39 Ngành học và Tổ hợp môn xét tuyển chuẩn HUIT
@@ -168,7 +167,7 @@ export default function MajorsPage() {
               {filteredMajors.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-8 py-16 text-center font-medium text-slate-500">
-                    Không tìm thấy ngành học hoặc tổ hợp môn phù hợp với từ khóa "{searchTerm}".
+                    Không tìm thấy ngành học hoặc tổ hợp môn phù hợp với từ khóa &quot;{searchTerm}&quot;.
                   </td>
                 </tr>
               )}

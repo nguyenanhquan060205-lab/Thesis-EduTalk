@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, Sparkles, Database, MessageSquare, History, ArrowUpRight, Zap, Target, GraduationCap } from "lucide-react";
+import { Brain, Database, MessageSquare, History, ArrowUpRight, Zap, Target, GraduationCap } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 

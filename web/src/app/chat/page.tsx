@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, Bot, Sparkles, MessageSquare, GraduationCap } from "lucide-react";
+import { Send, Bot, GraduationCap } from "lucide-react";
 
 type Message = { id: number; text: string; sender: "bot" | "user" };
 

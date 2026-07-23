@@ -41,8 +41,9 @@ HUIT_MAJORS = {
     "Công nghệ sinh học": {"code": "7420201", "blocks": ["B00", "B08", "A00", "D07"]},
     "Quản lý tài nguyên và môi trường": {"code": "7850101", "blocks": ["B00", "A01", "A00", "D07"]},
     "Công nghệ kỹ thuật môi trường": {"code": "7520501", "blocks": ["B00", "A01", "A00", "D07"]},
-    "Quản lý Công nghiệp": {"code": "7510601", "blocks": ["D01", "A01", "C01", "A00"]}
+    "Quản lý Công nghiệp": {"code": "7510601", "blocks": ["D01", "A01", "C01", "A00"]},
 }
+
 
 def calculate_similarity(v1, v2):
     v1 = np.array(v1, dtype=float)
@@ -51,24 +52,27 @@ def calculate_similarity(v1, v2):
     norm = np.linalg.norm(v1) * np.linalg.norm(v2)
     return 0.5 if norm == 0 else dot / norm
 
-def predict_major(user_features: dict) -> list[dict]:
+
+def predict_major(user_features: dict) -> list:
     """
     Dự đoán ngành phù hợp dựa trên 23 Features đầu vào và luật tuyển sinh HUIT
     """
     selected_block = user_features.get("block", "D01")
     results = []
-    
+
     for major_name, info in HUIT_MAJORS.items():
         is_eligible = selected_block in info["blocks"]
         # Giả lập điểm tương đồng từ 23 features
         base_score = 0.85 if is_eligible else 0.45
-        results.append({
-            "code": info["code"],
-            "major": major_name,
-            "blocks": info["blocks"],
-            "eligible": is_eligible,
-            "similarity": float(base_score)
-        })
-    
+        results.append(
+            {
+                "code": info["code"],
+                "major": major_name,
+                "blocks": info["blocks"],
+                "eligible": is_eligible,
+                "similarity": float(base_score),
+            }
+        )
+
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results

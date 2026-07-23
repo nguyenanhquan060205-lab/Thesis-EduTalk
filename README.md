@@ -27,7 +27,15 @@ Lưu ý: Bạn cần tạo file `.env` trong thư mục `backend/` trước (cop
 ```bash
 cd backend
 python -m venv venv
-source venv/Scripts/activate # hoặc venv/bin/activate trên Mac/Linux
+
+# Kích hoạt môi trường ảo (venv):
+# Trên Windows PowerShell:
+.\venv\Scripts\Activate.ps1
+# Trên Windows CMD:
+venv\Scripts\activate.bat
+# Trên Mac/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
