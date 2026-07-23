@@ -3,24 +3,16 @@
 Đây là kho lưu trữ chung (monorepo) của dự án EduTalk HUIT, bao gồm Backend (FastAPI), Web (Next.js) và Mobile (Flutter).
 
 ## Kiến trúc hệ thống
-- **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic. Cung cấp API và thuật toán dự đoán AI.
-- **Firebase:** Firebase Authentication, Firestore, Cloud Messaging (FCM) dùng chung cho Web và Mobile.
-- **Web:** Next.js (React), giao diện công khai và dashboard.
-- **Mobile:** Flutter, ứng dụng di động cho sinh viên.
+- **Backend:** FastAPI (Python). Cung cấp RESTful API và tính toán thuật toán AI (XGBoost, RAG Chatbot).
+- **Firebase:** Firebase Authentication, Firestore Database, Cloud Messaging (FCM) quản lý CSDL & xác thực chung cho Web và Mobile.
+- **Web:** Next.js (React), giao diện tư vấn tuyển sinh công khai và dashboard.
+- **Mobile:** Flutter, ứng dụng di động dành cho học sinh & sinh viên.
 - **API Codegen:** Tự động sinh Client cho TypeScript và Dart dựa trên OpenAPI.
 
 ## Yêu cầu môi trường
-- Docker & Docker Compose
 - Node.js >= 18 (cho Web)
 - Python >= 3.10 (cho Backend)
 - Flutter SDK (cho Mobile)
-
-## Hướng dẫn chạy nhanh (Docker Compose)
-Để chạy đồng thời Backend và Database (PostgreSQL):
-```bash
-docker-compose up -d db backend
-```
-Lưu ý: Bạn cần tạo file `.env` trong thư mục `backend/` trước (copy từ `.env.example`).
 
 ## Hướng dẫn phát triển độc lập
 
