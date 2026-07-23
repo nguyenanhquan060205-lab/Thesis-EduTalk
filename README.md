@@ -3,7 +3,8 @@
 Đây là kho lưu trữ chung (monorepo) của dự án EduTalk HUIT, bao gồm Backend (FastAPI), Web (Next.js) và Mobile (Flutter).
 
 ## Kiến trúc hệ thống
-- **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic. Cung cấp API và thuật toán dự đoán.
+- **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic. Cung cấp API và thuật toán dự đoán AI.
+- **Firebase:** Firebase Authentication, Firestore, Cloud Messaging (FCM) dùng chung cho Web và Mobile.
 - **Web:** Next.js (React), giao diện công khai và dashboard.
 - **Mobile:** Flutter, ứng dụng di động cho sinh viên.
 - **API Codegen:** Tự động sinh Client cho TypeScript và Dart dựa trên OpenAPI.
