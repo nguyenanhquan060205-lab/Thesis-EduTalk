@@ -3,19 +3,28 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { BrainCircuit, Calculator, User, Target, Cpu, CheckCircle2, Lock, Sparkles, Layers, Sliders } from "lucide-react";
+import { BrainCircuit, Calculator, User, Target, Cpu, CheckCircle2, Lock, Sparkles, Sliders } from "lucide-react";
 
-// 1. Mã tổ hợp xét tuyển
-const BLOCKS: Record<string, string[]> = {
-  "A00": ["Toan", "Ly", "Hoa"],
-  "A01": ["Toan", "Ly", "Anh"],
-  "B00": ["Toan", "Hoa", "Sinh"],
-  "C00": ["Van", "Su", "Dia"],
-  "D01": ["Toan", "Van", "Anh"],
-  "D07": ["Toan", "Hoa", "Anh"]
+// 15 Tổ hợp môn xét tuyển chuẩn HUIT
+const BLOCKS: Record<string, { subjects: string[]; name: string }> = {
+  "A00": { subjects: ["Toan", "Ly", "Hoa"], name: "Toán, Vật lý, Hóa học" },
+  "A01": { subjects: ["Toan", "Ly", "Anh"], name: "Toán, Vật lý, Tiếng Anh" },
+  "B00": { subjects: ["Toan", "Hoa", "Sinh"], name: "Toán, Hóa học, Sinh học" },
+  "B08": { subjects: ["Toan", "Sinh", "Anh"], name: "Toán, Sinh học, Tiếng Anh" },
+  "C00": { subjects: ["Van", "Su", "Dia"], name: "Ngữ văn, Lịch sử, Địa lý" },
+  "C01": { subjects: ["Van", "Toan", "Ly"], name: "Ngữ văn, Toán, Vật lý" },
+  "C02": { subjects: ["Van", "Toan", "Hoa"], name: "Ngữ văn, Toán, Hóa học" },
+  "C03": { subjects: ["Van", "Toan", "Su"], name: "Ngữ văn, Toán, Lịch sử" },
+  "D01": { subjects: ["Toan", "Van", "Anh"], name: "Toán, Ngữ văn, Tiếng Anh" },
+  "D07": { subjects: ["Toan", "Hoa", "Anh"], name: "Toán, Hóa học, Tiếng Anh" },
+  "D09": { subjects: ["Toan", "Su", "Anh"], name: "Toán, Lịch sử, Tiếng Anh" },
+  "D14": { subjects: ["Van", "Su", "Anh"], name: "Ngữ văn, Lịch sử, Tiếng Anh" },
+  "D15": { subjects: ["Van", "Su", "Anh"], name: "Ngữ văn, Lịch sử, Tiếng Anh" },
+  "X01": { subjects: ["Toan", "Van", "GD"], name: "Toán, Ngữ văn, GDKTPL" },
+  "X26": { subjects: ["Toan", "Tin", "Anh"], name: "Toán, Tin học, Tiếng Anh" },
 };
 
-// 2. 10 Môn học tại HUIT
+// 10 Môn học thi tốt nghiệp HUIT
 const SUBJECTS = [
   { id: "Toan", label: "Toán" },
   { id: "Van", label: "Ngữ văn" },
@@ -29,7 +38,7 @@ const SUBJECTS = [
   { id: "Tin", label: "Tin học" }
 ];
 
-// 3. 10 Chỉ số Tính cách / Sở thích
+// 10 Chỉ số Tính cách / Sở thích
 const TRAITS = [
   { id: "nangdong", label: "Năng động & Hướng ngoại", desc: "Thích giao tiếp, hòa đồng" },
   { id: "logic", label: "Tư duy Logic & Phân tích", desc: "Giỏi giải quyết vấn đề toán học" },
@@ -47,11 +56,11 @@ export default function PredictPage() {
   const router = useRouter();
   
   // State 23 Input Features
-  const [block, setBlock] = useState<string>("A00"); // 1 feature: Mã tổ hợp
+  const [block, setBlock] = useState<string>("D01"); // 1 feature: Mã tổ hợp
   const [gender, setGender] = useState<number>(0); // 1 feature: Giới tính (0: Nam, 1: Nữ)
   const [goal, setGoal] = useState<number>(1); // 1 feature: Mục tiêu sau tốt nghiệp (1..4)
   const [scores, setScores] = useState<Record<string, string>>({
-    Toan: "8.5", Ly: "8.0", Hoa: "7.5"
+    Toan: "8.5", Van: "8.0", Anh: "7.5"
   }); // 10 features: Điểm thi 10 môn
   const [traits, setTraits] = useState<Record<string, number>>({
     nangdong: 4, logic: 5, sangtao: 3, congnghe: 5, xahoi: 3,
@@ -63,9 +72,9 @@ export default function PredictPage() {
   const handleBlockChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newBlock = e.target.value;
     setBlock(newBlock);
-    const activeSubjects = BLOCKS[newBlock] || [];
+    const activeSubs = BLOCKS[newBlock]?.subjects || [];
     const newScores: Record<string, string> = {};
-    activeSubjects.forEach(sub => {
+    activeSubs.forEach(sub => {
       newScores[sub] = (Math.random() * 2 + 7.5).toFixed(1);
     });
     setScores(newScores);
@@ -79,8 +88,7 @@ export default function PredictPage() {
     }, 1800);
   };
 
-  // Tính số lượng features đã điền chuẩn
-  const activeSubjectCount = (BLOCKS[block] || []).length;
+  const activeSubjectCount = (BLOCKS[block]?.subjects || []).length;
   const totalConfiguredFeatures = 1 + 1 + 1 + 10 + 10; // 23 features
 
   return (
@@ -94,13 +102,13 @@ export default function PredictPage() {
           <div>
             <div className="inline-flex items-center gap-2 bg-blue-500/20 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-blue-400/30 text-xs font-bold text-blue-300 mb-4">
               <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              Mô hình XGBoost & Multi-Feature Vector
+              Mô hình XGBoost & Multi-Feature Vector (15 Tổ Hợp Môn HUIT)
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-3">
               Form Phân tích Tuyển sinh AI
             </h1>
             <p className="text-slate-300 text-sm md:text-base font-normal max-w-2xl leading-relaxed">
-              Nhập <strong>Bộ 23 Đặc trưng Đầu vào (Input Features - X)</strong> chuẩn hóa theo Đề án HUIT. Hệ thống tự động khóa các môn không thuộc tổ hợp với giá trị <code className="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300">NaN</code> để triệt tiêu nhiễu dữ liệu.
+              Nhập <strong>Bộ 23 Đặc trưng Đầu vào (Input Features - X)</strong> chuẩn hóa theo Đề án HUIT. Các môn không thuộc tổ hợp sẽ được tự động gán giá trị <code className="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300">NaN</code> để triệt tiêu nhiễu dữ liệu.
             </p>
           </div>
 
@@ -136,7 +144,7 @@ export default function PredictPage() {
                 1. Khối xét tuyển & 10 Môn học (11 Features)
               </h2>
               <span className="text-xs font-bold bg-blue-50 text-[#2563EB] px-3 py-1 rounded-full border border-blue-100">
-                1 Tổ hợp + 10 Môn
+                15 Tổ hợp Môn HUIT
               </span>
             </div>
             
@@ -151,7 +159,7 @@ export default function PredictPage() {
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-slate-900 font-bold outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-500/10 transition cursor-pointer shadow-xs"
               >
                 {Object.keys(BLOCKS).map(b => (
-                  <option key={b} value={b}>Tổ hợp Khối {b} ({BLOCKS[b].join(", ")})</option>
+                  <option key={b} value={b}>Tổ hợp Khối {b} — {BLOCKS[b].name}</option>
                 ))}
               </select>
             </div>
@@ -163,13 +171,13 @@ export default function PredictPage() {
                   Điểm thi 10 môn thực tế (Features 2 - 11/23)
                 </label>
                 <span className="text-xs text-slate-500 font-medium">
-                  Môn thuộc khối: <strong className="text-emerald-600 font-bold">{activeSubjectCount} mở</strong> | Môn khác: <strong className="text-slate-400 font-bold">{10 - activeSubjectCount} khóa (NaN)</strong>
+                  Thuộc khối {block}: <strong className="text-emerald-600 font-bold">{activeSubjectCount} mở</strong> | Khác: <strong className="text-slate-400 font-bold">{10 - activeSubjectCount} khóa (NaN)</strong>
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {SUBJECTS.map(sub => {
-                  const isActive = BLOCKS[block]?.includes(sub.id);
+                  const isActive = BLOCKS[block]?.subjects.includes(sub.id);
                   return (
                     <div 
                       key={sub.id} 
@@ -228,7 +236,6 @@ export default function PredictPage() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6">
-              {/* Feature: Gender */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                   Giới tính (Feature 12/23)
@@ -243,7 +250,6 @@ export default function PredictPage() {
                 </select>
               </div>
 
-              {/* Feature: Career Goal */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                   Mục tiêu Sau Tốt nghiệp (Feature 13/23)
@@ -283,7 +289,6 @@ export default function PredictPage() {
                 </span>
               </div>
 
-              {/* 10 Trait Sliders */}
               <div className="space-y-4 max-h-[460px] overflow-y-auto pr-2 custom-scrollbar">
                 {TRAITS.map((trait, idx) => (
                   <div key={trait.id} className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 hover:bg-slate-50 transition">
@@ -308,7 +313,6 @@ export default function PredictPage() {
               </div>
             </div>
 
-            {/* Submit Action Button */}
             <div className="pt-6 border-t border-slate-100 mt-6">
               <button 
                 onClick={handlePredict}
@@ -316,7 +320,7 @@ export default function PredictPage() {
                 className="w-full py-4 rounded-2xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-base shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5"
               >
                 {isPredicting ? (
-                  <><Cpu className="w-5 h-5 animate-spin" /> Đang truyền Feature Vector vào XGBoost...</>
+                  <><Cpu className="w-5 h-5 animate-spin" /> Đang truyền Vector 23 Features vào XGBoost...</>
                 ) : (
                   <><BrainCircuit className="w-5 h-5" /> Trích xuất 23 Features & Dự đoán</>
                 )}
