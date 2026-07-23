@@ -36,7 +36,6 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 text-xl font-black text-[#2563EB]">
           <div className="flex items-center gap-2">
-            {/* HUIT Logo Icon */}
             <div className="bg-[#2563EB] p-1.5 rounded-lg shadow-sm flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>

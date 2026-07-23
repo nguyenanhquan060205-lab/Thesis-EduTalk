@@ -57,9 +57,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[4rem] md:text-[6rem] lg:text-[7.5rem] font-black leading-[0.9] tracking-tighter-xl text-slate-900 mb-6"
+            className="text-[3.5rem] md:text-[5.5rem] lg:text-[6.8rem] font-black leading-[0.95] tracking-tighter-xl text-slate-900 mb-6"
           >
-            Đại học <br />
+            Trường Đại học <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#1d4ed8] to-teal-600">
               Công Thương
             </span>

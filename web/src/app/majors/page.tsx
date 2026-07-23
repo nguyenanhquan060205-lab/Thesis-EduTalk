@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Database, Search, FileSpreadsheet, Download, RefreshCcw, Filter, BookOpen } from "lucide-react";
+import { BookOpen, Search, Filter, CheckCircle2, GraduationCap, Building2 } from "lucide-react";
 import { useState } from "react";
 
 // Danh sách 39 Ngành học và Tổ hợp môn xét tuyển chuẩn HUIT
@@ -63,24 +63,15 @@ export default function MajorsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-[#2563EB] px-3.5 py-1.5 rounded-full border border-blue-100 text-xs font-bold">
-            <BookOpen className="w-4 h-4" />
-            Cơ sở Dữ liệu Tuyển sinh Chính thức HUIT 2026
+            <GraduationCap className="w-4 h-4" />
+            Thông Tin Tuyển Sinh Chính Thức HUIT 2026
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3 text-slate-900 tracking-tight">
-            <Database className="w-8 h-8 text-[#2563EB]" /> Danh mục 39 Ngành học HUIT
+            <Building2 className="w-8 h-8 text-[#2563EB]" /> Danh Mục 39 Ngành Đào Tạo
           </h1>
           <p className="text-slate-600 max-w-3xl font-medium text-sm leading-relaxed">
-            Tra cứu danh sách 39 ngành đào tạo chuẩn của Trường Đại học Công Thương TP.HCM kèm 15 Tổ hợp môn xét tuyển tương ứng. Dữ liệu làm căn cứ kiểm duyệt cho Backend Business Rules.
+            Tra cứu danh sách ngành học, mã ngành, tổ hợp môn xét tuyển và điểm chuẩn tham khảo tại Trường Đại học Công Thương TP.HCM.
           </p>
-        </div>
-        
-        <div className="flex items-center gap-3 shrink-0">
-          <button className="bg-white hover:bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold transition shadow-xs text-slate-700">
-            <RefreshCcw className="w-4 h-4" /> Đồng bộ Backend
-          </button>
-          <button className="bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold transition shadow-md shadow-blue-500/20">
-            <Download className="w-4 h-4" /> Xuất CSV
-          </button>
         </div>
       </div>
 
@@ -88,31 +79,31 @@ export default function MajorsPage() {
       <div className="grid sm:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-3xl flex items-center gap-5 border border-slate-200 shadow-xs">
           <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 text-[#2563EB]">
-            <FileSpreadsheet className="w-7 h-7" />
+            <GraduationCap className="w-7 h-7" />
           </div>
           <div>
             <div className="text-3xl font-black text-slate-900">39</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ngành Đào tạo Chuẩn</div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ngành Đào Tạo Chính Thức</div>
           </div>
         </div>
         
         <div className="bg-white p-6 rounded-3xl flex items-center gap-5 border border-slate-200 shadow-xs">
           <div className="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center border border-teal-100 text-teal-600">
-            <Database className="w-7 h-7" />
+            <BookOpen className="w-7 h-7" />
           </div>
           <div>
             <div className="text-3xl font-black text-slate-900">15</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổ hợp Môn Xét tuyển</div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổ Hợp Môn Xét Tuyển</div>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-3xl flex items-center gap-5 border border-slate-200 shadow-xs">
           <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center border border-purple-100 text-purple-600">
-            <Database className="w-7 h-7" />
+            <CheckCircle2 className="w-7 h-7" />
           </div>
           <div>
-            <div className="text-3xl font-black text-slate-900">100%</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Khớp Dữ liệu HUIT</div>
+            <div className="text-3xl font-black text-slate-900">2026</div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cập Nhật Mới Nhất</div>
           </div>
         </div>
       </div>
@@ -120,7 +111,7 @@ export default function MajorsPage() {
       {/* Main Table Container */}
       <div className="bg-white rounded-3xl overflow-hidden flex flex-col border border-slate-200 shadow-xs">
         <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/80">
-          <h2 className="text-lg font-extrabold text-slate-900">Bảng tra cứu Ngành & Khối thi</h2>
+          <h2 className="text-lg font-extrabold text-slate-900">Bảng Tra Cứu Ngành & Khối Thi</h2>
           
           <div className="flex gap-3">
             <div className="relative">
@@ -133,9 +124,6 @@ export default function MajorsPage() {
                 className="bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/15 transition w-full sm:w-80 shadow-xs font-medium"
               />
             </div>
-            <button className="bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-slate-600 hover:text-slate-900 transition shadow-xs font-bold">
-              <Filter className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
@@ -147,17 +135,14 @@ export default function MajorsPage() {
                 <th className="px-6 py-4 font-extrabold">Mã Ngành</th>
                 <th className="px-6 py-4 font-extrabold">Tên Ngành Học</th>
                 <th className="px-6 py-4 font-extrabold">Tổ Hợp Môn Xét Tuyển</th>
-                <th className="px-6 py-4 font-extrabold">Điểm Chuẩn Dự Kiến</th>
-                <th className="px-6 py-4 font-extrabold text-center">Trạng Thái</th>
+                <th className="px-6 py-4 font-extrabold">Điểm Chuẩn Năm Ngoái</th>
+                <th className="px-6 py-4 font-extrabold text-center">Trạng Thái Tuyển Sinh</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredMajors.map((major, idx) => (
-                <motion.tr 
+                <tr 
                   key={major.code + idx}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(idx * 0.02, 0.5) }}
                   className="hover:bg-blue-50/40 transition group"
                 >
                   <td className="px-6 py-4 text-xs font-bold text-slate-400">{idx + 1}</td>
@@ -170,15 +155,15 @@ export default function MajorsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-lg font-black text-xs">
-                      {major.score.toFixed(1)}
+                      {major.score.toFixed(1)} điểm
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-lg font-bold text-xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Đang tuyển sinh
                     </span>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
               {filteredMajors.length === 0 && (
                 <tr>
