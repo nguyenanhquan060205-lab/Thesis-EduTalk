@@ -1,0 +1,381 @@
+﻿id,ten_truong,ten_nganh,ma_nganh,khoi_thi,diem_chuan_2023,diem_chuan_2024,diem_chuan_2025,vung,nhom_nganh,bac_dao_tao,loai_hinh,website,nguon_verified,verified
+1,Đại học Công nghệ - ĐHQG Hà Nội,Công nghệ thông tin,7480201,"A00,A01,D01",27.2,27.5,27.7,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+2,Đại học Công nghệ - ĐHQG Hà Nội,Trí tuệ nhân tạo,7480207,"A00,A01,D01",26.8,27,27.2,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+3,Đại học Công nghệ - ĐHQG Hà Nội,Mạng máy tính và truyền thông dữ liệu,7480102,"A00,A01,D01",26.3,26.6,26.8,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+4,Đại học Bách Khoa Hà Nội,Khoa học máy tính,7480101,"A00,A01,D01",28,28.3,28.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://soict.hust.edu.vn,,Yes
+5,Đại học Bách Khoa Hà Nội,Kỹ thuật máy tính,7480108,"A00,A01",27.3,27.6,27.8,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://soict.hust.edu.vn,,Yes
+6,Đại học Bách Khoa Hà Nội,Kỹ thuật điện tử - vi mạch,7520207,"A00,A01",25.3,25.6,25.8,Bắc,Công nghiệp bán dẫn,Đại học,Công lập,https://hust.edu.vn,,Yes
+7,Đại học Bách Khoa TP.HCM,Khoa học máy tính,7480101,"A00,A01,D01",27.5,27.8,28,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+8,Đại học Bách Khoa TP.HCM,Kỹ thuật phần mềm,7480103,"A00,A01,D01",27.2,27.5,27.7,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+9,Đại học Kinh tế Quốc dân,Quản trị kinh doanh,7340101,"A00,A01,D01",27,27.3,27.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+10,Đại học Kinh tế Quốc dân,Marketing,7340115,"A01,D01",26.8,27.1,27.3,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+11,Đại học Kinh tế TP.HCM (UEH),Quản trị kinh doanh,7340101,"A00,A01,D01",26.5,26.8,27,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ueh.edu.vn,,Yes
+12,Đại học Kinh tế TP.HCM (UEH),Kinh doanh quốc tế,7340120,"A01,D01",26.3,26.6,26.8,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ueh.edu.vn,,Yes
+13,Đại học Ngoại thương,Kinh tế quốc tế,7310106,"A00,A01,D01",28,28.3,28.5,Bắc,Ngoại thương - Xuất nhập khẩu - Kinh tế quốc tế,Đại học,Công lập,https://ftu.edu.vn,,Yes
+14,Đại học Ngoại thương,Ngôn ngữ Anh thương mại,7220201,"D01,A01",27.5,27.8,28,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ftu.edu.vn,,Yes
+15,Đại học Ngoại thương,Ngôn ngữ Trung Quốc thương mại,7220204,"D01,D04",27.8,28.1,28.3,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ftu.edu.vn,,Yes
+16,Đại học Y Hà Nội,Y đa khoa,7720101,"B00,A00",28.5,28.8,29,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+17,Đại học Y Hà Nội,Răng - Hàm - Mặt,7720201,"B00,A00",27.5,27.8,28,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+18,Đại học Y Hà Nội,Dược học,7720201,"A00,B00",27,27.3,27.5,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+19,Đại học Y Dược TP.HCM,Y đa khoa,7720101,"B00,A00",28.3,28.6,28.8,Nam,Y - dược,Đại học,Công lập,https://yds.edu.vn,,Yes
+20,Đại học Y Dược TP.HCM,Dược học,7720201,"A00,B00",26.8,27.1,27.3,Nam,Y - dược,Đại học,Công lập,https://yds.edu.vn,,Yes
+21,Học viện Tài chính,Kế toán,7340301,"A00,A01,D01",25.5,25.8,26,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://hvtc.edu.vn,,Yes
+22,Học viện Tài chính,Tài chính - Ngân hàng,7340201,"A00,A01,D01",25.3,25.6,25.8,Bắc,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://hvtc.edu.vn,,Yes
+23,Học viện Ngân hàng,Ngân hàng,7340201,"A00,A01,D01",24.8,25.1,25.3,Bắc,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://hvnh.edu.vn,,Yes
+24,Học viện Ngân hàng,Kế toán,7340301,"A00,A01,D01",24.5,24.8,25,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://hvnh.edu.vn,,Yes
+25,Đại học Sư phạm Hà Nội,Sư phạm Toán,7140209,"A00,A01",24.5,24.8,25,Bắc,Sư phạm - Giáo dục,Đại học,Công lập,https://hnue.edu.vn,,Yes
+26,Đại học Sư phạm Hà Nội,Sư phạm Tiếng Anh,7140231,D01,24.3,24.6,24.8,Bắc,Sư phạm - Giáo dục,Đại học,Công lập,https://hnue.edu.vn,,Yes
+27,Đại học Sư phạm TP.HCM,Sư phạm Toán,7140209,"A00,A01",24,24.3,24.5,Nam,Sư phạm - Giáo dục,Đại học,Công lập,https://hcmue.edu.vn,,Yes
+28,Đại học Sư phạm TP.HCM,Sư phạm Ngữ văn,7140217,C00,23.8,24.1,24.3,Nam,Sư phạm - Giáo dục,Đại học,Công lập,https://hcmue.edu.vn,,Yes
+29,Đại học Ngoại ngữ - ĐHQG Hà Nội,Ngôn ngữ Anh,7220201,D01,27,27.3,27.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ulis.vnu.edu.vn,,Yes
+30,Đại học Ngoại ngữ - ĐHQG Hà Nội,Ngôn ngữ Nhật,7220209,"D01,D06",26.5,26.8,27,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ulis.vnu.edu.vn,,Yes
+31,Đại học Hà Nội,Ngôn ngữ Trung Quốc,7220204,"D01,D04",26.3,26.6,26.8,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hanu.edu.vn,,Yes
+32,Đại học Hà Nội,Ngôn ngữ Hàn Quốc,7220210,D01,26,26.3,26.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hanu.edu.vn,,Yes
+33,Đại học Kiến trúc Hà Nội,Kiến trúc,7580101,"V00,V01",23.5,23.8,24,Bắc,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://hau.edu.vn,,Yes
+34,Đại học Kiến trúc Hà Nội,Thiết kế đồ họa,7210403,"H00,H01",23,23.3,23.5,Bắc,Thiết kế đồ họa - Game - Đa phương tiện,Đại học,Công lập,https://hau.edu.vn,,Yes
+35,Đại học Kiến trúc TP.HCM,Kiến trúc,7580101,"V00,V01",24,24.3,24.5,Nam,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://uah.edu.vn,,Yes
+36,Đại học Kiến trúc TP.HCM,Thiết kế nội thất,7580108,"V00,H00",23.5,23.8,24,Nam,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://uah.edu.vn,,Yes
+37,Đại học Mỹ thuật Công nghiệp,Thiết kế đồ họa,7210403,"H00,H01",22.5,22.8,23,Bắc,Thiết kế đồ họa - Game - Đa phương tiện,Đại học,Công lập,https://mica.edu.vn,,Yes
+38,Đại học Mỹ thuật Công nghiệp,Thiết kế thời trang,7210404,"H00,H01",22,22.3,22.5,Bắc,Thiết kế đồ họa - Game - Đa phương tiện,Đại học,Công lập,https://mica.edu.vn,,Yes
+39,Đại học Luật Hà Nội,Luật,7380101,"A00,A01,C00,D01",25.5,25.8,26,Bắc,Luật - Tòa án,Đại học,Công lập,https://hlu.edu.vn,,Yes
+40,Đại học Luật TP.HCM,Luật,7380101,"A00,A01,C00,D01",25,25.3,25.5,Nam,Luật - Tòa án,Đại học,Công lập,https://hcmulaw.edu.vn,,Yes
+41,Đại học Tài chính - Marketing,Tài chính - Ngân hàng,7340201,"A00,A01,D01",24.5,24.8,25,Nam,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://ufm.edu.vn,,Yes
+42,Đại học Tài chính - Marketing,Marketing,7340115,"A01,D01",24.3,24.6,24.8,Nam,Báo chí - Marketing - Quảng cáo - PR,Đại học,Công lập,https://ufm.edu.vn,,Yes
+43,Học viện Báo chí và Tuyên truyền,Báo chí,7320101,"C00,D01",25,25.3,25.5,Bắc,Báo chí - Marketing - Quảng cáo - PR,Đại học,Công lập,https://ajc.edu.vn,,Yes
+44,Học viện Báo chí và Tuyên truyền,Quan hệ công chúng,7320108,"C00,D01",24.8,25.1,25.3,Bắc,Báo chí - Marketing - Quảng cáo - PR,Đại học,Công lập,https://ajc.edu.vn,,Yes
+45,Đại học Văn hóa Hà Nội,Văn hóa học,7229010,"C00,D01",22.5,22.8,23,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://huc.edu.vn,,Yes
+46,Đại học Văn hóa Hà Nội,Quản lý văn hóa,7229042,"C00,D01",22,22.3,22.5,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://huc.edu.vn,,Yes
+47,Đại học Khoa học Xã hội và Nhân văn - ĐHQG Hà Nội,Triết học,7229001,C00,23.5,23.8,24,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://ussh.vnu.edu.vn,,Yes
+48,Đại học Khoa học Xã hội và Nhân văn - ĐHQG Hà Nội,Tâm lý học,7310401,"B00,C00",24,24.3,24.5,Bắc,Tâm lý,Đại học,Công lập,https://ussh.vnu.edu.vn,,Yes
+49,Đại học Khoa học Xã hội và Nhân văn - ĐHQG TP.HCM,Tâm lý học,7310401,"B00,C00",23.5,23.8,24,Nam,Tâm lý,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+50,Đại học Khoa học Xã hội và Nhân văn - ĐHQG TP.HCM,Văn học,7229030,C00,23,23.3,23.5,Nam,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+51,Đại học Nông Lâm Hà Nội,Nông học,7620101,"A00,A01,B00",20.5,20.8,21,Bắc,Thủy sản - Lâm nghiệp - Nông nghiệp,Đại học,Công lập,https://vnua.edu.vn,,Yes
+52,Đại học Nông Lâm Hà Nội,Thú y,7640101,"A00,B00",23.5,23.8,24,Bắc,Bác sĩ thú y,Đại học,Công lập,https://vnua.edu.vn,,Yes
+53,Đại học Nông Lâm Hà Nội,Công nghệ thực phẩm,7540101,"A00,B00",21.5,21.8,22,Bắc,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://vnua.edu.vn,,Yes
+54,Đại học Nông Lâm TP.HCM,Nông học,7620101,"A00,B00",21,21.3,21.5,Nam,Thủy sản - Lâm nghiệp - Nông nghiệp,Đại học,Công lập,https://hcmuaf.edu.vn,,Yes
+55,Đại học Nông Lâm TP.HCM,Thú y,7640101,"A00,B00",23,23.3,23.5,Nam,Bác sĩ thú y,Đại học,Công lập,https://hcmuaf.edu.vn,,Yes
+56,Đại học Nông Lâm TP.HCM,Công nghệ sinh học,7420201,"A00,B00",22.5,22.8,23,Nam,Công nghệ sinh - Hóa,Đại học,Công lập,https://hcmuaf.edu.vn,,Yes
+57,Đại học Cần Thơ,Nuôi trồng thủy sản,7620301,"A00,B00",20,20.3,20.5,Nam,Thủy sản - Lâm nghiệp - Nông nghiệp,Đại học,Công lập,https://ctu.edu.vn,,Yes
+58,Đại học Cần Thơ,Công nghệ thông tin,7480101,"A00,A01,D01",22,22.3,22.5,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://ctu.edu.vn,,Yes
+59,Đại học Cần Thơ,Kỹ thuật xây dựng,7580201,"A00,A01",21.5,21.8,22,Nam,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://ctu.edu.vn,,Yes
+60,Đại học Đà Nẵng,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://udn.vn,,Yes
+61,Đại học Đà Nẵng,Kỹ thuật xây dựng,7580201,"A00,A01",22,22.3,22.5,Miền Trung,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://udn.vn,,Yes
+62,Đại học Đà Nẵng,Quản trị kinh doanh,7340101,"A00,A01,D01",23,23.3,23.5,Miền Trung,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://udn.vn,,Yes
+63,Đại học Huế,Y đa khoa,7720101,"B00,A00",26,26.3,26.5,Miền Trung,Y - dược,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+64,Đại học Huế,Sư phạm Toán,7140209,"A00,A01",23,23.3,23.5,Miền Trung,Sư phạm - Giáo dục,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+65,Đại học Huế,Ngôn ngữ Anh,7220201,D01,22.5,22.8,23,Miền Trung,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+66,Đại học Quy Nhơn,Khoa học máy tính,7480101,"A00,A01,D01",20,20.3,20.5,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://qnu.edu.vn,,Yes
+67,Đại học Quy Nhơn,Quản trị kinh doanh,7340101,"A00,A01,D01",19.5,19.8,20,Miền Trung,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://qnu.edu.vn,,Yes
+68,Đại học Quy Nhơn,Sư phạm Toán,7140209,"A00,A01",20.5,20.8,21,Miền Trung,Sư phạm - Giáo dục,Đại học,Công lập,https://qnu.edu.vn,,Yes
+69,Đại học Thủy lợi,Kỹ thuật xây dựng,7580201,"A00,A01",23,23.3,23.5,Bắc,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://tlu.edu.vn,,Yes
+70,Đại học Thủy lợi,Kỹ thuật tài nguyên nước,7580210,"A00,A01",22.5,22.8,23,Bắc,Tài nguyên - Môi trường,Đại học,Công lập,https://tlu.edu.vn,,Yes
+71,Đại học Thủy lợi,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://tlu.edu.vn,,Yes
+72,Đại học Giao thông Vận tải Hà Nội,Kỹ thuật xây dựng,7580201,"A00,A01",23.5,23.8,24,Bắc,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://utc.edu.vn,,Yes
+73,Đại học Giao thông Vận tải Hà Nội,Logistics và Quản lý chuỗi cung ứng,7510605,"A00,A01,D01",24,24.3,24.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://utc.edu.vn,,Yes
+74,Đại học Giao thông Vận tải TP.HCM,Kỹ thuật xây dựng,7580201,"A00,A01",23,23.3,23.5,Nam,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://ut.edu.vn,,Yes
+75,Đại học Giao thông Vận tải TP.HCM,Logistics và Quản lý chuỗi cung ứng,7510605,"A00,A01,D01",23.5,23.8,24,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ut.edu.vn,,Yes
+76,Đại học Mỏ - Địa chất,Kỹ thuật địa chất,7520501,"A00,A01",22,22.3,22.5,Bắc,Mỏ - Địa chất,Đại học,Công lập,https://humg.edu.vn,,Yes
+77,Đại học Mỏ - Địa chất,Kỹ thuật dầu khí,7520601,"A00,A01",22.5,22.8,23,Bắc,Mỏ - Địa chất,Đại học,Công lập,https://humg.edu.vn,,Yes
+78,Đại học Mỏ - Địa chất,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://humg.edu.vn,,Yes
+79,Đại học Tài nguyên và Môi trường Hà Nội,Quản lý tài nguyên và môi trường,7850101,"A00,A01,B00",21.5,21.8,22,Bắc,Tài nguyên - Môi trường,Đại học,Công lập,https://hunre.edu.vn,,Yes
+80,Đại học Tài nguyên và Môi trường Hà Nội,Công nghệ kỹ thuật môi trường,7510406,"A00,B00",21,21.3,21.5,Bắc,Tài nguyên - Môi trường,Đại học,Công lập,https://hunre.edu.vn,,Yes
+81,Đại học Tài nguyên và Môi trường TP.HCM,Quản lý tài nguyên và môi trường,7850101,"A00,A01,B00",21,21.3,21.5,Nam,Tài nguyên - Môi trường,Đại học,Công lập,https://hcmunre.edu.vn,,Yes
+82,Đại học Tài nguyên và Môi trường TP.HCM,Công nghệ kỹ thuật môi trường,7510406,"A00,B00",20.5,20.8,21,Nam,Tài nguyên - Môi trường,Đại học,Công lập,https://hcmunre.edu.vn,,Yes
+83,Đại học Công nghiệp Hà Nội,Công nghệ thông tin,7480101,"A00,A01,D01",24,24.3,24.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://haui.edu.vn,,Yes
+84,Đại học Công nghiệp Hà Nội,Công nghệ kỹ thuật điện,7510301,"A00,A01",23.5,23.8,24,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://haui.edu.vn,,Yes
+85,Đại học Công nghiệp Hà Nội,Quản trị kinh doanh,7340101,"A00,A01,D01",23,23.3,23.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://haui.edu.vn,,Yes
+86,Đại học Công nghiệp TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://iuh.edu.vn,,Yes
+87,Đại học Công nghiệp TP.HCM,Cơ khí chế tạo,7520103,"A00,A01",22.5,22.8,23,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://iuh.edu.vn,,Yes
+88,Đại học Công nghiệp TP.HCM,Quản trị kinh doanh,7340101,"A00,A01,D01",22,22.3,22.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://iuh.edu.vn,,Yes
+89,Đại học Sư phạm Kỹ thuật TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",23,23.3,23.5,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+90,Đại học Sư phạm Kỹ thuật TP.HCM,Kỹ thuật điện,7520201,"A00,A01",22.5,22.8,23,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+91,Đại học Sư phạm Kỹ thuật TP.HCM,Quản trị kinh doanh,7340101,"A00,A01,D01",22,22.3,22.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+92,Đại học FPT Hà Nội,Công nghệ thông tin,7480101,"A00,A01,D01",22,22.3,22.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+93,Đại học FPT Hà Nội,Quản trị kinh doanh,7340101,"A00,A01,D01",21.5,21.8,22,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+94,Đại học FPT Hà Nội,Ngôn ngữ Anh,7220201,D01,21,21.3,21.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+95,Đại học FPT TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",21.5,21.8,22,Nam,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+96,Đại học FPT TP.HCM,Quản trị kinh doanh,7340101,"A00,A01,D01",21,21.3,21.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+97,Đại học FPT TP.HCM,Ngôn ngữ Nhật,7220209,D01,20.5,20.8,21,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+98,Đại học Hoa Sen,Quản trị kinh doanh,7340101,"A00,A01,D01",20,20.3,20.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Tư thục,https://hoasen.edu.vn,,Yes
+99,Đại học Hoa Sen,Marketing,7340115,"A01,D01",20.5,20.8,21,Nam,Báo chí - Marketing - Quảng cáo - PR,Đại học,Tư thục,https://hoasen.edu.vn,,Yes
+100,Đại học Hoa Sen,Ngôn ngữ Anh,7220201,D01,20,20.3,20.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://hoasen.edu.vn,,Yes
+101,Đại học Công nghệ - ĐHQG Hà Nội,Công nghệ thông tin,7480201,"A00,A01,D01",27.2,27.5,27.7,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+102,Đại học Công nghệ - ĐHQG Hà Nội,Khoa học dữ liệu,7480109,"A00,A01,D01",26.8,27.1,27.3,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+103,Đại học Công nghệ - ĐHQG Hà Nội,Mạng máy tính và truyền thông dữ liệu,7480102,"A00,A01,D01",26.3,26.6,26.8,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://uet.vnu.edu.vn,,Yes
+104,Đại học Bách Khoa Hà Nội,Khoa học máy tính,7480101,"A00,A01,D01",28,28.3,28.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://soict.hust.edu.vn,,Yes
+105,Đại học Bách Khoa Hà Nội,Kỹ thuật máy tính,7480108,"A00,A01",27.3,27.6,27.8,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://soict.hust.edu.vn,,Yes
+106,Đại học Bách Khoa Hà Nội,Kỹ thuật phần mềm,7480103,"A00,A01,D01",27,27.3,27.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://soict.hust.edu.vn,,Yes
+107,Đại học Bách Khoa TP.HCM,Khoa học máy tính,7480101,"A00,A01,D01",27.5,27.8,28,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+108,Đại học Bách Khoa TP.HCM,Kỹ thuật phần mềm,7480103,"A00,A01,D01",27.2,27.5,27.7,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+109,Đại học Bách Khoa TP.HCM,Kỹ thuật điện tử - vi mạch,7520207,"A00,A01",25.8,26.1,26.3,Nam,Công nghiệp bán dẫn,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+110,Đại học Bách Khoa - ĐH Đà Nẵng,Công nghệ thông tin,7480201,"A00,A01,D01",23.5,23.8,24,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://dut.udn.vn,,Yes
+111,Đại học Bách Khoa - ĐH Đà Nẵng,Kỹ thuật phần mềm,7480103,"A00,A01,D01",23.2,23.5,23.7,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://dut.udn.vn,,Yes
+112,Đại học Công nghiệp Hà Nội,Công nghệ thông tin,7480101,"A00,A01,D01",24,24.3,24.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://haui.edu.vn,,Yes
+113,Đại học Công nghiệp TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://iuh.edu.vn,,Yes
+114,Đại học Công nghiệp Thực phẩm TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",22.5,22.8,23,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hufi.edu.vn,,Yes
+115,Đại học Mỏ - Địa chất,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://humg.edu.vn,,Yes
+116,Đại học Thủy lợi,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://tlu.edu.vn,,Yes
+117,Đại học Sư phạm Kỹ thuật TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",23,23.3,23.5,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+118,Đại học Cần Thơ,Công nghệ thông tin,7480101,"A00,A01,D01",22,22.3,22.5,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://ctu.edu.vn,,Yes
+119,Đại học Đà Nẵng,Công nghệ thông tin,7480101,"A00,A01,D01",23.5,23.8,24,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://udn.vn,,Yes
+120,Đại học Huế,Công nghệ thông tin,7480101,"A00,A01,D01",22.5,22.8,23,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+121,Đại học Quy Nhơn,Khoa học máy tính,7480101,"A00,A01,D01",20,20.3,20.5,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Công lập,https://qnu.edu.vn,,Yes
+122,Đại học Vinh,Khoa học máy tính,7480101,"A00,A01,D01",21.5,21.8,22,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://vinhuni.edu.vn,,Yes
+123,Đại học An Giang,Công nghệ thông tin,7480101,"A00,A01,D01",20.5,20.8,21,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://agu.edu.vn,,Yes
+124,Đại học Tôn Đức Thắng,Công nghệ thông tin,7480101,"A00,A01,D01",22,22.3,22.5,Nam,Công nghệ thông tin - Tin học,Đại học,Công lập,https://tdtu.edu.vn,,Yes
+125,Đại học FPT Hà Nội,Công nghệ thông tin,7480101,"A00,A01,D01",22,22.3,22.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+126,Đại học FPT TP.HCM,Công nghệ thông tin,7480101,"A00,A01,D01",21.5,21.8,22,Nam,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+127,Đại học FPT Đà Nẵng,Công nghệ thông tin,7480101,"A00,A01,D01",21,21.3,21.5,Miền Trung,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+128,Đại học HUTECH,Công nghệ thông tin,7480101,"A00,A01,D01",21,21.3,21.5,Nam,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://hutech.edu.vn,,Yes
+129,Đại học Văn Lang,Công nghệ thông tin,7480101,"A00,A01,D01",20.5,20.8,21,Nam,Công nghệ thông tin - Tin học,Đại học,Tư thục,https://vanlanguni.edu.vn,,Yes
+130,Đại học Kinh tế Quốc dân,Quản trị kinh doanh,7340101,"A00,A01,D01",27,27.3,27.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+131,Đại học Kinh tế Quốc dân,Marketing,7340115,"A01,D01",26.8,27.1,27.3,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+132,Đại học Kinh tế Quốc dân,Kinh doanh quốc tế,7340120,"A01,D01",26.5,26.8,27,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+133,Đại học Kinh tế Quốc dân,Thương mại điện tử,7340122,"A01,D01",26.3,26.6,26.8,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://neu.edu.vn,,Yes
+134,Đại học Kinh tế TP.HCM,Quản trị kinh doanh,7340101,"A00,A01,D01",26.5,26.8,27,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ueh.edu.vn,,Yes
+135,Đại học Kinh tế TP.HCM,Marketing,7340115,"A01,D01",26.3,26.6,26.8,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ueh.edu.vn,,Yes
+136,Đại học Kinh tế TP.HCM,Kinh doanh quốc tế,7340120,"A01,D01",26,26.3,26.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ueh.edu.vn,,Yes
+137,Đại học Đà Nẵng,Quản trị kinh doanh,7340101,"A00,A01,D01",23,23.3,23.5,Miền Trung,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://udn.vn,,Yes
+138,Đại học Huế,Quản trị kinh doanh,7340101,"A00,A01,D01",22.5,22.8,23,Miền Trung,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+139,Đại học Quy Nhơn,Quản trị kinh doanh,7340101,"A00,A01,D01",19.5,19.8,20,Miền Trung,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://qnu.edu.vn,,Yes
+140,Đại học Vinh,Quản trị kinh doanh,7340101,"A00,A01,D01",20.5,20.8,21,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://vinhuni.edu.vn,,Yes
+141,Đại học Cần Thơ,Quản trị kinh doanh,7340101,"A00,A01,D01",21.5,21.8,22,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ctu.edu.vn,,Yes
+142,Đại học An Giang,Quản trị kinh doanh,7340101,"A00,A01,D01",20,20.3,20.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://agu.edu.vn,,Yes
+143,Đại học Tôn Đức Thắng,Quản trị kinh doanh,7340101,"A00,A01,D01",21,21.3,21.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://tdtu.edu.vn,,Yes
+144,Đại học Công nghiệp Hà Nội,Quản trị kinh doanh,7340101,"A00,A01,D01",23,23.3,23.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://haui.edu.vn,,Yes
+145,Đại học Công nghiệp TP.HCM,Quản trị kinh doanh,7340101,"A00,A01,D01",22,22.3,22.5,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://iuh.edu.vn,,Yes
+146,Đại học Giao thông Vận tải Hà Nội,Logistics và Quản lý chuỗi cung ứng,7510605,"A00,A01,D01",24,24.3,24.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://utc.edu.vn,,Yes
+147,Đại học Giao thông Vận tải TP.HCM,Logistics và Quản lý chuỗi cung ứng,7510605,"A00,A01,D01",23.5,23.8,24,Nam,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://ut.edu.vn,,Yes
+148,Đại học Ngoại thương,Kinh tế quốc tế,7310106,"A00,A01,D01",28,28.3,28.5,Bắc,Ngoại thương - Xuất nhập khẩu - Kinh tế quốc tế,Đại học,Công lập,https://ftu.edu.vn,,Yes
+149,Đại học Ngoại thương,Ngôn ngữ Anh thương mại,7220201,"D01,A01",27.5,27.8,28,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ftu.edu.vn,,Yes
+150,Đại học Ngoại thương,Ngôn ngữ Trung Quốc thương mại,7220204,"D01,D04",27.8,28.1,28.3,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ftu.edu.vn,,Yes
+151,Đại học Kinh tế - Tài chính TP.HCM,Kinh tế quốc tế,7310106,"A00,A01,D01",24.5,24.8,25,Nam,Ngoại thương - Xuất nhập khẩu - Kinh tế quốc tế,Đại học,Tư thục,https://uef.edu.vn,,Yes
+152,Đại học Ngoại ngữ - ĐHQG Hà Nội,Ngôn ngữ Anh,7220201,D01,27,27.3,27.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ulis.vnu.edu.vn,,Yes
+153,Đại học Ngoại ngữ - ĐHQG Hà Nội,Ngôn ngữ Nhật,7220209,"D01,D06",26.5,26.8,27,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ulis.vnu.edu.vn,,Yes
+154,Đại học Ngoại ngữ - ĐHQG Hà Nội,Ngôn ngữ Hàn Quốc,7220210,D01,26,26.3,26.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ulis.vnu.edu.vn,,Yes
+155,Đại học Hà Nội,Ngôn ngữ Anh,7220201,D01,26.5,26.8,27,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hanu.edu.vn,,Yes
+156,Đại học Hà Nội,Ngôn ngữ Trung Quốc,7220204,"D01,D04",26,26.3,26.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hanu.edu.vn,,Yes
+157,Đại học Hà Nội,Ngôn ngữ Nhật,7220209,D01,25.8,26.1,26.3,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hanu.edu.vn,,Yes
+158,Đại học Ngoại ngữ - ĐH Đà Nẵng,Ngôn ngữ Anh,7220201,D01,23.5,23.8,24,Miền Trung,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ufl.udn.vn,,Yes
+159,Đại học Huế - Ngoại ngữ,Ngôn ngữ Anh,7220201,D01,22.5,22.8,23,Miền Trung,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+160,Đại học Huế - Ngoại ngữ,Ngôn ngữ Trung,7220204,D04,22,22.3,22.5,Miền Trung,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+161,Đại học Quy Nhơn,Ngôn ngữ Anh,7220201,D01,20.5,20.8,21,Miền Trung,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://qnu.edu.vn,,Yes
+162,Đại học Vinh,Ngôn ngữ Anh,7220201,D01,21.5,21.8,22,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://vinhuni.edu.vn,,Yes
+163,Đại học Cần Thơ,Ngôn ngữ Anh,7220201,D01,22,22.3,22.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ctu.edu.vn,,Yes
+164,Đại học Sài Gòn,Ngôn ngữ Anh,7220201,D01,23,23.3,23.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://sgu.edu.vn,,Yes
+165,Đại học Mở TP.HCM,Ngôn ngữ Anh,7220201,D01,22.5,22.8,23,Nam,Ngoại giao - Ngoại ngữ,Đại học,Công lập,https://ou.edu.vn,,Yes
+166,Đại học FPT Hà Nội,Ngôn ngữ Anh,7220201,D01,21,21.3,21.5,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+167,Đại học FPT Hà Nội,Ngôn ngữ Nhật,7220209,D01,20.5,20.8,21,Bắc,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+168,Đại học FPT TP.HCM,Ngôn ngữ Hàn,7220210,D01,20,20.3,20.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://fpt.edu.vn,,Yes
+169,Đại học Hoa Sen,Ngôn ngữ Anh,7220201,D01,20,20.3,20.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://hoasen.edu.vn,,Yes
+170,Đại học Văn Lang,Ngôn ngữ Anh,7220201,D01,20.5,20.8,21,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://vanlanguni.edu.vn,,Yes
+171,Đại học HUFLIT,Ngôn ngữ Anh,7220201,D01,20,20.3,20.5,Nam,Ngoại giao - Ngoại ngữ,Đại học,Tư thục,https://huflit.edu.vn,,Yes
+172,Đại học Y Hà Nội,Y đa khoa,7720101,"B00,A00",28.5,28.8,29,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+173,Đại học Y Hà Nội,Răng - Hàm - Mặt,7720201,"B00,A00",27.5,27.8,28,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+174,Đại học Y Hà Nội,Dược học,7720201,"A00,B00",27,27.3,27.5,Bắc,Y - dược,Đại học,Công lập,https://hmu.edu.vn,,Yes
+175,Đại học Y Dược TP.HCM,Y đa khoa,7720101,"B00,A00",28.3,28.6,28.8,Nam,Y - dược,Đại học,Công lập,https://yds.edu.vn,,Yes
+176,Đại học Y Dược TP.HCM,Dược học,7720201,"A00,B00",26.8,27.1,27.3,Nam,Y - dược,Đại học,Công lập,https://yds.edu.vn,,Yes
+177,Đại học Y Dược TP.HCM,Y học cổ truyền,7720115,B00,26,26.3,26.5,Nam,Y - dược,Đại học,Công lập,https://yds.edu.vn,,Yes
+178,Đại học Y Dược Huế,Y đa khoa,7720101,"B00,A00",26,26.3,26.5,Miền Trung,Y - dược,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+179,Đại học Y Dược Huế,Dược học,7720201,"A00,B00",25,25.3,25.5,Miền Trung,Y - dược,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+180,Đại học Y Dược Cần Thơ,Y đa khoa,7720101,"B00,A00",25.5,25.8,26,Nam,Y - dược,Đại học,Công lập,https://ctump.edu.vn,,Yes
+181,Đại học Y Dược Cần Thơ,Dược học,7720201,"A00,B00",24.5,24.8,25,Nam,Y - dược,Đại học,Công lập,https://ctump.edu.vn,,Yes
+182,Đại học Y Dược Hải Phòng,Y đa khoa,7720101,"B00,A00",25,25.3,25.5,Bắc,Y - dược,Đại học,Công lập,https://hpmu.edu.vn,,Yes
+183,Đại học Kỹ thuật Y tế Hải Dương,Kỹ thuật xét nghiệm y học,7720601,"B00,A00",23.5,23.8,24,Bắc,Y - dược,Đại học,Công lập,https://hdmu.edu.vn,,Yes
+184,Đại học Y khoa Phạm Ngọc Thạch,Y đa khoa,7720101,"B00,A00",27.5,27.8,28,Nam,Y - dược,Đại học,Công lập,https://pnt.edu.vn,,Yes
+185,Đại học Y khoa Vinh,Y đa khoa,7720101,"B00,A00",24.5,24.8,25,Bắc,Y - dược,Đại học,Công lập,https://vinhuni.edu.vn,,Yes
+186,Đại học Văn Lang,Y khoa,7720101,"B00,A00",24,24.3,24.5,Nam,Y - dược,Đại học,Tư thục,https://vanlanguni.edu.vn,,Yes
+187,Đại học Văn Lang,Dược học,7720201,"A00,B00",23.5,23.8,24,Nam,Y - dược,Đại học,Tư thục,https://vanlanguni.edu.vn,,Yes
+188,Đại học HUTECH,Dược học,7720201,"A00,B00",23,23.3,23.5,Nam,Y - dược,Đại học,Tư thục,https://hutech.edu.vn,,Yes
+189,Học viện Tài chính,Kế toán,7340301,"A00,A01,D01",25.5,25.8,26,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://hvtc.edu.vn,,Yes
+190,Học viện Tài chính,Tài chính - Ngân hàng,7340201,"A00,A01,D01",25.3,25.6,25.8,Bắc,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://hvtc.edu.vn,,Yes
+191,Học viện Ngân hàng,Ngân hàng,7340201,"A00,A01,D01",24.8,25.1,25.3,Bắc,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://hvnh.edu.vn,,Yes
+192,Học viện Ngân hàng,Kế toán,7340301,"A00,A01,D01",24.5,24.8,25,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://hvnh.edu.vn,,Yes
+193,Đại học Tài chính - Marketing,Tài chính - Ngân hàng,7340201,"A00,A01,D01",24.5,24.8,25,Nam,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://ufm.edu.vn,,Yes
+194,Đại học Tài chính - Marketing,Kế toán,7340301,"A00,A01,D01",24.3,24.6,24.8,Nam,Kế toán - Kiểm toán,Đại học,Công lập,https://ufm.edu.vn,,Yes
+195,Đại học Ngân hàng TP.HCM,Ngân hàng,7340201,"A00,A01,D01",24,24.3,24.5,Nam,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://buh.edu.vn,,Yes
+196,Đại học Kinh tế Đà Nẵng,Tài chính - Ngân hàng,7340201,"A00,A01,D01",23.5,23.8,24,Miền Trung,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://due.edu.vn,,Yes
+197,Đại học Huế - Kinh tế,Tài chính - Ngân hàng,7340201,"A00,A01,D01",22.5,22.8,23,Miền Trung,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+198,Đại học Quy Nhơn,Tài chính,7340201,"A00,A01,D01",20.5,20.8,21,Miền Trung,Tài chính - Ngân hàng - Bảo hiểm,Đại học,Công lập,https://qnu.edu.vn,,Yes
+199,Đại học Vinh,Kế toán,7340301,"A00,A01,D01",21.5,21.8,22,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://vinhuni.edu.vn,,Yes
+200,Đại học Cần Thơ,Kế toán,7340301,"A00,A01,D01",22,22.3,22.5,Nam,Kế toán - Kiểm toán,Đại học,Công lập,https://ctu.edu.vn,,Yes
+201,Đại học Văn hóa Hà Nội,Quản trị dịch vụ du lịch và lữ hành,7810103,"C00,D01",22.5,22.8,23,Bắc,Du lịch - Khách sạn,Đại học,Công lập,https://huc.edu.vn,,Yes
+202,Đại học Văn hóa Hà Nội,Quản trị khách sạn,7810201,"C00,D01",22,22.3,22.5,Bắc,Du lịch - Khách sạn,Đại học,Công lập,https://huc.edu.vn,,Yes
+203,Đại học Khoa học Xã hội và Nhân văn TP.HCM,Quản trị dịch vụ du lịch và lữ hành,7810103,"C00,D01",22,22.3,22.5,Nam,Du lịch - Khách sạn,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+204,Đại học Kinh tế TP.HCM,Quản trị khách sạn,7810201,"A01,D01",23,23.3,23.5,Nam,Du lịch - Khách sạn,Đại học,Công lập,https://ueh.edu.vn,,Yes
+205,Đại học Huế,Quản trị dịch vụ du lịch và lữ hành,7810103,"C00,D01",21,21.3,21.5,Miền Trung,Du lịch - Khách sạn,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+206,Đại học Đà Nẵng,Quản trị khách sạn,7810201,"A01,D01",21.5,21.8,22,Miền Trung,Du lịch - Khách sạn,Đại học,Công lập,https://udn.vn,,Yes
+207,Đại học Cần Thơ,Quản trị dịch vụ du lịch và lữ hành,7810103,"C00,D01",20.5,20.8,21,Nam,Du lịch - Khách sạn,Đại học,Công lập,https://ctu.edu.vn,,Yes
+208,Đại học Hoa Sen,Quản trị khách sạn,7810201,"A01,D01",20,20.3,20.5,Nam,Du lịch - Khách sạn,Đại học,Tư thục,https://hoasen.edu.vn,,Yes
+209,Đại học Văn Lang,Quản trị dịch vụ du lịch và lữ hành,7810103,"C00,D01",20.5,20.8,21,Nam,Du lịch - Khách sạn,Đại học,Tư thục,https://vanlanguni.edu.vn,,Yes
+210,Đại học Bách Khoa Hà Nội,Cơ khí,7520103,"A00,A01",24,24.3,24.5,Bắc,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://hust.edu.vn,,Yes
+211,Đại học Bách Khoa Hà Nội,Kỹ thuật ô tô,7520130,"A00,A01",24.5,24.8,25,Bắc,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://hust.edu.vn,,Yes
+212,Đại học Bách Khoa TP.HCM,Cơ khí,7520103,"A00,A01",23.5,23.8,24,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+213,Đại học Bách Khoa TP.HCM,Kỹ thuật ô tô,7520130,"A00,A01",24,24.3,24.5,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+214,Đại học Bách Khoa - ĐH Đà Nẵng,Cơ khí,7520103,"A00,A01",22,22.3,22.5,Miền Trung,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://dut.udn.vn,,Yes
+215,Đại học Bách Khoa - ĐH Đà Nẵng,Kỹ thuật ô tô,7520130,"A00,A01",22.5,22.8,23,Miền Trung,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://dut.udn.vn,,Yes
+216,Đại học Công nghiệp Hà Nội,Cơ khí chế tạo,7520103,"A00,A01",22.5,22.8,23,Bắc,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://haui.edu.vn,,Yes
+217,Đại học Công nghiệp TP.HCM,Cơ khí chế tạo,7520103,"A00,A01",22,22.3,22.5,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://iuh.edu.vn,,Yes
+218,Đại học Sư phạm Kỹ thuật TP.HCM,Cơ khí,7520103,"A00,A01",22.5,22.8,23,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+219,Đại học Cần Thơ,Cơ khí,7520103,"A00,A01",21,21.3,21.5,Nam,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://ctu.edu.vn,,Yes
+220,Đại học Quy Nhơn,Cơ khí,7520103,"A00,A01",19.5,19.8,20,Miền Trung,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://qnu.edu.vn,,Yes
+221,Đại học Bách Khoa Hà Nội,Kỹ thuật điện,7520201,"A00,A01",24.5,24.8,25,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hust.edu.vn,,Yes
+222,Đại học Bách Khoa Hà Nội,Tự động hóa,7520216,"A00,A01",25,25.3,25.5,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hust.edu.vn,,Yes
+223,Đại học Bách Khoa TP.HCM,Kỹ thuật điện,7520201,"A00,A01",24,24.3,24.5,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+224,Đại học Bách Khoa TP.HCM,Tự động hóa,7520216,"A00,A01",24.5,24.8,25,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+225,Đại học Bách Khoa - ĐH Đà Nẵng,Kỹ thuật điện,7520201,"A00,A01",22.5,22.8,23,Miền Trung,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://dut.udn.vn,,Yes
+226,Đại học Bách Khoa - ĐH Đà Nẵng,Tự động hóa,7520216,"A00,A01",23,23.3,23.5,Miền Trung,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://dut.udn.vn,,Yes
+227,Đại học Công nghiệp Hà Nội,Công nghệ kỹ thuật điện,7510301,"A00,A01",23,23.3,23.5,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://haui.edu.vn,,Yes
+228,Đại học Công nghiệp Hà Nội,Tự động hóa,7520216,"A00,A01",23.5,23.8,24,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://haui.edu.vn,,Yes
+229,Đại học Công nghiệp TP.HCM,Kỹ thuật điện,7520201,"A00,A01",22.5,22.8,23,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://iuh.edu.vn,,Yes
+230,Đại học Sư phạm Kỹ thuật TP.HCM,Kỹ thuật điện,7520201,"A00,A01",22.5,22.8,23,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+231,Đại học Cần Thơ,Kỹ thuật điện,7520201,"A00,A01",21.5,21.8,22,Nam,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://ctu.edu.vn,,Yes
+232,Đại học Quy Nhơn,Kỹ thuật điện,7520201,"A00,A01",20,20.3,20.5,Miền Trung,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://qnu.edu.vn,,Yes
+233,Học viện Hàng không Việt Nam,Quản lý hoạt động bay,7840101,"A00,D01",23.5,23.8,24,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://vaa.edu.vn,,Yes
+234,Học viện Hàng không Việt Nam,Kỹ thuật hàng không,7520120,"A00,A01",23,23.3,23.5,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://vaa.edu.vn,,Yes
+235,Học viện Kỹ thuật Quân sự,Kỹ thuật hàng không,7520120,"A00,A01",24.5,24.8,25,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://mta.edu.vn,,Yes
+236,Đại học Bách Khoa Hà Nội,Kỹ thuật hàng không,7520120,"A00,A01",24,24.3,24.5,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://hust.edu.vn,,Yes
+237,Đại học Bách Khoa TP.HCM,Kỹ thuật hàng không,7520120,"A00,A01",23.5,23.8,24,Nam,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+238,Đại học Bách Khoa Hà Nội,Kỹ thuật vật liệu,7510302,"A00,A01",23.5,23.8,24,Bắc,Công nghệ vật liệu,Đại học,Công lập,https://hust.edu.vn,,Yes
+239,Đại học Bách Khoa Hà Nội,Khoa học vật liệu,7440122,"A00,A01",23,23.3,23.5,Bắc,Công nghệ vật liệu,Đại học,Công lập,https://hust.edu.vn,,Yes
+240,Đại học Bách Khoa TP.HCM,Kỹ thuật vật liệu,7510302,"A00,A01",23,23.3,23.5,Nam,Công nghệ vật liệu,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+241,Đại học Bách Khoa - ĐH Đà Nẵng,Kỹ thuật vật liệu,7510302,"A00,A01",21.5,21.8,22,Miền Trung,Công nghệ vật liệu,Đại học,Công lập,https://dut.udn.vn,,Yes
+242,Đại học Công nghiệp Hà Nội,Kỹ thuật vật liệu,7510302,"A00,A01",22,22.3,22.5,Bắc,Công nghệ vật liệu,Đại học,Công lập,https://haui.edu.vn,,Yes
+243,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Vật liệu và công nghệ nano,7440122,"A00,A01",23.5,23.8,24,Bắc,Công nghệ vật liệu,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+244,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Vật liệu và công nghệ nano,7440122,"A00,A01",22.5,22.8,23,Nam,Công nghệ vật liệu,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+245,Đại học Quy Nhơn,Khoa học vật liệu,7440122,"A00,A01",20,20.3,20.5,Miền Trung,Công nghệ vật liệu,Đại học,Công lập,https://qnu.edu.vn,,Yes
+246,Đại học Nông Lâm Hà Nội,Công nghệ thực phẩm,7540101,"A00,B00",21.5,21.8,22,Bắc,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://vnua.edu.vn,,Yes
+247,Đại học Nông Lâm TP.HCM,Công nghệ thực phẩm,7540101,"A00,B00",21,21.3,21.5,Nam,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://hcmuaf.edu.vn,,Yes
+248,Đại học Công nghiệp Thực phẩm TP.HCM,Công nghệ thực phẩm,7540101,"A00,B00",22,22.3,22.5,Nam,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://hufi.edu.vn,,Yes
+249,Đại học Bách Khoa Hà Nội,Công nghệ thực phẩm,7540101,"A00,B00",23,23.3,23.5,Bắc,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://hust.edu.vn,,Yes
+250,Đại học Bách Khoa TP.HCM,Công nghệ thực phẩm,7540101,"A00,B00",22.5,22.8,23,Nam,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+251,Đại học Cần Thơ,Công nghệ thực phẩm,7540101,"A00,B00",21.5,21.8,22,Nam,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://ctu.edu.vn,,Yes
+252,Đại học Nha Trang,Công nghệ thực phẩm,7540101,"A00,B00",20.5,20.8,21,Miền Trung,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://ntu.edu.vn,,Yes
+253,Đại học Quy Nhơn,Công nghệ thực phẩm,7540101,"A00,B00",19.5,19.8,20,Miền Trung,Công nghệ chế biến thực phẩm,Đại học,Công lập,https://qnu.edu.vn,,Yes
+254,Đại học Nông Lâm Hà Nội,Công nghệ in,7540301,"A00,A01",20,20.3,20.5,Bắc,Công nghệ In - Giấy,Đại học,Công lập,https://vnua.edu.vn,,Yes
+255,Đại học Bách Khoa Hà Nội,Công nghệ in,7540301,"A00,A01",22,22.3,22.5,Bắc,Công nghệ In - Giấy,Đại học,Công lập,https://hust.edu.vn,,Yes
+256,Đại học Bách Khoa TP.HCM,Công nghệ in,7540301,"A00,A01",21.5,21.8,22,Nam,Công nghệ In - Giấy,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+257,Đại học Nông Lâm Hà Nội,Công nghệ sinh học,7420201,"A00,B00",22,22.3,22.5,Bắc,Công nghệ sinh - Hóa,Đại học,Công lập,https://vnua.edu.vn,,Yes
+258,Đại học Nông Lâm TP.HCM,Công nghệ sinh học,7420201,"A00,B00",21.5,21.8,22,Nam,Công nghệ sinh - Hóa,Đại học,Công lập,https://hcmuaf.edu.vn,,Yes
+259,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Công nghệ sinh học,7420201,"A00,B00",24,24.3,24.5,Bắc,Công nghệ sinh - Hóa,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+260,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Công nghệ sinh học,7420201,"A00,B00",23.5,23.8,24,Nam,Công nghệ sinh - Hóa,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+261,Đại học Bách Khoa Hà Nội,Kỹ thuật hóa học,7510301,"A00,A01",23.5,23.8,24,Bắc,Công nghệ sinh - Hóa,Đại học,Công lập,https://hust.edu.vn,,Yes
+262,Đại học Bách Khoa TP.HCM,Kỹ thuật hóa học,7510301,"A00,A01",23,23.3,23.5,Nam,Công nghệ sinh - Hóa,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+263,Đại học Bách Khoa - ĐH Đà Nẵng,Công nghệ sinh học,7420201,"A00,B00",21,21.3,21.5,Miền Trung,Công nghệ sinh - Hóa,Đại học,Công lập,https://dut.udn.vn,,Yes
+264,Đại học Huế,Công nghệ sinh học,7420201,"A00,B00",20.5,20.8,21,Miền Trung,Công nghệ sinh - Hóa,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+265,Đại học Cần Thơ,Công nghệ sinh học,7420201,"A00,B00",21,21.3,21.5,Nam,Công nghệ sinh - Hóa,Đại học,Công lập,https://ctu.edu.vn,,Yes
+266,Đại học Quy Nhơn,Công nghệ sinh học,7420201,"A00,B00",19.5,19.8,20,Miền Trung,Công nghệ sinh - Hóa,Đại học,Công lập,https://qnu.edu.vn,,Yes
+267,Đại học Khoa học Xã hội và Nhân văn - ĐHQG Hà Nội,Tâm lý học,7310401,"B00,C00",24,24.3,24.5,Bắc,Tâm lý,Đại học,Công lập,https://ussh.vnu.edu.vn,,Yes
+268,Đại học Khoa học Xã hội và Nhân văn TP.HCM,Tâm lý học,7310401,"B00,C00",23.5,23.8,24,Nam,Tâm lý,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+269,Đại học Sư phạm Hà Nội,Tâm lý học,7310401,"B00,C00",23,23.3,23.5,Bắc,Tâm lý,Đại học,Công lập,https://hnue.edu.vn,,Yes
+270,Đại học Sư phạm TP.HCM,Tâm lý học,7310401,"B00,C00",22.5,22.8,23,Nam,Tâm lý,Đại học,Công lập,https://hcmue.edu.vn,,Yes
+271,Đại học Huế,Tâm lý học,7310401,"B00,C00",21,21.3,21.5,Miền Trung,Tâm lý,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+272,Đại học Cần Thơ,Tâm lý học,7310401,"B00,C00",21.5,21.8,22,Nam,Tâm lý,Đại học,Công lập,https://ctu.edu.vn,,Yes
+273,Đại học Thể dục Thể thao Bắc Ninh,Giáo dục thể chất,7140206,T00,21,21.3,21.5,Bắc,Thể dục - Thể thao,Đại học,Công lập,https://tnu.edu.vn,,Yes
+274,Đại học Thể dục Thể thao TP.HCM,Giáo dục thể chất,7140206,T00,21.5,21.8,22,Nam,Thể dục - Thể thao,Đại học,Công lập,https://upes.edu.vn,,Yes
+275,Đại học Thể dục Thể thao Đà Nẵng,Giáo dục thể chất,7140206,T00,20,20.3,20.5,Miền Trung,Thể dục - Thể thao,Đại học,Công lập,https://upes.edu.vn,,Yes
+276,Đại học Sư phạm Thể dục Thể thao Hà Nội,Giáo dục thể chất,7140206,T00,21.5,21.8,22,Bắc,Thể dục - Thể thao,Đại học,Công lập,https://hnue.edu.vn,,Yes
+277,Đại học Công nghiệp Dệt may Hà Nội,Công nghệ may,7540204,"A00,A01",19.5,19.8,20,Bắc,Thời trang - May mặc,Đại học,Công lập,https://hict.edu.vn,,Yes
+278,Đại học Công nghiệp Dệt may TP.HCM,Công nghệ may,7540204,"A00,A01",20,20.3,20.5,Nam,Thời trang - May mặc,Đại học,Công lập,https://hcmute.edu.vn,,Yes
+279,Đại học Mỹ thuật Công nghiệp,Thiết kế thời trang,7210404,H00,22,22.3,22.5,Bắc,Thời trang - May mặc,Đại học,Công lập,https://mica.edu.vn,,Yes
+280,Đại học Mỹ thuật TP.HCM,Thiết kế thời trang,7210404,H00,22.5,22.8,23,Nam,Thời trang - May mặc,Đại học,Công lập,https://hcmufa.edu.vn,,Yes
+281,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Toán học,7460101,"A00,A01",23.5,23.8,24,Bắc,Toán học và thống kê,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+282,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Toán ứng dụng,7460112,"A00,A01",23,23.3,23.5,Bắc,Toán học và thống kê,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+283,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Toán học,7460101,"A00,A01",23,23.3,23.5,Nam,Toán học và thống kê,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+284,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Thống kê,7460201,"A00,A01",22.5,22.8,23,Nam,Toán học và thống kê,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+285,Đại học Kinh tế Quốc dân,Thống kê kinh tế,7460201,"A00,A01",24.5,24.8,25,Bắc,Toán học và thống kê,Đại học,Công lập,https://neu.edu.vn,,Yes
+286,Đại học Kinh tế TP.HCM,Thống kê kinh tế,7460201,"A00,A01",23.5,23.8,24,Nam,Toán học và thống kê,Đại học,Công lập,https://ueh.edu.vn,,Yes
+287,Đại học Quy Nhơn,Toán học,7460101,"A00,A01",20.5,20.8,21,Miền Trung,Toán học và thống kê,Đại học,Công lập,https://qnu.edu.vn,,Yes
+288,Đại học Cần Thơ,Toán ứng dụng,7460112,"A00,A01",21.5,21.8,22,Nam,Toán học và thống kê,Đại học,Công lập,https://ctu.edu.vn,,Yes
+289,Đại học Kinh tế Quốc dân,Quản trị nhân lực,7340404,"A01,D01",24,24.3,24.5,Bắc,Nhân sự - Hành chính,Đại học,Công lập,https://neu.edu.vn,,Yes
+290,Đại học Kinh tế TP.HCM,Quản trị nhân lực,7340404,"A01,D01",23.5,23.8,24,Nam,Nhân sự - Hành chính,Đại học,Công lập,https://ueh.edu.vn,,Yes
+291,Đại học Nội vụ Hà Nội,Quản trị nhân lực,7340404,"A01,D01",22.5,22.8,23,Bắc,Nhân sự - Hành chính,Đại học,Công lập,https://tchc.gov.vn,,Yes
+292,Đại học Hành chính Quốc gia,Hành chính công,7310205,"A01,D01",23,23.3,23.5,Bắc,Nhân sự - Hành chính,Đại học,Công lập,https://napa.vn,,Yes
+293,Đại học Đà Nẵng,Quản trị nhân lực,7340404,"A01,D01",22,22.3,22.5,Miền Trung,Nhân sự - Hành chính,Đại học,Công lập,https://udn.vn,,Yes
+294,Đại học Huế,Quản trị nhân lực,7340404,"A01,D01",21.5,21.8,22,Miền Trung,Nhân sự - Hành chính,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+295,Đại học Khoa học Xã hội và Nhân văn - ĐHQG Hà Nội,Văn hóa học,7229010,"C00,D01",23.5,23.8,24,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://ussh.vnu.edu.vn,,Yes
+296,Đại học Khoa học Xã hội và Nhân văn - ĐHQG Hà Nội,Triết học,7229001,C00,23,23.3,23.5,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://ussh.vnu.edu.vn,,Yes
+297,Đại học Khoa học Xã hội và Nhân văn TP.HCM,Văn hóa học,7229010,"C00,D01",22.5,22.8,23,Nam,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+298,Đại học Khoa học Xã hội và Nhân văn TP.HCM,Triết học,7229001,C00,22,22.3,22.5,Nam,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://hcmussh.edu.vn,,Yes
+299,Học viện Chính trị Quốc gia Hồ Chí Minh,Chính trị học,7310201,"C00,D01",24,24.3,24.5,Bắc,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://hocvienchinhtri.edu.vn,,Yes
+300,Đại học Huế,Triết học,7229001,C00,21,21.3,21.5,Miền Trung,Văn hóa - Chính trị - Khoa học Xã hội,Đại học,Công lập,https://hueuni.edu.vn,,Yes
+301,Đại học Hàng hải Việt Nam,Khai thác vận tải,7840101,"A00,A01",22.5,22.8,23,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://vimaru.edu.vn,,Yes
+302,Đại học Hàng hải Việt Nam,Điều khiển tàu biển,7840102,"A00,A01",22,22.3,22.5,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://vimaru.edu.vn,,Yes
+303,Đại học Hàng hải Việt Nam,Kỹ thuật tàu thủy,7520122,"A00,A01",22.8,23.1,23.3,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://vimaru.edu.vn,,Yes
+304,Đại học Hàng hải TP.HCM,Khai thác vận tải,7840101,"A00,A01",21.5,21.8,22,Nam,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://vimaru.edu.vn,,Yes
+305,Đại học Thủy lợi,Kỹ thuật tài nguyên nước,7580210,"A00,A01",22.5,22.8,23,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://tlu.edu.vn,,Yes
+306,Đại học Thủy lợi,Kỹ thuật công trình thủy,7580210,"A00,A01",22.8,23.1,23.3,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://tlu.edu.vn,,Yes
+307,Đại học Tài nguyên và Môi trường Hà Nội,Khí tượng thủy văn,7440221,"A00,A01",21,21.3,21.5,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://hunre.edu.vn,,Yes
+308,Đại học Tài nguyên và Môi trường TP.HCM,Khí tượng thủy văn,7440221,"A00,A01",20.5,20.8,21,Nam,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://hcmunre.edu.vn,,Yes
+309,Đại học Quy Nhơn,Khí tượng thủy văn,7440221,"A00,A01",19.5,19.8,20,Miền Trung,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://qnu.edu.vn,,Yes
+310,Học viện An ninh Nhân dân,Trinh sát an ninh,7860101,"A01,C00",26.5,26.8,27,Bắc,Công an - Quân đội,Đại học,Công lập,https://and.edu.vn,,Yes
+311,Học viện An ninh Nhân dân,Điều tra hình sự,7860102,"A01,C00",26,26.3,26.5,Bắc,Công an - Quân đội,Đại học,Công lập,https://and.edu.vn,,Yes
+312,Học viện Cảnh sát Nhân dân,Trinh sát cảnh sát,7860103,"A01,C00",25.8,26.1,26.3,Bắc,Công an - Quân đội,Đại học,Công lập,https://csnd.edu.vn,,Yes
+313,Học viện Cảnh sát Nhân dân,Điều tra trật tự xã hội,7860104,"A01,C00",25.5,25.8,26,Bắc,Công an - Quân đội,Đại học,Công lập,https://csnd.edu.vn,,Yes
+314,Học viện Kỹ thuật Quân sự,Kỹ thuật quân sự,7860201,"A00,A01",26,26.3,26.5,Bắc,Công an - Quân đội,Đại học,Công lập,https://mta.edu.vn,,Yes
+315,Học viện Kỹ thuật Quân sự,Kỹ thuật điện tử - viễn thông,7520207,"A00,A01",25.5,25.8,26,Bắc,Công an - Quân đội,Đại học,Công lập,https://mta.edu.vn,,Yes
+316,Học viện Hậu cần,Hậu cần quân sự,7860202,"A00,A01",24.5,24.8,25,Bắc,Công an - Quân đội,Đại học,Công lập,https://hocvienhaucan.edu.vn,,Yes
+317,Học viện Hải quân,Kỹ thuật hải quân,7860203,"A00,A01",24,24.3,24.5,Bắc,Công an - Quân đội,Đại học,Công lập,https://hocvienhaiquan.vn,,Yes
+318,Học viện Phòng không - Không quân,Kỹ thuật phòng không,7860204,"A00,A01",24.5,24.8,25,Bắc,Công an - Quân đội,Đại học,Công lập,https://hvpkqq.edu.vn,,Yes
+319,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Vật lý học,7440101,"A00,A01",24,24.3,24.5,Bắc,Khoa học tự nhiên khác,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+320,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Hóa học,7440112,"A00,B00",23.5,23.8,24,Bắc,Khoa học tự nhiên khác,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+321,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Sinh học,7420101,B00,23,23.3,23.5,Bắc,Khoa học tự nhiên khác,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+322,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Vật lý học,7440101,"A00,A01",23.5,23.8,24,Nam,Khoa học tự nhiên khác,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+323,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Hóa học,7440112,"A00,B00",23,23.3,23.5,Nam,Khoa học tự nhiên khác,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+324,Đại học Khoa học Tự nhiên - ĐHQG TP.HCM,Sinh học,7420101,B00,22.5,22.8,23,Nam,Khoa học tự nhiên khác,Đại học,Công lập,https://hcmus.edu.vn,,Yes
+325,Đại học Khoa học - ĐH Huế,Vật lý học,7440101,"A00,A01",21.5,21.8,22,Miền Trung,Khoa học tự nhiên khác,Đại học,Công lập,https://husc.edu.vn,,Yes
+326,Đại học Khoa học - ĐH Huế,Hóa học,7440112,"A00,B00",21,21.3,21.5,Miền Trung,Khoa học tự nhiên khác,Đại học,Công lập,https://husc.edu.vn,,Yes
+327,Đại học Khoa học - ĐH Huế,Sinh học,7420101,B00,20.5,20.8,21,Miền Trung,Khoa học tự nhiên khác,Đại học,Công lập,https://husc.edu.vn,,Yes
+328,Đại học Quy Nhơn,Vật lý học,7440101,"A00,A01",20,20.3,20.5,Miền Trung,Khoa học tự nhiên khác,Đại học,Công lập,https://qnu.edu.vn,,Yes
+329,Đại học Quy Nhơn,Hóa học,7440112,"A00,B00",19.5,19.8,20,Miền Trung,Khoa học tự nhiên khác,Đại học,Công lập,https://qnu.edu.vn,,Yes
+330,Đại học Cần Thơ,Vật lý học,7440101,"A00,A01",21,21.3,21.5,Nam,Khoa học tự nhiên khác,Đại học,Công lập,https://ctu.edu.vn,,Yes
+331,Đại học Cần Thơ,Sinh học,7420101,B00,20.5,20.8,21,Nam,Khoa học tự nhiên khác,Đại học,Công lập,https://ctu.edu.vn,,Yes
+332,Đại học Bách Khoa Hà Nội,Kỹ thuật hạt nhân,7520402,"A00,A01",23.5,23.8,24,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://hust.edu.vn,,Yes
+333,Đại học Khoa học Tự nhiên - ĐHQG Hà Nội,Vật lý hạt nhân,7440108,"A00,A01",23,23.3,23.5,Bắc,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://hus.vnu.edu.vn,,Yes
+334,Đại học Bách Khoa TP.HCM,Kỹ thuật hạt nhân,7520402,"A00,A01",22.5,22.8,23,Nam,Hàng không - Vũ trụ - Hạt nhân,Đại học,Công lập,https://hcmut.edu.vn,,Yes
+335,Đại học Điện lực,Kỹ thuật điện,7520201,"A00,A01",22,22.3,22.5,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://epu.edu.vn,,Yes
+336,Đại học Điện lực,Hệ thống điện,7520205,"A00,A01",22.5,22.8,23,Bắc,Điện lạnh - Điện tử - Điện - Tự động hóa,Đại học,Công lập,https://epu.edu.vn,,Yes
+337,Đại học Giao thông Vận tải,Hàng hải,7840101,"A00,A01",22,22.3,22.5,Bắc,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://utc.edu.vn,,Yes
+338,Đại học Nha Trang,Kỹ thuật tàu thủy,7520122,"A00,A01",20.5,20.8,21,Miền Trung,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://ntu.edu.vn,,Yes
+339,Đại học Nha Trang,Khai thác vận tải,7840101,"A00,A01",20,20.3,20.5,Miền Trung,Hàng hải - Thủy lợi - Thời tiết,Đại học,Công lập,https://ntu.edu.vn,,Yes
+340,Đại học Công nghệ Giao thông Vận tải,Kỹ thuật xây dựng công trình giao thông,7580205,"A00,A01",21.5,21.8,22,Bắc,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://utc2.edu.vn,,Yes
+341,Đại học Công nghệ Giao thông Vận tải,Logistics và Quản lý chuỗi cung ứng,7510605,"A00,A01,D01",22,22.3,22.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://utc2.edu.vn,,Yes
+342,Đại học Công nghệ Thông tin và Truyền thông - ĐH Thái Nguyên,Công nghệ thông tin,7480101,"A00,A01,D01",21.5,21.8,22,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://ictu.edu.vn,,Yes
+343,Đại học Công nghệ Thông tin và Truyền thông - ĐH Thái Nguyên,Kỹ thuật phần mềm,7480103,"A00,A01,D01",21,21.3,21.5,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://ictu.edu.vn,,Yes
+344,Đại học Hạ Long,Công nghệ thông tin,7480101,"A00,A01,D01",19.5,19.8,20,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://daihochalong.edu.vn,,Yes
+345,Đại học Hạ Long,Quản trị kinh doanh,7340101,"A00,A01,D01",19,19.3,19.5,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://daihochalong.edu.vn,,Yes
+346,Đại học Hải Phòng,Công nghệ thông tin,7480101,"A00,A01,D01",20.5,20.8,21,Bắc,Công nghệ thông tin - Tin học,Đại học,Công lập,https://dhhp.edu.vn,,Yes
+347,Đại học Hải Phòng,Kỹ thuật xây dựng,7580201,"A00,A01",20,20.3,20.5,Bắc,Xây dựng - Kiến trúc - Giao thông,Đại học,Công lập,https://dhhp.edu.vn,,Yes
+348,Đại học Kinh tế Kỹ thuật Công nghiệp,Quản trị kinh doanh,7340101,"A00,A01,D01",20.5,20.8,21,Bắc,Kinh tế - Quản trị kinh doanh - Thương Mại,Đại học,Công lập,https://uneti.edu.vn,,Yes
+349,Đại học Kinh tế Kỹ thuật Công nghiệp,Kế toán,7340301,"A00,A01,D01",20,20.3,20.5,Bắc,Kế toán - Kiểm toán,Đại học,Công lập,https://uneti.edu.vn,,Yes
+350,Đại học Sao Đỏ,Cơ khí,7520103,"A00,A01",19.5,19.8,20,Bắc,Ô tô - Cơ khí - Chế tạo,Đại học,Công lập,https://saodo.edu.vn,,Yes
+351,Đại học Mỹ thuật Việt Nam,Hội họa,7210101,H00,22,22.3,22.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vietnamfineart.edu.vn,,Yes
+352,Đại học Mỹ thuật Việt Nam,Điêu khắc,7210102,H00,21.5,21.8,22,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vietnamfineart.edu.vn,,Yes
+353,Đại học Mỹ thuật Việt Nam,Đồ họa,7210103,H00,22.5,22.8,23,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vietnamfineart.edu.vn,,Yes
+354,Đại học Mỹ thuật TP.HCM,Hội họa,7210101,H00,22.5,22.8,23,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmufa.edu.vn,,Yes
+355,Đại học Mỹ thuật TP.HCM,Điêu khắc,7210102,H00,22,22.3,22.5,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmufa.edu.vn,,Yes
+356,Đại học Mỹ thuật TP.HCM,Đồ họa,7210103,H00,23,23.3,23.5,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmufa.edu.vn,,Yes
+357,Đại học Nghệ thuật Huế,Hội họa,7210101,H00,21,21.3,21.5,Miền Trung,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hufa.edu.vn,,Yes
+358,Đại học Nghệ thuật Huế,Điêu khắc,7210102,H00,20.5,20.8,21,Miền Trung,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hufa.edu.vn,,Yes
+359,Đại học Nghệ thuật Huế,Đồ họa,7210103,H00,21.5,21.8,22,Miền Trung,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hufa.edu.vn,,Yes
+360,Học viện Âm nhạc Quốc gia Việt Nam,Thanh nhạc,7210205,N00,22,22.3,22.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vnam.edu.vn,,Yes
+361,Học viện Âm nhạc Quốc gia Việt Nam,Piano,7210201,N00,22.5,22.8,23,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vnam.edu.vn,,Yes
+362,Học viện Âm nhạc Quốc gia Việt Nam,Sáng tác âm nhạc,7210203,N00,22.3,22.6,22.8,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vnam.edu.vn,,Yes
+363,Học viện Âm nhạc Quốc gia Việt Nam,Chỉ huy âm nhạc,7210204,N00,22,22.3,22.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vnam.edu.vn,,Yes
+364,Học viện Âm nhạc Huế,Thanh nhạc,7210205,N00,20.5,20.8,21,Miền Trung,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmcons.vn,,Yes
+365,Học viện Âm nhạc Huế,Piano,7210201,N00,20,20.3,20.5,Miền Trung,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmcons.vn,,Yes
+366,Học viện Âm nhạc TP.HCM,Thanh nhạc,7210205,N00,21.5,21.8,22,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmcons.vn,,Yes
+367,Học viện Âm nhạc TP.HCM,Piano,7210201,N00,22,22.3,22.5,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://hcmcons.vn,,Yes
+368,Đại học Sân khấu Điện ảnh Hà Nội,Đạo diễn điện ảnh,7210234,S00,21.5,21.8,22,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skda.edu.vn,,Yes
+369,Đại học Sân khấu Điện ảnh Hà Nội,Diễn viên kịch  điện ảnh,7210231,S00,21,21.3,21.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skda.edu.vn,,Yes
+370,Đại học Sân khấu Điện ảnh Hà Nội,Biên kịch điện ảnh,7210232,S00,20.5,20.8,21,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skda.edu.vn,,Yes
+371,Đại học Sân khấu Điện ảnh TP.HCM,Đạo diễn điện ảnh,7210234,S00,21,21.3,21.5,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skdahcm.edu.vn,,Yes
+372,Đại học Sân khấu Điện ảnh TP.HCM,Diễn viên kịch điện ảnh,7210231,S00,20.5,20.8,21,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skdahcm.edu.vn,,Yes
+373,Đại học Sân khấu Điện ảnh TP.HCM,Quay phim,7210233,S00,21.5,21.8,22,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://skdahcm.edu.vn,,Yes
+374,Đại học Văn hóa Hà Nội,Đạo diễn sự kiện,7210241,S00,21,21.3,21.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://huc.edu.vn,,Yes
+375,Đại học Văn hóa Nghệ thuật Quân đội,Thanh nhạc,7210205,N00,22,22.3,22.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vanhnghequandoi.vn,,Yes
+376,Đại học Văn hóa Nghệ thuật Quân đội,Piano,7210201,N00,21.5,21.8,22,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vanhnghequandoi.vn,,Yes
+377,Đại học Văn hóa - Nghệ thuật Quân đội (phân hiệu TP.HCM),Thanh nhạc,7210205,N00,21,21.3,21.5,Nam,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://vanhnghequandoi.vn,,Yes
+378,Đại học Mỹ thuật Công nghiệp,Hội họa,7210101,H00,22.5,22.8,23,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://mica.edu.vn,,Yes
+379,Đại học Mỹ thuật Công nghiệp,Điêu khắc,7210102,H00,22,22.3,22.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://mica.edu.vn,,Yes
+380,Đại học Mỹ thuật Công nghiệp,Đồ họa,7210103,H00,23,23.3,23.5,Bắc,Mỹ thuật - Âm nhạc - Nghệ thuật,Đại học,Công lập,https://mica.edu.vn,,Yes

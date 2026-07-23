@@ -1,0 +1,57 @@
+name: ui_login_out
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.10.7 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_animate: ^4.5.0
+  simple_gradient_text: ^1.3.0
+  cupertino_icons: ^1.0.8
+  image_picker: ^1.0.7
+  go_router: ^12.0.0
+  intl: ^0.18.1
+  lucide_icons: ^0.257.0
+  firebase_core: ^3.15.2
+  cloud_firestore: ^5.6.12
+  firebase_auth: ^5.4.1
+  http: ^1.6.0
+  google_sign_in: ^6.2.2
+  lottie: ^3.3.3
+  firebase_app_check: ^0.3.2+10
+  firebase_messaging: ^15.2.4
+  firebase_ai: ^2.3.0
+  firebase_storage: ^12.4.10
+  share_plus: ^13.1.0
+  cloudinary_url_gen: ^1.8.0
+  cloudinary_flutter: ^1.3.0
+  flutter_dotenv: ^6.0.1
+  crypto: ^3.0.7
+  app_links: ^6.0.0
+  url_launcher: ^6.3.2
+  webview_flutter: ^4.4.2
+  shimmer: ^3.0.0
+  flutter_countdown_timer: ^4.1.0
+  fl_chart: ^0.66.0
+  pdf: ^3.10.8
+  printing: ^5.11.1
+  path_provider: ^2.1.2
+  iconsax: ^0.0.8
+  provider: ^6.1.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/Live chatbot.json
+    - .env

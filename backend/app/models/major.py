@@ -1,0 +1,1 @@
+from sqlalchemy import Column, Integer, String`nfrom app.models.base import Base`n`nclass Major(Base):`n    __tablename__ = "majors"`n    id = Column(Integer, primary_key=True, index=True)`n    name = Column(String, unique=True, index=True, nullable=False)`n    code = Column(String, nullable=True)`n    description = Column(String, nullable=True)`n

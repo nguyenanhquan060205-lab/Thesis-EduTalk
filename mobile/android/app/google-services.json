@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "404877063083",
+    "project_id": "edutalk-a2f80",
+    "storage_bucket": "edutalk-a2f80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404877063083:android:5efa2f4a8b41b603bdd8ee",
+        "android_client_info": {
+          "package_name": "com.example.ui_login_out"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404877063083-3d6au882g2f2m7me8ru005n5u6tgs9g3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ui_login_out",
+            "certificate_hash": "bf823057c40c19e4efbfd5f94029eac674258c93"
+          }
+        },
+        {
+          "client_id": "404877063083-j48frcfi8inppbvaesohdl2n0dg5eevq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ui_login_out",
+            "certificate_hash": "c251520ec759e1330af3c00527a9bb6583e6130b"
+          }
+        },
+        {
+          "client_id": "404877063083-unce4lelreot53fh6a2vjblf42p6ihl5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ui_login_out",
+            "certificate_hash": "873f5cde4fa738e89f7d8298ef0ea1daedda4dac"
+          }
+        },
+        {
+          "client_id": "404877063083-4h66696tacn9843qld84k0gd1ebga9dl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9RVsNefgZMqQikyoIO2mjCLDVJwogO1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404877063083-4h66696tacn9843qld84k0gd1ebga9dl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
