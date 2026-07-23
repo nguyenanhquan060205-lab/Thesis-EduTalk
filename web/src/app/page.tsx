@@ -71,11 +71,11 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="text-lg md:text-2xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed"
           >
-            Nâng tầm quyết định tương lai bằng Trí tuệ Nhân tạo. Mô hình XGBoost & RAG Pipeline độc quyền dành riêng cho Tân sinh viên HUIT.
+            Hệ thống Trợ lý Tuyển sinh & Tư vấn Ngành học Thông minh dành riêng cho học sinh & sinh viên HUIT.
           </motion.p>
         </motion.div>
 
-        {/* Action Buttons (Magnetic effect simulated with hover scale) */}
+        {/* Action Buttons */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,10 +84,10 @@ export default function Home() {
         >
           <Link href="/predict" className="group relative bg-[#2563EB] text-white px-8 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:bg-[#1d4ed8] shadow-[0_10px_40px_-10px_rgba(37,99,235,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(37,99,235,0.7)] hover:-translate-y-1 overflow-hidden">
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-            <Brain className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" /> Trải nghiệm AI
+            <Brain className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" /> Tư vấn Ngành học AI
           </Link>
           <Link href="/chat" className="group bg-white/80 backdrop-blur-md border border-slate-200 text-slate-800 px-8 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-sm hover:border-slate-300 hover:bg-white hover:-translate-y-1">
-            <MessageSquare className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" /> Trợ lý RAG
+            <MessageSquare className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" /> Trợ lý Hỏi đáp AI
           </Link>
         </motion.div>
       </section>
@@ -96,7 +96,7 @@ export default function Home() {
       <section className="relative z-20 max-w-7xl mx-auto w-full px-6">
         <div className="flex items-center gap-3 mb-10">
           <div className="w-2 h-2 rounded-full bg-[#2563EB]"></div>
-          <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest">Hệ sinh thái HUIT AI</h2>
+          <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest">Hệ sinh thái HUIT EduTalk</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 auto-rows-[250px]">
@@ -122,7 +122,7 @@ export default function Home() {
               <div className="relative z-10 mt-12">
                 <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Tư vấn Chuyên sâu</h3>
                 <p className="text-slate-500 font-medium text-lg max-w-md">
-                  Mô hình XGBoost phân tích hơn 23 đặc trưng tâm lý và học lực để gợi ý ngành học tối ưu nhất.
+                  Phân tính điểm số 3 môn thi cùng sở thích cá nhân để gợi ý ngành học phù hợp nhất với bản thân.
                 </p>
               </div>
             </motion.div>
@@ -145,10 +145,10 @@ export default function Home() {
               </div>
 
               <div className="relative z-10 mt-12">
-                <div className="text-5xl font-black text-white mb-2">37+</div>
+                <div className="text-5xl font-black text-white mb-2">39+</div>
                 <h3 className="text-xl font-bold text-blue-100 mb-3">Ngành học HUIT</h3>
                 <p className="text-blue-200/80 font-medium text-sm">
-                  Tra cứu điểm chuẩn, chỉ tiêu và thông tin tuyển sinh mới nhất năm 2026.
+                  Tra cứu điểm chuẩn, chỉ tiêu và các tổ hợp môn xét tuyển mới nhất năm 2026.
                 </p>
               </div>
             </motion.div>
@@ -169,12 +169,12 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="text-xl font-black text-slate-900 mb-2">Lịch sử</h3>
-                <p className="text-slate-500 font-medium text-sm">Quản lý kết quả dự đoán của bạn.</p>
+                <p className="text-slate-500 font-medium text-sm">Quản lý các kết quả đánh giá cá nhân.</p>
               </div>
             </motion.div>
           </Link>
 
-          {/* Card 4: XAI (Small) */}
+          {/* Card 4: Explanation (Small) */}
           <Link href="/result" className="md:col-span-1 md:row-span-1 group block">
             <motion.div 
               whileHover={{ y: -4, scale: 0.98 }}
@@ -188,8 +188,8 @@ export default function Home() {
                 <ArrowUpRight className="w-5 h-5 text-teal-300 group-hover:text-teal-600 transition-colors" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-slate-900 mb-2">SHAP XAI</h3>
-                <p className="text-teal-700 font-medium text-sm">Giải thích quyết định của AI.</p>
+                <h3 className="text-xl font-black text-slate-900 mb-2">Phân Tích</h3>
+                <p className="text-teal-700 font-medium text-sm">Xem yếu tố ảnh hưởng tới kết quả.</p>
               </div>
             </motion.div>
           </Link>

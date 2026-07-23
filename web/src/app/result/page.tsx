@@ -5,16 +5,15 @@ import { CheckCircle2, ShieldAlert, Brain, ChevronLeft, BarChart3, Download, Sha
 import Link from "next/link";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 
-// Dữ liệu mô phỏng đóng góp SHAP cho 23 Features
-const SHAP_DATA = [
-  { name: "Tính cách: Công nghệ", value: 1.8 },
-  { name: "Điểm Toán (A00)", value: 1.4 },
-  { name: "Tính cách: Logic", value: 1.1 },
-  { name: "Mục tiêu (Đi làm)", value: 0.8 },
-  { name: "Tổ hợp: A00", value: 0.5 },
-  { name: "Điểm Lý (A00)", value: 0.4 },
-  { name: "Tính cách: Sức khỏe", value: -0.3 },
-  { name: "Tính cách: Giao tiếp", value: -0.7 },
+// Dữ liệu mô phỏng mức độ đóng góp chỉ số
+const INFLUENCE_DATA = [
+  { name: "Đam mê Công nghệ", value: 1.8 },
+  { name: "Điểm môn Toán", value: 1.4 },
+  { name: "Tư duy Logic & Phân tích", value: 1.1 },
+  { name: "Mục tiêu (Đi làm công ty)", value: 0.8 },
+  { name: "Tổ hợp xét tuyển (D01)", value: 0.5 },
+  { name: "Mức độ quan tâm Sức khỏe", value: -0.3 },
+  { name: "Tính cách: Thích giao tiếp", value: -0.7 },
 ];
 
 export default function ResultPage() {
@@ -25,29 +24,29 @@ export default function ResultPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200 pb-6 gap-4">
         <div>
           <Link href="/predict" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-[#2563EB] font-bold text-sm transition mb-3">
-            <ChevronLeft className="w-4 h-4" /> Trở lại Form 23 Features
+            <ChevronLeft className="w-4 h-4" /> Làm lại Bài Đánh Giá
           </Link>
           <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900 tracking-tight">
-            <Brain className="w-8 h-8 text-[#2563EB]" /> Báo cáo Kết quả Dự đoán AI & XAI
+            <Brain className="w-8 h-8 text-[#2563EB]" /> Báo Cáo Kết Quả Định Hướng Ngành Học
           </h1>
           <p className="text-slate-500 font-medium text-sm mt-1">
-            Xử lý luồng: XGBoost Model $\rightarrow$ Backend Business Rules $\rightarrow$ Biểu đồ Giải thích SHAP.
+            Tổng hợp phân tích dựa trên điểm thi, tính cách và tiêu chí tuyển sinh chính thức tại HUIT.
           </p>
         </div>
 
         <div className="flex gap-3 shrink-0">
           <button className="bg-white hover:bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold transition shadow-xs text-slate-700">
-            <Share2 className="w-4 h-4" /> Chia sẻ
+            <Share2 className="w-4 h-4" /> Chia sẻ kết quả
           </button>
           <button className="bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold transition shadow-md shadow-blue-500/20">
-            <Download className="w-4 h-4" /> Tải Báo cáo PDF
+            <Download className="w-4 h-4" /> Tải báo cáo PDF
           </button>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
         
-        {/* Left Column: Top Recommendation & Backend Rules (4 Cols) */}
+        {/* Left Column: Top Recommendation & Admission Notes (4 Cols) */}
         <div className="lg:col-span-4 space-y-6">
           
           {/* Top 1 Recommendation Card */}
@@ -61,7 +60,7 @@ export default function ResultPage() {
             </div>
 
             <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30 text-xs font-bold mb-4">
-              <Sparkles className="w-3.5 h-3.5" /> Khuyến nghị Tối ưu (Top 1)
+              <Sparkles className="w-3.5 h-3.5" /> Gợi ý Phù hợp Nhất
             </div>
 
             <div className="text-3xl font-black text-white mb-2 leading-tight">
@@ -72,10 +71,10 @@ export default function ResultPage() {
             <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-cyan-300 to-blue-400 mt-6">
               89.4%
             </div>
-            <p className="text-slate-300 mt-2 text-xs font-bold">Xác suất Phù hợp Tâm lý & Học lực</p>
+            <p className="text-slate-300 mt-2 text-xs font-bold">Mức độ tương thích với bản thân</p>
           </motion.div>
 
-          {/* Backend Business Rules Warning (Rule 1 & Rule 2) */}
+          {/* Admission Cutoff Warning Note */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -84,30 +83,30 @@ export default function ResultPage() {
           >
             <h3 className="font-extrabold text-amber-800 flex items-center gap-2 text-base">
               <ShieldAlert className="w-5 h-5 text-amber-600" /> 
-              Cảnh báo Backend Business Rule
+              Lưu ý quan trọng về Điểm chuẩn
             </h3>
             <p className="text-xs text-amber-900 leading-relaxed font-semibold">
-              <strong>Luật 2 (Điểm chuẩn HUIT):</strong> Tổng 3 môn khối A00 của bạn là <strong>24.0 điểm</strong>, xấp xỉ điểm chuẩn năm ngoái <strong>(24.5)</strong>.
+              Tổng điểm 3 môn của bạn là <strong>24.0 điểm</strong>, sát với điểm chuẩn tham khảo năm ngoái của ngành CNTT HUIT <strong>(24.5 điểm)</strong>.
             </p>
             <div className="pt-3 border-t border-amber-200/70 text-xs text-amber-800 font-medium">
-              <strong className="text-amber-900 font-bold">Khuyên dùng nguyện vọng 2:</strong> Ngành An toàn Thông tin hoặc Kỹ thuật Phần mềm HUIT.
+              <strong className="text-amber-900 font-bold">Gợi ý nguyện vọng 2 an toàn:</strong> Bạn nên đăng ký thêm nguyện vọng An toàn Thông tin hoặc Kỹ thuật Phần mềm HUIT để tăng cơ hội trúng tuyển.
             </div>
           </motion.div>
 
-          {/* Secondary Potential Options */}
+          {/* Secondary Options */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-3"
           >
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lựa chọn Tiềm năng Khác</h3>
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ngành học Tiềm năng Khác</h3>
             
-            <div className="bg-white p-4.5 rounded-2xl flex items-center justify-between border border-slate-200 shadow-xs hover:border-[#2563EB]/40 transition">
+            <div className="bg-white p-4.5 rounded-2xl flex items-center justify-between border border-slate-200 shadow-xs hover:border-[#2563EB]/40 transition cursor-pointer">
               <div>
                 <div className="font-bold text-slate-900 text-base">An toàn Thông tin</div>
                 <div className="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-0.5">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Đủ điều kiện điểm chuẩn
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Khả năng trúng tuyển cao
                 </div>
               </div>
               <div className="text-xl font-black text-[#2563EB]">78.5%</div>
@@ -115,18 +114,18 @@ export default function ResultPage() {
 
             <div className="bg-white p-4.5 rounded-2xl flex items-center justify-between border border-slate-200 shadow-xs opacity-75">
               <div>
-                <div className="font-bold text-slate-900 text-base">Kỹ thuật Điện tử</div>
+                <div className="font-bold text-slate-900 text-base">Trí tuệ nhân tạo</div>
                 <div className="text-xs font-bold text-slate-500 flex items-center gap-1 mt-0.5">
-                  <Info className="w-3.5 h-3.5" /> Lựa chọn an toàn
+                  <Info className="w-3.5 h-3.5" /> Phù hợp với năng lực
                 </div>
               </div>
-              <div className="text-xl font-black text-slate-500">65.2%</div>
+              <div className="text-xl font-black text-slate-500">72.0%</div>
             </div>
           </motion.div>
 
         </div>
 
-        {/* Right Column: SHAP XAI Visual Explanation Chart (8 Cols) */}
+        {/* Right Column: Visual Explanation (8 Cols) */}
         <div className="lg:col-span-8">
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
@@ -138,27 +137,27 @@ export default function ResultPage() {
               <div>
                 <h2 className="text-xl font-extrabold flex items-center gap-2.5 text-slate-900">
                   <BarChart3 className="w-6 h-6 text-purple-600" /> 
-                  Giải thích Mô hình AI (Biểu đồ SHAP Values)
+                  Phân Tích Các Yếu Tố Ảnh Hưởng
                 </h2>
                 <p className="text-slate-500 font-medium text-xs mt-1">
-                  Đo lường mức độ ảnh hưởng của từng đặc trưng trong bộ 23 Features đối với quyết định gợi ý ngành CNTT.
+                  Đánh giá mức độ đóng góp của từng môn học và nét tính cách tới gợi ý ngành Công nghệ Thông tin.
                 </p>
               </div>
             </div>
 
             <div className="flex-1 min-h-[400px] w-full bg-slate-50/70 rounded-2xl p-4 md:p-6 border border-slate-100">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={SHAP_DATA} layout="vertical" margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
+                <BarChart data={INFLUENCE_DATA} layout="vertical" margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
                   <XAxis type="number" stroke="#64748b" tick={{fill: '#475569', fontWeight: 600, fontSize: 12}} />
-                  <YAxis type="category" dataKey="name" stroke="#64748b" tick={{fill: '#334155', fontSize: 12, fontWeight: 700}} width={170} />
+                  <YAxis type="category" dataKey="name" stroke="#64748b" tick={{fill: '#334155', fontSize: 12, fontWeight: 700}} width={180} />
                   <Tooltip 
                     cursor={{fill: 'rgba(37, 99, 235, 0.05)'}}
                     contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
                   />
                   <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={26}>
-                    {SHAP_DATA.map((entry, index) => (
+                    {INFLUENCE_DATA.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.value > 0 ? '#10b981' : '#ef4444'} />
                     ))}
                   </Bar>
@@ -169,13 +168,13 @@ export default function ResultPage() {
             <div className="mt-6 flex flex-wrap items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-600">
               <div className="flex items-center gap-6 font-semibold">
                 <span className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-500"></span> Đóng góp Tích cực (+SHAP)
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-500"></span> Yếu tố tác động tích cực
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-full bg-red-500"></span> Đóng góp Tiêu cực (-SHAP)
+                  <span className="w-3.5 h-3.5 rounded-full bg-red-500"></span> Yếu tố tác động tiêu cực
                 </span>
               </div>
-              <span className="text-slate-400 font-medium">Mô hình XGBoost + SHAP Tree Explainer</span>
+              <span className="text-slate-400 font-medium">Hệ thống Phân tích EduTalk HUIT</span>
             </div>
           </motion.div>
         </div>
