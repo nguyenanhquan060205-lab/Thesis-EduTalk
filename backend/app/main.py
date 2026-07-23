@@ -11,7 +11,7 @@ app = FastAPI(
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For development. In production, specify domains.
+    allow_origins=["*"],  # For development. In production, specify domains.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,6 +24,7 @@ app.include_router(predict.router, prefix="/api/v1/predict", tags=["Prediction"]
 app.include_router(majors.router, prefix="/api/v1/majors", tags=["Majors"])
 app.include_router(survey.router, prefix="/api/v1/survey", tags=["Survey"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
+
 
 @app.get("/")
 def read_root():
