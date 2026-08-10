@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/auth_service.dart';
 import '../services/otp_service.dart';
 import '/screens/Register.dart';
@@ -43,39 +42,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _checkRoleAndNavigate() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final doc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-        String role = 'user';
-        if (doc.exists && doc.data() != null) {
-          final data = doc.data() as Map<String, dynamic>;
-          role = data['role'] ?? 'user';
-        }
-        if (!mounted) return;
-        setState(() => _isLoading = false);
-        if (role == 'admin') {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminLayout()),
-            (route) => false,
-          );
-        } else {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const AuthGate()),
-            (route) => false,
-          );
-        }
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      _showError("Lỗi phân quyền: $e");
+  /// Điều hướng dựa trên role trả về từ API (không cần query Firestore nữa)
+  void _navigateByRole(String role) {
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (role == 'admin') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const AdminLayout()),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthGate()),
+        (route) => false,
+      );
     }
   }
 
@@ -83,31 +65,31 @@ class _LoginScreenState extends State<LoginScreen> {
     String email = _userController.text.trim();
     String password = _passwordController.text.trim();
     if (email.isEmpty || password.isEmpty) {
-      _showError("Vui lòng nhập đầy đủ thông tin");
+      _showError('Vui lòng nhập đầy đủ thông tin');
       return;
     }
     setState(() => _isLoading = true);
-    final Map<String, dynamic>? result =
-        await _authService.login(email, password) as Map<String, dynamic>?;
+    final result = await _authService.login(email, password);
     if (!mounted) return;
-    if (result == null || result["status"] != "success") {
+    if (result['status'] != 'success') {
       setState(() => _isLoading = false);
-      _showError(result?["status"]?.toString() ?? "Đăng nhập thất bại");
+      _showError(result['status']?.toString() ?? 'Đăng nhập thất bại');
       return;
     }
-    _checkRoleAndNavigate();
+    // Role đã có sẵn trong response — không cần query Firestore thêm
+    _navigateByRole(result['role']?.toString() ?? 'user');
   }
 
   void _handleGoogleLogin() async {
     setState(() => _isLoading = true);
-    final Map<String, dynamic> result = await _authService.signInWithGoogle();
+    final result = await _authService.signInWithGoogle();
     if (!mounted) return;
-    if (result["status"] != "success") {
+    if (result['status'] != 'success') {
       setState(() => _isLoading = false);
-      _showError(result["status"]?.toString() ?? "Đăng nhập thất bại");
+      _showError(result['status']?.toString() ?? 'Đăng nhập thất bại');
       return;
     }
-    _checkRoleAndNavigate();
+    _navigateByRole(result['role']?.toString() ?? 'user');
   }
 
   // ─────────────────────────────────────────────

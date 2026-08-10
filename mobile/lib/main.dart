@@ -4,9 +4,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_login_out/screens/home.dart';
+import 'package:ui_login_out/services/auth_service.dart';
 import 'firebase_options.dart';
 import 'screens/Login.dart';
 import 'screens/admin/admin_layout.dart';
@@ -89,16 +89,13 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  Future<DocumentSnapshot>? _docFuture;
+  Future<Map<String, dynamic>?>? _docFuture;
   String? _cachedUid;
 
-  Future<DocumentSnapshot> _getDoc(String uid) {
+  Future<Map<String, dynamic>?> _getDoc(String uid) {
     if (_cachedUid != uid || _docFuture == null) {
       _cachedUid = uid;
-      _docFuture = FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
+      _docFuture = AuthService().getUserInfo(uid);
     }
     return _docFuture!;
   }
@@ -131,13 +128,13 @@ class _AuthGateState extends State<AuthGate> {
         final String name =
             user.displayName ?? user.email?.split('@')[0] ?? 'Bạn';
 
-        return FutureBuilder<DocumentSnapshot>(
+        return FutureBuilder<Map<String, dynamic>?>(
           future: _getDoc(user.uid),
           builder: (context, docSnapshot) {
             print(
               'DOC STATE: ${docSnapshot.connectionState} '
               'hasError=${docSnapshot.hasError} '
-              'exists=${docSnapshot.data?.exists}',
+              'exists=${docSnapshot.data != null}',
             );
 
             if (docSnapshot.connectionState == ConnectionState.waiting) {
@@ -149,12 +146,12 @@ class _AuthGateState extends State<AuthGate> {
               return HomeScreen(userName: name);
             }
 
-            if (!docSnapshot.hasData || !docSnapshot.data!.exists) {
+            if (!docSnapshot.hasData || docSnapshot.data == null) {
               print('DOC: không tồn tại → HomeScreen');
               return HomeScreen(userName: name);
             }
 
-            final String role = docSnapshot.data!.get('role') ?? 'user';
+            final String role = docSnapshot.data!['role'] ?? 'user';
             print('DOC: role=$role → vào HomeScreen');
             if (role == 'admin') return const AdminLayout();
             return HomeScreen(userName: name);

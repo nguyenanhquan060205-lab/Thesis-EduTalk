@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Login.dart';
 import 'dashboard_screen.dart';
@@ -84,13 +83,13 @@ class _AdminLayoutState extends State<AdminLayout> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: StreamBuilder<QuerySnapshot>(
+                child: StreamBuilder<List<Map<String, dynamic>>>(
                   stream: _adminService.getAdminNotificationsStream(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final docs = snapshot.data?.docs ?? [];
+                    final docs = snapshot.data ?? [];
                     if (docs.isEmpty) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -107,16 +106,16 @@ class _AdminLayoutState extends State<AdminLayout> {
                     return ListView.builder(
                       itemCount: docs.length,
                       itemBuilder: (context, index) {
-                        final doc = docs[index];
-                        final data = doc.data() as Map<String, dynamic>;
+                        final data = docs[index];
+                        final String docId = data['id'] ?? '';
                         final String type = data['type'] ?? 'post_report';
 
                         return InkWell(
-                          onTap: () => _adminService.resolveAdminNotification(doc.id),
+                          onTap: () => _adminService.resolveAdminNotification(docId),
                           borderRadius: BorderRadius.circular(16),
                           child: type == 'premium_payment'
-                              ? _buildPremiumPaymentNotification(doc, data)
-                              : _buildPostReportNotification(doc, data),
+                              ? _buildPremiumPaymentNotification(docId, data)
+                              : _buildPostReportNotification(docId, data),
                         );
                       },
                     );

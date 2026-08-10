@@ -1,170 +1,184 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../models/post_model.dart';
+import 'api_client.dart';
 
+/// AdminService — Gọi Python Backend thay vì Firestore trực tiếp.
+/// Toàn bộ quyền Admin được kiểm soát server-side (require_admin middleware).
 class AdminService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // =========================================================================
-  // 1. QUẢN LÝ NGƯỜI DÙNG (USER MANAGEMENT)
+  // 1. DASHBOARD
+  // → GET /api/v1/admin/dashboard
   // =========================================================================
-
-  /// Lắng nghe danh sách tất cả người dùng dạng UserModel
-  Stream<List<UserModel>> getUsersStream() {
-    return _db.collection('users').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => UserModel.fromDocument(doc)).toList();
-    });
+  Future<Map<String, dynamic>> getDashboard() async {
+    return await ApiClient.get('/api/v1/admin/dashboard', withAuth: true);
   }
 
-  /// Cập nhật cấp độ Premium của người dùng
+  // =========================================================================
+  // 2. QUẢN LÝ NGƯỜI DÙNG
+  // =========================================================================
+
+  /// Lấy danh sách tất cả users.
+  /// → GET /api/v1/admin/users
+  Future<List<UserModel>> getUsers() async {
+    final result = await ApiClient.get('/api/v1/admin/users', withAuth: true);
+    if (result['data'] == null) return [];
+    return (result['data'] as List)
+        .map((e) => UserModel.fromMap(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  /// Stream wrapper (polling 30s).
+  Stream<List<UserModel>> getUsersStream() async* {
+    while (true) {
+      yield await getUsers();
+      await Future.delayed(const Duration(seconds: 30));
+    }
+  }
+
+  /// Cập nhật trạng thái Premium.
+  /// → PUT /api/v1/admin/users/{uid}/premium
   Future<void> updatePremiumStatus(
     String docId, {
     required SubscriptionPlan plan,
     required bool isPremium,
   }) async {
-    final updates = <String, dynamic>{
-      'plan': plan == SubscriptionPlan.none ? null : plan.name,
-      'isPremium': isPremium,
-      'subscriptionStatus': isPremium ? 'active' : 'none',
-    };
-    
-    // Nếu cấp quyền premium, cập nhật thời gian hết hạn tương ứng
-    if (isPremium) {
-      final now = DateTime.now();
-      updates['premiumStart'] = Timestamp.fromDate(now);
-      updates['premiumAt'] = Timestamp.fromDate(now);
-      
-      if (plan == SubscriptionPlan.monthly) {
-        updates['premiumExpiry'] = Timestamp.fromDate(now.add(const Duration(days: 30)));
-      } else if (plan == SubscriptionPlan.yearly) {
-        updates['premiumExpiry'] = Timestamp.fromDate(now.add(const Duration(days: 365)));
-      } else if (plan == SubscriptionPlan.lifetime) {
-        // lifetime không cần ngày hết hạn
-        updates['premiumExpiry'] = null;
-      }
-    } else {
-      updates['premiumStart'] = null;
-      updates['premiumExpiry'] = null;
-      updates['premiumAt'] = null;
-    }
-
-    await _db.collection('users').doc(docId).update(updates);
+    await ApiClient.put(
+      '/api/v1/admin/users/$docId/premium',
+      body: {
+        'plan': plan == SubscriptionPlan.none ? 'none' : plan.name,
+        'isPremium': isPremium,
+      },
+      withAuth: true,
+    );
   }
 
-  /// Xóa người dùng khỏi Firestore
+  /// Xóa người dùng.
+  /// → DELETE /api/v1/admin/users/{uid}
   Future<void> deleteUser(String docId) async {
-    await _db.collection('users').doc(docId).delete();
+    await ApiClient.delete('/api/v1/admin/users/$docId', withAuth: true);
   }
 
   // =========================================================================
-  // 2. QUẢN LÝ PREMIUM (PREMIUM MANAGEMENT)
+  // 3. QUẢN LÝ DIỄN ĐÀN
   // =========================================================================
 
-  /// Lắng nghe các giao dịch đã thành công để tính doanh thu
-  Stream<QuerySnapshot> getSuccessfulTransactionsStream() {
-    return _db
-        .collection('transactions')
-        // .where('status', isEqualTo: 'success') // Bỏ filter tạm thời để debug
-        .snapshots();
+  /// Lấy tất cả bài viết (kể cả pending) cho Admin.
+  /// → GET /api/v1/admin/posts
+  Future<List<PostModel>> getPosts() async {
+    final result = await ApiClient.get('/api/v1/admin/posts', withAuth: true);
+    if (result['data'] == null) return [];
+    return (result['data'] as List)
+        .map((e) => PostModel.fromMap(Map<String, dynamic>.from(e), e['id']))
+        .toList();
   }
 
-  // =========================================================================
-  // 3. QUẢN LÝ DIỄN ĐÀN (FORUM MANAGEMENT)
-  // =========================================================================
-
-  /// Lắng nghe danh sách bài viết dạng PostModel, sắp xếp theo thời gian giảm dần
-  Stream<List<PostModel>> getPostsStream() {
-    return _db
-        .collection('posts')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => PostModel.fromMap(doc.data(), doc.id))
-          .toList();
-    });
+  Stream<List<PostModel>> getPostsStream() async* {
+    while (true) {
+      yield await getPosts();
+      await Future.delayed(const Duration(seconds: 20));
+    }
   }
 
-  /// Xóa bài viết khỏi Firestore
+  /// Xóa bài viết.
+  /// → DELETE /api/v1/admin/posts/{id}
   Future<void> deletePost(String docId) async {
-    await _db.collection('posts').doc(docId).delete();
-    
-    // Đồng thời đánh dấu thông báo liên quan đến bài viết này là đã đọc
-    final notifications = await _db
-        .collection('admin_notifications')
-        .where('postId', isEqualTo: docId)
-        .where('status', isEqualTo: 'unread')
-        .get();
-        
-    final batch = _db.batch();
-    for (var doc in notifications.docs) {
-      batch.update(doc.reference, {'status': 'read'});
-    }
-    await batch.commit();
+    await ApiClient.delete('/api/v1/admin/posts/$docId', withAuth: true);
   }
 
-  /// Bỏ báo cáo bài viết (duyệt bài viết an toàn, xóa lượt báo cáo)
+  /// Bỏ báo cáo bài viết (duyệt an toàn).
+  /// → PUT /api/v1/admin/posts/{id}/dismiss-report
   Future<void> dismissPostReports(String postId) async {
-    await _db.collection('posts').doc(postId).update({
-      'reportCount': 0,
-      'isPending': false,
-      'reportedBy': [],
-    });
-    
-    // Đánh dấu các thông báo liên quan đến bài viết này là đã đọc
-    final notifications = await _db
-        .collection('admin_notifications')
-        .where('postId', isEqualTo: postId)
-        .where('status', isEqualTo: 'unread')
-        .get();
-        
-    final batch = _db.batch();
-    for (var doc in notifications.docs) {
-      batch.update(doc.reference, {'status': 'read'});
+    await ApiClient.put(
+      '/api/v1/admin/posts/$postId/dismiss-report',
+      withAuth: true,
+    );
+  }
+
+  // =========================================================================
+  // 4. DASHBOARD & THÔNG BÁO ADMIN
+  // =========================================================================
+
+  /// Lấy thông báo admin chưa đọc.
+  /// → GET /api/v1/admin/notifications
+  Future<List<Map<String, dynamic>>> getAdminNotifications() async {
+    final result = await ApiClient.get(
+      '/api/v1/admin/notifications',
+      withAuth: true,
+    );
+    if (result['data'] == null) return [];
+    return List<Map<String, dynamic>>.from(result['data']);
+  }
+
+  Stream<List<Map<String, dynamic>>> getAdminNotificationsStream() async* {
+    while (true) {
+      yield await getAdminNotifications();
+      await Future.delayed(const Duration(seconds: 15));
     }
-    await batch.commit();
   }
 
-  // =========================================================================
-  // 4. DASHBOARD & THÔNG BÁO
-  // =========================================================================
-
-  /// Lắng nghe danh sách giao dịch gần đây giới hạn số lượng hiển thị
-  Stream<QuerySnapshot> getRecentTransactionsStream({int limit = 5}) {
-    return _db
-        .collection('transactions')
-        .orderBy('timestamp', descending: true)
-        .limit(limit)
-        .snapshots();
-  }
-
-  /// Lấy danh sách thông báo chưa đọc của Admin
-  Stream<QuerySnapshot> getAdminNotificationsStream() {
-    return _db
-        .collection('admin_notifications')
-        .where('status', isEqualTo: 'unread')
-        .orderBy('createdAt', descending: true)
-        .snapshots();
-  }
-
-  /// Đánh dấu một thông báo admin đã xử lý
+  /// Đánh dấu thông báo đã xử lý.
+  /// → PUT /api/v1/admin/notifications/{id}/resolve
   Future<void> resolveAdminNotification(String docId) async {
-    await _db.collection('admin_notifications').doc(docId).update({'status': 'read'});
+    await ApiClient.put(
+      '/api/v1/admin/notifications/$docId/resolve',
+      withAuth: true,
+    );
   }
 
-  /// Đánh dấu tất cả thông báo admin chưa đọc thành đã đọc
+  /// Đánh dấu tất cả thông báo đã đọc (gọi từng cái).
   Future<void> resolveAllAdminNotifications() async {
-    final unread = await _db
-        .collection('admin_notifications')
-        .where('status', isEqualTo: 'unread')
-        .get();
-
-    if (unread.docs.isEmpty) return;
-
-    final batch = _db.batch();
-    for (var doc in unread.docs) {
-      batch.update(doc.reference, {'status': 'read'});
+    final notifs = await getAdminNotifications();
+    for (final n in notifs) {
+      if (n['id'] != null) {
+        await resolveAdminNotification(n['id']);
+      }
     }
-    await batch.commit();
+  }
+
+  // =========================================================================
+  // 5. QUẢN LÝ GIAO DỊCH (giữ lại stream từ Backend nếu có)
+  // =========================================================================
+
+  /// Lấy giao dịch gần đây — dùng dashboard data.
+  Future<List<Map<String, dynamic>>> getRecentTransactions({int limit = 5}) async {
+    final dashboard = await getDashboard();
+    // Dashboard đã có tổng doanh thu — transactions chi tiết có thể thêm sau
+    return [];
+  }
+
+  // Compat stream cho code cũ
+  Stream<List<Map<String, dynamic>>> getSuccessfulTransactionsStream() async* {
+    while (true) {
+      yield await getRecentTransactions();
+      await Future.delayed(const Duration(seconds: 30));
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> getRecentTransactionsStream({int limit = 5}) async* {
+    while (true) {
+      yield await getRecentTransactions(limit: limit);
+      await Future.delayed(const Duration(seconds: 30));
+    }
+  }
+
+  // =========================================================================
+  // 6. QUẢN LÝ SUPPORT
+  // =========================================================================
+
+  /// → GET /api/v1/admin/support
+  Future<List<Map<String, dynamic>>> getSupportRequests() async {
+    final result = await ApiClient.get('/api/v1/admin/support', withAuth: true);
+    if (result['data'] == null) return [];
+    return List<Map<String, dynamic>>.from(result['data']);
+  }
+
+  /// → PUT /api/v1/admin/support/{id}
+  Future<void> updateSupportRequest(String id, String status, {String? note}) async {
+    await ApiClient.put(
+      '/api/v1/admin/support/$id',
+      body: {'status': status, 'adminNote': note},
+      withAuth: true,
+    );
   }
 }

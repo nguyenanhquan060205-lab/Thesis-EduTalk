@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ui_login_out/services/auth_service.dart';
 import 'package:ui_login_out/screens/free_usage_store.dart';
 import 'package:ui_login_out/services/premium_theme_helper.dart';
 import 'Premium_screen.dart';
@@ -135,12 +135,9 @@ class DuLieuScreenState extends State<DuLieuScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-    if (!doc.exists) return;
-    final userData = UserModel.fromDocument(doc);
+    final data = await AuthService().getUserInfo(user.uid);
+    if (data == null) return;
+    final userData = UserModel.fromMap(data, user.uid);
 
     // Ưu tiên check Premium trước. Nếu là Premium Active thì cho qua luôn, không check lượt.
     if (userData.isPremiumActive) {

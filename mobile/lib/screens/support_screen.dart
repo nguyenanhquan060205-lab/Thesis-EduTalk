@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import '../services/support_service.dart';
 import 'support_request_screen.dart';
 
 class SupportScreen extends StatelessWidget {
@@ -228,14 +228,8 @@ class SupportScreen extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('support_requests')
-                      .where(
-                        'uid',
-                        isEqualTo: FirebaseAuth.instance.currentUser?.uid,
-                      )
-                      .snapshots(),
+                StreamBuilder<List<Map<String, dynamic>>>(
+                  stream: SupportService().getMySupportRequestsStream(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Padding(
@@ -257,14 +251,11 @@ class SupportScreen extends StatelessWidget {
                       );
                     }
 
-                    final docs = snapshot.data?.docs ?? [];
+                    final docs = snapshot.data ?? [];
                     if (docs.isEmpty) {
                       return Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 30,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(24),
@@ -279,46 +270,28 @@ class SupportScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            Icon(
-                              Icons.chat_bubble_outline_rounded,
-                              size: 40,
-                              color: Colors.grey.shade400,
-                            ),
+                            Icon(Icons.chat_bubble_outline_rounded, size: 40, color: Colors.grey.shade400),
                             const SizedBox(height: 12),
                             Text(
                               "Chưa có yêu cầu hỗ trợ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade500,
-                              ),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               "Các yêu cầu hỗ trợ bạn gửi sẽ hiển thị ở đây.",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade400,
-                              ),
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
                             ),
                           ],
                         ),
                       );
                     }
 
-                    // Sắp xếp in-memory theo thời gian giảm dần
-                    final sortedDocs = List<QueryDocumentSnapshot>.from(docs);
+                    // Sắp xếp theo createdAt (ISO-8601 string)
+                    final sortedDocs = List<Map<String, dynamic>>.from(docs);
                     sortedDocs.sort((a, b) {
-                      final aTime =
-                          (a.data() as Map<String, dynamic>?)?['createdAt']
-                              as Timestamp?;
-                      final bTime =
-                          (b.data() as Map<String, dynamic>?)?['createdAt']
-                              as Timestamp?;
-                      if (aTime == null && bTime == null) return 0;
-                      if (aTime == null) return 1;
-                      if (bTime == null) return -1;
+                      final aTime = a['createdAt']?.toString() ?? '';
+                      final bTime = b['createdAt']?.toString() ?? '';
                       return bTime.compareTo(aTime);
                     });
 
@@ -327,6 +300,7 @@ class SupportScreen extends StatelessWidget {
                           .map((doc) => _buildRequestCard(doc))
                           .toList(),
                     );
+
                   },
                 ),
               ],
@@ -337,8 +311,7 @@ class SupportScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRequestCard(QueryDocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  Widget _buildRequestCard(Map<String, dynamic> data) {
     final title = data['title'] ?? 'Không có tiêu đề';
     final message = data['message'] ?? '';
     final type = data['type'] ?? 'Khác';
@@ -348,15 +321,19 @@ class SupportScreen extends StatelessWidget {
     final answeredAtVal = data['answeredAt'];
 
     String dateStr = '';
-    if (createdAtVal is Timestamp) {
-      dateStr = DateFormat('dd/MM/yyyy HH:mm').format(createdAtVal.toDate());
+    if (createdAtVal != null) {
+      try {
+        final dt = DateTime.parse(createdAtVal.toString()).toLocal();
+        dateStr = DateFormat('dd/MM/yyyy HH:mm').format(dt);
+      } catch (_) {}
     }
 
     String answeredDateStr = '';
-    if (answeredAtVal is Timestamp) {
-      answeredDateStr = DateFormat(
-        'dd/MM/yyyy HH:mm',
-      ).format(answeredAtVal.toDate());
+    if (answeredAtVal != null) {
+      try {
+        final dt = DateTime.parse(answeredAtVal.toString()).toLocal();
+        answeredDateStr = DateFormat('dd/MM/yyyy HH:mm').format(dt);
+      } catch (_) {}
     }
 
     final isResolved = status == 'resolved';

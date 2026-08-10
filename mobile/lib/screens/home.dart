@@ -1,10 +1,10 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ui_login_out/screens/free_usage_store.dart';
 import 'package:ui_login_out/services/payment_service.dart';
+import 'package:ui_login_out/services/api_client.dart';
 import '../models/user_model.dart';
 import 'PhanTich.dart';
 import 'DuLieu.dart';
@@ -137,49 +137,44 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription? _usageSubscription;
   StreamSubscription? _notificationSubscription;
 
-  /// Lắng nghe thông báo mới (real-time) và hiện popup trượt xuống khi đang mở app
+  /// Polling thông báo mới (thay thế Firestore real-time stream)
   void _listenToNotifications() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-    _notificationSubscription = FirebaseFirestore.instance
-        .collection('notifications')
-        .where('receiverId', isEqualTo: user.uid)
-        .where('isRead', isEqualTo: false)
-        .orderBy('createdAt', descending: true)
-        .limit(1)
-        .snapshots()
-        .listen((snapshot) {
-          for (final change in snapshot.docChanges) {
-            if (change.type == DocumentChangeType.added && mounted) {
-              final data = change.doc.data();
-              if (data == null) continue;
+    _notificationSubscription = Stream.periodic(
+      const Duration(seconds: 30),
+    ).asyncMap((_) async {
+      final result = await ApiClient.get(
+        '/api/v1/users/$uid/notifications',
+        withAuth: true,
+      );
+      return result;
+    }).listen((result) {
+      if (!mounted) return;
+      final data = result['data'] as List?;
+      if (data == null || data.isEmpty) return;
+      // Hiện popup cho thông báo mới nhất chưa đọc
+      final latest = data.first as Map<String, dynamic>;
+      if (latest['isRead'] == true) return;
+      if (latest['senderId'] == uid) return;
 
-              // Tránh hiện popup cho chính mình (dù backend đã chặn, filter lại cho chắc)
-              if (data['senderId'] == user.uid) continue;
-
-              final type = data['type'] ?? 'comment';
-              final senderName = data['senderName'] ?? 'Ai đó';
-
-              String title = 'Thông báo mới';
-              String content = '';
-
-              if (type == 'like') {
-                title = 'Lượt thích mới';
-                content = '$senderName đã thích bài viết của bạn.';
-              } else if (type == 'reply') {
-                title = 'Phản hồi mới';
-                content = '$senderName đã trả lời bình luận của bạn.';
-              } else {
-                title = 'Bình luận mới';
-                content = '$senderName đã bình luận vào bài viết của bạn.';
-              }
-
-              // Hiện thông báo trượt từ trên xuống (Custom Top Banner)
-              _showTopNotificationBanner(title, content);
-            }
-          }
-        });
+      final type = latest['type'] ?? 'comment';
+      final senderName = latest['senderName'] ?? 'Ai đó';
+      String title = 'Thông báo mới';
+      String content = '';
+      if (type == 'like') {
+        title = 'Lượt thích mới';
+        content = '$senderName đã thích bài viết của bạn.';
+      } else if (type == 'reply') {
+        title = 'Phản hồi mới';
+        content = '$senderName đã trả lời bình luận của bạn.';
+      } else {
+        title = 'Bình luận mới';
+        content = '$senderName đã bình luận vào bài viết của bạn.';
+      }
+      _showTopNotificationBanner(title, content);
+    });
   }
 
   void _showTopNotificationBanner(String title, String content) {
@@ -200,13 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           onDismiss: () {
             if (!isRemoved) {
-              isRemoved = true;
-              overlayEntry.remove();
-            }
-          },
-        );
-      },
-    );
 
     Overlay.of(context).insert(overlayEntry);
 
@@ -218,47 +206,35 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Polling usageCount và premiumAt từ API (thay Firestore stream)
   void _listenToUsageCount() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      _usageSubscription = FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .snapshots()
-          .listen((snapshot) {
-            if (snapshot.exists && mounted) {
-              final userData = UserModel.fromDocument(snapshot);
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-              // Logic thông báo nâng cấp thành công (MoMo & Bank)
-              if (!_initialStateCaptured) {
-                // Lần đầu load app: Chỉ ghi nhớ thời điểm thanh toán gần nhất, không hiện dialog
-                _lastPremiumAt = userData.premiumAt;
-                _initialStateCaptured = true;
-              } else {
-                // Các lần update sau:
-                // Nếu premiumAt mới xuất hiện HOẶC mới hơn cái cũ -> Vừa thanh toán thành công
-                if (userData.premiumAt != null &&
-                    (_lastPremiumAt == null ||
-                        userData.premiumAt!.isAfter(_lastPremiumAt!))) {
-                  _lastPremiumAt = userData.premiumAt; // Cập nhật mốc mới nhất
+    _usageSubscription = Stream.periodic(
+      const Duration(seconds: 20),
+      (_) => _,
+    ).asyncMap((_) async {
+      return await ApiClient.get('/api/v1/users/$uid/premium', withAuth: true);
+    }).listen((result) {
+      if (!mounted) return;
+      final isPremium = result['isPremium'] as bool? ?? false;
+      currentUserNotifier.value = currentUserNotifier.value?.copyWith(
+        isPremium: isPremium,
+      ) ?? currentUserNotifier.value;
+    });
 
-                  // Đợi 800ms để các sheet (MoMo/Bank) đóng lời hẳn rồi mới hiện Dialog
-                  Future.delayed(const Duration(milliseconds: 800), () {
-                    if (mounted) {
-                      _showUpgradeSuccessDialog(userData.planDisplayName);
-                    }
-                  });
-                }
-              }
+    // Load lần đầu ngay khi khởi tạo
+    ApiClient.get('/api/v1/users/$uid', withAuth: true).then((result) {
+      if (!mounted) return;
+      final usageCount = result['usageCount'] as int? ?? 0;
+      freeUsageCount.value = (3 - usageCount).clamp(0, 3);
+      try {
+        currentUserNotifier.value = UserModel.fromMap(result);
+      } catch (_) {}
+    });
+  }
 
-              // Đồng bộ giá trị từ Firestore sang ValueNotifier global
-              freeUsageCount.value = (3 - userData.usageCount).clamp(0, 3);
-
-              // Đồng bộ toàn bộ thông tin User để xử lý Theme Premium
-              currentUserNotifier.value = userData;
-            }
-          });
-    }
   }
 
   void _showUpgradeSuccessDialog(String planName) {
@@ -832,3 +808,4 @@ class __TopNotificationBannerWidgetState
     );
   }
 }
+

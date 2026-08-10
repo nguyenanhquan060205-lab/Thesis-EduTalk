@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../services/api_client.dart';
 
 class SupportRequestScreen extends StatefulWidget {
   const SupportRequestScreen({super.key});
@@ -36,48 +35,34 @@ class _SupportRequestScreenState
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      setState(() {
-        isLoading = true;
-      });
+      setState(() => isLoading = true);
 
-      final user = FirebaseAuth.instance.currentUser;
-
-      final docRef = await FirebaseFirestore.instance
-          .collection("support_requests")
-          .add({
-        "uid": user?.uid,
-        "email": user?.email,
-        "title": titleController.text.trim(),
-        "message": messageController.text.trim(),
-        "type": selectedType,
-        "status": "pending",
-        "createdAt": Timestamp.now(),
-      });
-
-      if (user?.uid != null) {
-        await FirebaseFirestore.instance.collection('notifications').add({
-          'receiverId': user!.uid,
-          'senderId': 'system',
-          'senderName': 'Edutalk',
-          'type': 'support_pending',
-          'postId': docRef.id,
-          'isRead': false,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
+      // Gọi API Backend thay vì Firestore trực tiếp
+      final result = await ApiClient.post(
+        '/api/v1/support/request',
+        body: {
+          'title': titleController.text.trim(),
+          'message': messageController.text.trim(),
+          'type': selectedType,
+        },
+        withAuth: true,
+      );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Gửi hỗ trợ thành công"),
-          ),
-        );
-
-        Navigator.pop(context);
+        setState(() => isLoading = false);
+        if (result['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Gửi hỗ trợ thành công')),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['message']?.toString() ?? 'Gửi thất bại')),
+          );
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
           content: Text("Lỗi: $e"),
         ),
       );

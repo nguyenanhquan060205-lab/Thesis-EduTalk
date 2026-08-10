@@ -50,19 +50,29 @@ class UserModel {
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    return UserModel.fromMap(data, doc.id);
+  }
+
+  factory UserModel.fromMap(Map<String, dynamic> data, String id) {
+    DateTime parseDate(dynamic val) {
+      if (val is Timestamp) return val.toDate();
+      if (val is String) return DateTime.tryParse(val) ?? DateTime.now();
+      return DateTime.now();
+    }
+
     return UserModel(
-      uid: doc.id,
+      uid: id,
       email: data['email'] ?? '',
       name: data['name'] ?? '',
       role: data['role'] == 'admin' ? UserRole.admin : UserRole.user,
-      createdAt: (data['created_at'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: data['created_at'] != null ? parseDate(data['created_at']) : DateTime.now(),
       isPremium: data['isPremium'] ?? false,
       usageCount: data['usageCount'] ?? 0,
       freeLimit: data['freeLimit'] ?? 3,
-      plan: _parsePlan(data['plan'] ?? data['planCode']), // Hỗ trợ cả plan và planCode
-      premiumStart: (data['premiumStart'] as Timestamp?)?.toDate(),
-      premiumExpiry: (data['premiumExpiry'] as Timestamp?)?.toDate(),
-      premiumAt: (data['premiumAt'] as Timestamp?)?.toDate(),
+      plan: _parsePlan(data['plan'] ?? data['planCode']),
+      premiumStart: data['premiumStart'] != null ? parseDate(data['premiumStart']) : null,
+      premiumExpiry: data['premiumExpiry'] != null ? parseDate(data['premiumExpiry']) : null,
+      premiumAt: data['premiumAt'] != null ? parseDate(data['premiumAt']) : null,
       subscriptionStatus: data['subscriptionStatus'] ?? 'none',
     );
   }

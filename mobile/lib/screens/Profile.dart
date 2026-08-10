@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'Setting.dart';
 import 'Premium_screen.dart';
 import 'ThaoLuan.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'free_usage_store.dart';
 import '../services/premium_theme_helper.dart';
 import '../models/user_model.dart';
@@ -158,17 +155,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) return;
 
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
+      final data = await AuthService().getUserInfo(uid);
 
-      if (doc.exists && mounted) {
-        final data = doc.data()!;
+      if (data != null && mounted) {
         setState(() {
           _phoneController.text = data['phone'] ?? "";
           _dobController.text = data['dob'] ?? "";
-          _photoUrl = data['photoUrl']; // Lấy link ảnh từ Firestore về
+          _photoUrl = data['photoUrl']; // Lấy link ảnh từ Server về
 
           if ((data['name'] ?? "").toString().isNotEmpty) {
             _displayName = data['name'];
@@ -209,11 +202,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) throw Exception("Chưa đăng nhập");
 
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      await AuthService().updateProfile(uid, {
         'phone': phone,
         'dob': dob,
-        'updated_at': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      });
 
       if (mounted) {
         _showTopNotification(
@@ -253,30 +245,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final uid = FirebaseAuth.instance.currentUser?.uid;
         if (uid == null) throw Exception("Chưa đăng nhập");
 
-        // 1. GỌI API ĐẨY ẢNH LÊN CLOUDINARY
-        const cloudName = "edutalk-app"; // Thay tên của ông vào đây
-        const uploadPreset = "edutalk_avatars"; // Thay preset vào đây (Nhớ set Unsigned trên web)
+        // 1. GỌI API UPLOAD ẢNH (QUA BACKEND)
+        final downloadUrl = await AuthService().uploadAvatar(_imageFile!);
         
-        final url = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/image/upload");
-        final request = http.MultipartRequest('POST', url)
-          ..fields['upload_preset'] = uploadPreset
-          ..files.add(await http.MultipartFile.fromPath('file', _imageFile!.path));
-
-        final response = await request.send();
-        
-        if (response.statusCode != 200) {
-          throw Exception("Lỗi khi up ảnh lên Cloudinary");
+        if (downloadUrl == null) {
+          throw Exception("Lỗi khi upload ảnh");
         }
 
-        // 2. LẤY LINK ẢNH TRẢ VỀ
-        final responseData = await response.stream.bytesToString();
-        final jsonMap = jsonDecode(responseData);
-        final downloadUrl = jsonMap['secure_url']; // Link https của ảnh
-
-        // 3. LƯU LINK ĐÓ VÀO FIRESTORE CỦA USER
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        // 2. LƯU LINK ĐÓ VÀO USER PROFILE
+        await AuthService().updateProfile(uid, {
           'photoUrl': downloadUrl,
-        }, SetOptions(merge: true));
+        });
         
         await FirebaseAuth.instance.currentUser?.updatePhotoURL(downloadUrl);
         UserAvatarCache.clear(uid);

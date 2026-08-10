@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -9,6 +9,7 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  final _authService = AuthService();
   final _currentPassCtrl = TextEditingController();
   final _newPassCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
@@ -62,26 +63,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null || user.email == null) {
-        _showSnack('Không tìm thấy tài khoản');
-        setState(() => _isLoading = false);
-        return;
-      }
-
-      // Bước 1: Re-authenticate để xác minh mật khẩu hiện tại
-      final credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: currentPass,
+      // Gọi API Backend — không còn dùng Firebase Auth trực tiếp
+      final result = await _authService.changePassword(
+        currentPassword: currentPass,
+        newPassword: newPass,
       );
-      await user.reauthenticateWithCredential(credential);
-
-      // Bước 2: Cập nhật mật khẩu mới lên Firebase Auth
-      await user.updatePassword(newPass);
 
       if (!mounted) return;
       setState(() => _isLoading = false);
 
+      if (result['status'] != 'success') {
+        _showSnack(result['message']?.toString() ?? 'Mật khẩu hiện tại không đúng.');
+        return;
+      }
       // Hiện dialog thành công rồi quay lại
       await showDialog(
         context: context,

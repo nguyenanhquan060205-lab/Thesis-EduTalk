@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-
 import 'package:fl_chart/fl_chart.dart';
+import '../services/firestore_service.dart';
+import '../models/prediction_model.dart';
 
 class LichSuScreen extends StatelessWidget {
   final String userName;
@@ -12,23 +12,16 @@ class LichSuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final _service = FirestoreService();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('predictions')
-            .doc(uid)
-            .collection('history')
-            .orderBy(
-              'created_at',
-              descending: false,
-            ) // ASC để vẽ biểu đồ theo thời gian
-            .snapshots(),
+      body: StreamBuilder<List<PredictionModel>>(
+        stream: _service.getPredictionsForUser(uid),
         builder: (context, snapshot) {
-          final docs = snapshot.data?.docs ?? [];
-          final reversedDocs = docs.reversed
-              .toList(); // DESC để hiện danh sách bản ghi mới nhất lên đầu
+          // Dữ liệu đã sắp xếp ASC theo created_at từ Backend
+          final docs = snapshot.data ?? [];
+          final reversedDocs = docs.reversed.toList(); // DESC cho danh sách
 
           return CustomScrollView(
             physics: const ClampingScrollPhysics(),
@@ -79,9 +72,8 @@ class LichSuScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final data =
-                          reversedDocs[index].data() as Map<String, dynamic>;
-                      return _buildHistoryCard(data, docs.length - index);
+                      final item = reversedDocs[index];
+                      return _buildHistoryCard(item.toDisplayMap(), docs.length - index);
                     }, childCount: docs.length),
                   ),
                 ),
@@ -93,9 +85,8 @@ class LichSuScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAnalyticsDashboard(List<QueryDocumentSnapshot> docs) {
-    final lastScore =
-        (docs.last.data() as Map<String, dynamic>)['total_score'] ?? 0.0;
+  Widget _buildAnalyticsDashboard(List<PredictionModel> docs) {
+    final lastScore = docs.last.totalScore ?? 0.0;
 
     return Container(
       padding: const EdgeInsets.all(20),

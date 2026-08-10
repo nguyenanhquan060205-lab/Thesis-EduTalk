@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui_login_out/services/api_service.dart';
+import 'package:ui_login_out/services/api_client.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PhanTichScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -30,8 +29,6 @@ class PhanTichScreen extends StatefulWidget {
 }
 
 class _PhanTichScreenState extends State<PhanTichScreen> {
-  final _apiService = ApiService();
-
   Future<void> _onPredict() async {
     showDialog(
       context: context,
@@ -42,70 +39,36 @@ class _PhanTichScreenState extends State<PhanTichScreen> {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
       
-      // Thêm Timeout để tránh đợi quá lâu khi server Render đang khởi động
-      final result = await _apiService.predict(
-        scores: inItems.map((item) => item.value.toDouble()).toList(),
-        userId: uid,
+      // Gọi qua Backend FastAPI (tự lo ML và DB)
+      final result = await ApiClient.post(
+        '/api/v1/survey/submit',
+        body: {
+          'scores': inItems.map((item) => item.value.toInt()).toList(),
+          'userId': uid,
+        },
+        withAuth: true,
       );
 
       if (context.mounted) Navigator.pop(context);
 
-      if (result['success'] == true) {
-        // 1. Tăng usageCount trên Firestore TRƯỚC (chỉ khi không phải Premium)
-        if (uid.isNotEmpty) {
-          final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-          if (userDoc.exists) {
-            final isPremium = userDoc.data()?['isPremium'] ?? false;
-            if (!isPremium) {
-              await FirebaseFirestore.instance.collection('users').doc(uid).update({
-                'usageCount': FieldValue.increment(1),
-              });
-            }
-          }
-        }
-
-        final major = result['predicted_major'] as String;
-        final unis = result['recommendations'] as List<dynamic>;
+      if (result['status'] == 'success') {
+        final mlData = result['results'];
+        final major = mlData['predicted_major'] as String;
+        final unis = mlData['recommendations'] as List<dynamic>;
         final userScores = List<int>.from(
-          (result['user_scores'] as List<dynamic>? ?? []).map(
+          (mlData['user_scores'] as List<dynamic>? ?? []).map(
             (e) => (e as num).round(),
           ),
         );
         final majorReqs = List<int>.from(
-          (result['major_requirements'] as List<dynamic>? ?? []).map(
+          (mlData['major_requirements'] as List<dynamic>? ?? []).map(
             (e) => (e as num).round(),
           ),
         );
 
-        // ← LƯU KẾT QUẢ LÊN FIRESTORE (THÊM total_score, subjects, scores_detail)
-        if (uid.isNotEmpty) {
-          await FirebaseFirestore.instance
-              .collection('predictions')
-              .doc(uid)
-              .collection('history')
-              .add({
-                'predicted_major': major,
-                'user_scores': userScores,
-                'major_requirements': majorReqs,
-                'recommendations': unis
-                    .map(
-                      (u) => {
-                        'ten_truong': u['ten_truong'] ?? '',
-                        'ma_truong': u['ma_truong'] ?? '',
-                        'diem_chuan_2024': u['diem_chuan_2024'] ?? '',
-                        'website': u['website'] ?? '',
-                      },
-                    )
-                    .toList(),
-                'input_scores': inItems.map((item) => item.value).toList(),
-                'total_score': widget.totalScore, // ← THÊM DÒNG NÀY
-                'subjects': widget.subjects, // ← THÊM DÒNG NÀY
-                'scores_detail': widget.scoresDetail, // ← THÊM DÒNG NÀY
-                'created_at': FieldValue.serverTimestamp(),
-              });
+        if (context.mounted) {
+          widget.onShowKetQua(major, unis, userScores, majorReqs);
         }
-
-        widget.onShowKetQua(major, unis, userScores, majorReqs);
       } else {
         _showError('Dự đoán thất bại: ${result['error'] ?? ''}');
       }

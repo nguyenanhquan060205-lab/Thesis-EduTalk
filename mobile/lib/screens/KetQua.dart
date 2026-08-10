@@ -3,8 +3,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../services/auth_service.dart';
 import 'Premium_screen.dart';
 
 class KetQuaScreen extends StatefulWidget {
@@ -379,11 +379,9 @@ class _KetQuaScreenState extends State<KetQuaScreen> {
     if (uid == null) return;
 
     // Check Premium before exporting
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
-    final user = UserModel.fromDocument(userDoc);
+    final userData = await AuthService().getUserInfo(uid);
+    if (userData == null) return;
+    final user = UserModel.fromMap(userData, uid);
 
     if (!user.isPremiumActive) {
       if (mounted) {

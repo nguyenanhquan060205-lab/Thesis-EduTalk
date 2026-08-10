@@ -1,26 +1,13 @@
+# pyrefly: ignore [missing-import]
 from fastapi import APIRouter
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 from app.services.predict_service import predict_major
 
 router = APIRouter()
 
 
-class SurveySubmit(BaseModel):
-    scores: list[int] = Field(
-        ...,
-        min_length=10,
-        max_length=10,
-        description="10 scores from survey",
-    )
-
-
-class PredictionResult(BaseModel):
-    major: str
-    similarity: float
-
-
-class PredictionResponse(BaseModel):
-    results: list[PredictionResult]
+from app.models.predict_models import SurveySubmit, PredictionResponse, PredictionResult
 
 
 @router.post(

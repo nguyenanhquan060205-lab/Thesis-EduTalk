@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../../services/admin_service.dart';
 import '../../models/user_model.dart';
@@ -26,14 +25,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: StreamBuilder<List<UserModel>>(
         stream: _adminService.getUsersStream(),
         builder: (context, userSnapshot) {
-          return StreamBuilder<QuerySnapshot>(
+          return StreamBuilder<List<Map<String, dynamic>>>(
             stream: _adminService.getSuccessfulTransactionsStream(),
             builder: (context, transSnapshot) {
               if (userSnapshot.hasError) {
-                return Center(child: SelectableText("Lỗi tải user: ${userSnapshot.error}"));
+                return Center(child: SelectableText('Loi tai user: ${userSnapshot.error}'));
               }
               if (transSnapshot.hasError) {
-                return Center(child: SelectableText("Lỗi tải doanh thu: ${transSnapshot.error}"));
+                return Center(child: SelectableText('Loi tai doanh thu: ${transSnapshot.error}'));
               }
               if (userSnapshot.connectionState == ConnectionState.waiting ||
                   transSnapshot.connectionState == ConnectionState.waiting) {
@@ -41,17 +40,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
 
               final users = userSnapshot.data ?? [];
-              final premiumUsers = users
-                  .where((u) => u.isPremium == true)
-                  .length;
+              final premiumUsers = users.where((u) => u.isPremium == true).length;
+              final transactions = transSnapshot.data ?? [];
 
-              final transactions = transSnapshot.data?.docs ?? [];
-
-              // Tính doanh thu theo filter
-              final filteredRevenue = _calculateRevenue(
-                transactions,
-                _revenueFilter,
-              );
+              final filteredRevenue = _calculateRevenue(transactions, _revenueFilter);
               final totalRevenue = _calculateRevenue(transactions, 'total');
 
               return SingleChildScrollView(
@@ -77,16 +69,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   double _calculateRevenue(
-    List<QueryDocumentSnapshot> transactions,
+    List<Map<String, dynamic>> transactions,
     String filter,
   ) {
     final now = DateTime.now();
     double revenue = 0;
 
-    for (var doc in transactions) {
-      final data = doc.data() as Map<String, dynamic>;
+    for (var data in transactions) {
       final status = data['status']?.toString().toLowerCase();
-      // Chỉ tính doanh thu cho giao dịch success
       if (status != 'success') continue;
 
       double amount = 0;
@@ -104,31 +94,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         revenue += amount;
       } else if (timestamp != null) {
         DateTime txDate = now;
-        if (timestamp is Timestamp) {
-          txDate = timestamp.toDate();
+        if (timestamp is String) {
+          txDate = DateTime.tryParse(timestamp) ?? now;
         } else if (timestamp is int) {
           txDate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-        } else if (timestamp is String) {
-          txDate = DateTime.tryParse(timestamp) ?? now;
         }
 
         switch (filter) {
           case 'today':
-            if (txDate.year == now.year &&
-                txDate.month == now.month &&
-                txDate.day == now.day) {
+            if (txDate.year == now.year && txDate.month == now.month && txDate.day == now.day) {
               revenue += amount;
             }
             break;
           case 'month':
-            if (txDate.year == now.year && txDate.month == now.month) {
-              revenue += amount;
-            }
+            if (txDate.year == now.year && txDate.month == now.month) revenue += amount;
             break;
           case 'year':
-            if (txDate.year == now.year) {
-              revenue += amount;
-            }
+            if (txDate.year == now.year) revenue += amount;
             break;
         }
       }

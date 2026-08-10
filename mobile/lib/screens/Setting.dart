@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
+import '../services/api_client.dart';
 import '../provider/Themenotifier.dart';
 import 'Login.dart';
 import 'ChangePass.dart';
@@ -27,14 +27,14 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<void> _loadNotificationSetting() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (doc.exists && mounted) {
-        setState(() {
-          _isNotificationEnabled = doc.data()?['isNotificationEnabled'] ?? true;
-        });
-      }
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+    // Gọi Backend thay vì Firestore trực tiếp
+    final result = await ApiClient.get('/api/v1/users/$uid', withAuth: true);
+    if (mounted && result['isNotificationEnabled'] != null) {
+      setState(() {
+        _isNotificationEnabled = result['isNotificationEnabled'] as bool? ?? true;
+      });
     }
   }
 
@@ -42,14 +42,14 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {
       _isNotificationEnabled = val;
     });
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // 1. Lưu tùy chọn vào Firestore
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        'isNotificationEnabled': val,
-      });
-
-      // 2. Cập nhật FCM token tương ứng (nếu bật thì lưu token, nếu tắt thì xóa token)
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      // Cập nhật qua Backend thay vì Firestore trực tiếp
+      await ApiClient.put(
+        '/api/v1/users/$uid',
+        body: {'isNotificationEnabled': val},
+        withAuth: true,
+      );
       await NotificationService.getAndSaveToken();
     }
   }

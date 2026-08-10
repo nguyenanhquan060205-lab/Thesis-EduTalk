@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import '../../services/admin_service.dart';
 
 class SupportManagementScreen extends StatefulWidget {
   const SupportManagementScreen({super.key});
@@ -10,7 +10,7 @@ class SupportManagementScreen extends StatefulWidget {
 }
 
 class _SupportManagementScreenState extends State<SupportManagementScreen> {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final AdminService _adminService = AdminService();
   int _activeTab = 0; // 0: Chưa xử lý, 1: Đã xử lý
 
   void _showAnswerSheet(BuildContext context, String docId, String title, String message, String userEmail, String? userUid) {
@@ -102,28 +102,18 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
 
                           setSheetState(() => isSaving = true);
                           try {
-                            await _db.collection('support_requests').doc(docId).update({
-                              'answer': answer,
-                              'answeredAt': FieldValue.serverTimestamp(),
-                              'status': 'resolved',
-                            });
+                            await _adminService.updateSupportRequest(
+                              docId,
+                              'resolved',
+                              note: answer,
+                            );
 
-                            if (userUid != null && userUid.isNotEmpty) {
-                              await _db.collection('notifications').add({
-                                'receiverId': userUid,
-                                'senderId': 'admin',
-                                'senderName': 'Quản trị viên',
-                                'type': 'support',
-                                'postId': docId,
-                                'isRead': false,
-                                'createdAt': FieldValue.serverTimestamp(),
-                              });
-                            }
                             if (context.mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text("Đã gửi giải đáp thành công!"), backgroundColor: Colors.green),
                               );
+                              setState(() {});
                             }
                           } catch (e) {
                             if (context.mounted) {
@@ -132,7 +122,7 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
                               );
                             }
                           } finally {
-                            setSheetState(() => isSaving = false);
+                            if (mounted) setSheetState(() => isSaving = false);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -217,11 +207,8 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
           ),
           // Request List
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _db
-                  .collection('support_requests')
-                  .where('status', isEqualTo: _activeTab == 0 ? 'pending' : 'resolved')
-                  .snapshots(),
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _adminService.getSupportRequests(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -229,7 +216,11 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
                 if (snapshot.hasError) {
                   return Center(child: Text("Lỗi: ${snapshot.error}", style: const TextStyle(color: Colors.red)));
                 }
-                final docs = snapshot.data?.docs ?? [];
+                
+                final allDocs = snapshot.data ?? [];
+                final status = _activeTab == 0 ? 'pending' : 'resolved';
+                final docs = allDocs.where((d) => d['status'] == status).toList();
+                
                 if (docs.isEmpty) {
                   return Center(
                     child: Text(
@@ -239,37 +230,36 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
                   );
                 }
 
-                // Sắp xếp in-memory theo thời gian giảm dần
-                final sortedDocs = List<QueryDocumentSnapshot>.from(docs);
+                final sortedDocs = List<Map<String, dynamic>>.from(docs);
                 sortedDocs.sort((a, b) {
-                  final aTime = (a.data() as Map<String, dynamic>?)?['createdAt'] as Timestamp?;
-                  final bTime = (b.data() as Map<String, dynamic>?)?['createdAt'] as Timestamp?;
-                  if (aTime == null && bTime == null) return 0;
-                  if (aTime == null) return 1;
-                  if (bTime == null) return -1;
-                  return bTime.compareTo(aTime);
+                  final aTs = a['createdAt']?.toString() ?? '';
+                  final bTs = b['createdAt']?.toString() ?? '';
+                  return bTs.compareTo(aTs);
                 });
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: sortedDocs.length,
-                  itemBuilder: (context, index) {
-                    final doc = sortedDocs[index];
-                    final data = doc.data() as Map<String, dynamic>;
-                    final title = data['title'] ?? 'Không có tiêu đề';
-                    final message = data['message'] ?? '';
-                    final email = data['email'] ?? 'Không rõ email';
-                    final type = data['type'] ?? 'Khác';
-                    final createdAtVal = data['createdAt'];
-                    String dateStr = '';
-                    if (createdAtVal is Timestamp) {
-                      dateStr = DateFormat('dd/MM/yyyy HH:mm').format(createdAtVal.toDate());
-                    }
+                return RefreshIndicator(
+                  onRefresh: () async => setState(() {}),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: sortedDocs.length,
+                    itemBuilder: (context, index) {
+                      final data = sortedDocs[index];
+                      final docId = data['id'] ?? '';
+                      final title = data['title'] ?? 'Khong co tieu de';
+                      final message = data['message'] ?? '';
+                      final email = data['email'] ?? 'Khong ro email';
+                      final type = data['type'] ?? 'Khac';
+                      final createdAtVal = data['createdAt']?.toString();
+                      String dateStr = '';
+                      if (createdAtVal != null) {
+                        final dt = DateTime.tryParse(createdAtVal);
+                        if (dt != null) dateStr = DateFormat('dd/MM/yyyy HH:mm').format(dt.toLocal());
+                      }
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
@@ -321,7 +311,7 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   final userUid = data['uid'] as String?;
-                                  _showAnswerSheet(context, doc.id, title, message, email, userUid);
+                                  _showAnswerSheet(context, docId, title, message, email, userUid);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF1E293B),
@@ -344,6 +334,7 @@ class _SupportManagementScreenState extends State<SupportManagementScreen> {
                       ),
                     );
                   },
+                  ),
                 );
               },
             ),

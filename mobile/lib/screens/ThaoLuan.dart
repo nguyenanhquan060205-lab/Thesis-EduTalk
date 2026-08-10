@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ui_login_out/services/post_service.dart';
@@ -38,7 +37,7 @@ class PostDraft {
 // ===========================================================================
 class UserAvatarCache {
   static final Map<String, String?> _cache = {};
-  static final Map<String, Future<DocumentSnapshot>> _pending = {};
+  static final Map<String, Future<Map<String, dynamic>?>> _pending = {};
 
   static Future<String?> getPhotoUrl(String userId) async {
     if (_cache.containsKey(userId)) {
@@ -47,9 +46,8 @@ class UserAvatarCache {
     if (_pending.containsKey(userId)) {
       try {
         final doc = await _pending[userId]!;
-        if (doc.exists) {
-          final data = doc.data() as Map<String, dynamic>?;
-          _cache[userId] = data?['photoUrl'];
+        if (doc != null) {
+          _cache[userId] = doc['photoUrl'] ?? doc['avatar'];
         } else {
           _cache[userId] = null;
         }
@@ -59,13 +57,12 @@ class UserAvatarCache {
       return _cache[userId];
     }
 
-    final future = FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final future = AuthService().getUserInfo(userId);
     _pending[userId] = future;
     try {
       final doc = await future;
-      if (doc.exists) {
-        final data = doc.data() as Map<String, dynamic>?;
-        _cache[userId] = data?['photoUrl'];
+      if (doc != null) {
+        _cache[userId] = doc['photoUrl'] ?? doc['avatar'];
       } else {
         _cache[userId] = null;
       }
@@ -180,14 +177,12 @@ class _ThaoLuanScreenState extends State<ThaoLuanScreen> {
     if (activeTab == "Của Tôi" && user != null) {
       return service.getMyPostsStream(user.uid);
     } else if (activeTab == "Nổi bật") {
-      return FirebaseFirestore.instance
-          .collection('posts')
-          .where('isPending', isEqualTo: false)
-          .orderBy('interactionCount', descending: true)
-          .snapshots()
-          .map((snapshot) => snapshot.docs
-              .map((doc) => PostModel.fromMap(doc.data(), doc.id))
-              .toList());
+      // Gọi stream chung và filter/sort local
+      return service.getPostsStream().map((posts) {
+        final filtered = posts.where((p) => !p.isPending).toList();
+        filtered.sort((a, b) => b.interactionCount.compareTo(a.interactionCount));
+        return filtered;
+      });
     }
     return service.getPostsStream();
   }
@@ -374,10 +369,10 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
         finalImageUrl = await service.uploadPostImage(_selectedImage!);
       }
 
-      // 2. LẤY THÔNG TIN USER TỪ FIRESTORE
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      String name = userDoc.data()?['name'] ?? "Thành viên EduTalk";
-      String? dob = userDoc.data()?['dob']; // Dữ liệu ngày sinh dạng DD/MM/YYYY
+      // 2. LẤY THÔNG TIN USER BẰNG AUTH SERVICE
+      final userDoc = await AuthService().getUserInfo(user.uid);
+      String name = userDoc?['name'] ?? "Thành viên EduTalk";
+      String? dob = userDoc?['dob']; // Dữ liệu ngày sinh dạng DD/MM/YYYY
       
       // 👉 LOGIC MỚI: LẤY THẲNG NĂM SINH
       String yearPrefix = "";
@@ -420,7 +415,7 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
         // =======================
         // LUỒNG CẬP NHẬT BÀI 
         // =======================
-        await FirebaseFirestore.instance.collection('posts').doc(widget.existingPost!.id!).update({
+        await service.editPost(widget.existingPost!.id!, {
           'content': content,
           'imageUrl': finalImageUrl,
           'tags': selectedTopics.isEmpty ? ["Hỏi đáp"] : selectedTopics,
@@ -855,8 +850,8 @@ class _CommentSheetPostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('posts').doc(postId).get(),
+    return FutureBuilder<PostModel?>(
+      future: PostService().getPostById(postId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -870,10 +865,10 @@ class _CommentSheetPostHeader extends StatelessWidget {
             ),
           );
         }
-        if (!snapshot.hasData || !snapshot.data!.exists) {
+        if (!snapshot.hasData || snapshot.data == null) {
           return const SizedBox.shrink();
         }
-        final post = PostModel.fromMap(snapshot.data!.data() as Map<String, dynamic>, snapshot.data!.id);
+        final post = snapshot.data!;
 
         return Container(
           padding: const EdgeInsets.all(16),
@@ -970,8 +965,8 @@ class _CommentSheetState extends State<_CommentSheet> {
         imageUrl = await PostService().uploadPostImage(_commentImage!);
       }
 
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      String name = userDoc.data()?['name'] ?? "Thành viên EduTalk";
+      final userDoc = await AuthService().getUserInfo(user.uid);
+      String name = userDoc?['name'] ?? "Thành viên EduTalk";
 
       final newComment = CommentModel(
         authorId: user.uid,
@@ -1533,16 +1528,13 @@ class _NotificationBellButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
-    return StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<List<NotificationModel>>(
       stream: uid == null
           ? const Stream.empty()
-          : FirebaseFirestore.instance
-              .collection('notifications')
-              .where('receiverId', isEqualTo: uid)
-              .where('isRead', isEqualTo: false)
-              .snapshots(),
+          : PostService().getNotificationsStream(uid),
       builder: (context, snapshot) {
-        final int unreadCount = snapshot.data?.docs.length ?? 0;
+        final List<NotificationModel> notifications = snapshot.data ?? [];
+        final int unreadCount = notifications.where((n) => !n.isRead).length;
 
         return GestureDetector(
           onTap: onTap,

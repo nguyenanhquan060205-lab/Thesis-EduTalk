@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ui_login_out/services/auth_service.dart';
 
 class ThemeNotifier extends ChangeNotifier {
   bool _isDarkMode = false;
@@ -20,14 +20,9 @@ class ThemeNotifier extends ChangeNotifier {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (doc.exists) {
-        final data = doc.data();
-        _isDarkMode = data?['isDarkMode'] ?? false;
+      final data = await AuthService().getUserInfo(user.uid);
+      if (data != null) {
+        _isDarkMode = data['isDarkMode'] ?? false;
         notifyListeners();
       }
     } catch (e) {
@@ -49,9 +44,9 @@ class ThemeNotifier extends ChangeNotifier {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
-        {'isDarkMode': _isDarkMode},
-      );
+      await AuthService().updateProfile(user.uid, {
+        'isDarkMode': _isDarkMode,
+      });
     } catch (e) {
       debugPrint('ThemeNotifier save error: $e');
     }

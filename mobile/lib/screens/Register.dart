@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,10 +11,13 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   Timer? _verifyTimer;
 
   // Biến dùng để lưu trữ và hiển thị thông báo lỗi ngay dưới ô mật khẩu
@@ -24,14 +26,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _phoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _verifyTimer?.cancel();
     super.dispose();
   }
 
-  // Hàm kiểm tra định dạng mật khẩu bằng Regular Expression
-  bool _validatePassword(String password) {
+  // Hàm kiểm tra định dạng mật khẩu
+  bool _validatePassword(String password, String confirmPassword) {
     if (password.isEmpty) {
       setState(() {
         _passwordError = "Vui lòng nhập mật khẩu";
@@ -39,29 +43,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return false;
     }
 
-    // Kiểm tra độ dài tối thiểu 8 ký tự
-    if (password.length < 8) {
+    // Mật khẩu phải > 10 ký tự
+    if (password.length <= 10) {
       setState(() {
-        _passwordError = "Mật khẩu phải có tối thiểu 8 ký tự";
+        _passwordError = "Mật khẩu phải lớn hơn 10 ký tự";
       });
       return false;
     }
 
-    // Kiểm tra chữ hoa, số và ký tự đặc biệt
-    final hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
-    final hasDigits = RegExp(r'[0-9]').hasMatch(password);
-    final hasSpecialCharacters = RegExp(
-      r'[!@#$%^&*(),.?":{}|<>]',
-    ).hasMatch(password);
-
-    if (!hasUppercase || !hasDigits || !hasSpecialCharacters) {
+    // Có ít nhất 1 ký tự đặc biệt
+    final hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password);
+    if (!hasSpecialCharacters) {
       setState(() {
-        _passwordError = "Mật khẩu phải bao gồm: Chữ hoa, số và kí tự đặc biệt";
+        _passwordError = "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt";
       });
       return false;
     }
 
-    // Nếu hợp lệ, xóa thông báo lỗi
+    // Mật khẩu nhập lại phải khớp
+    if (password != confirmPassword) {
+      setState(() {
+        _passwordError = "Mật khẩu nhập lại không khớp";
+      });
+      return false;
+    }
+
     setState(() {
       _passwordError = null;
     });
@@ -70,18 +76,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _handleRegister() async {
     String name = _nameController.text.trim();
+    String phone = _phoneController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+    if (name.isEmpty || email.isEmpty || password.isEmpty || phone.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Vui lòng điền đầy đủ thông tin")),
       );
       return;
     }
 
-    // Gọi hàm validate mật khẩu, nếu không thỏa mãn thì dừng lại
-    if (!_validatePassword(password)) {
+    if (!_validatePassword(password, confirmPassword)) {
       return;
     }
 
@@ -95,6 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       name,
       email,
       password,
+      phone: phone,
     );
 
     if (!mounted) return;
@@ -286,6 +294,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
+                        'SỐ ĐIỆN THOẠI',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _phoneController,
+                        style: const TextStyle(color: Colors.white),
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.phone_outlined,
+                            color: Colors.white70,
+                          ),
+                          hintText: '0912345678',
+                          hintStyle: const TextStyle(color: Colors.white38),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.1),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
                         'EMAIL',
                         style: TextStyle(
                           color: Colors.white70,
@@ -297,6 +334,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextField(
                         controller: _emailController,
                         style: const TextStyle(color: Colors.white),
+                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(
                             Icons.mail_outline,
@@ -330,7 +368,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Thêm onChanged để kiểm tra ngay lập tức khi người dùng gõ phím (Realtime validation)
                         onChanged: (value) {
                           if (_passwordError != null) {
-                            _validatePassword(value);
+                            _validatePassword(value, _confirmPasswordController.text);
                           }
                         },
                         decoration: InputDecoration(
@@ -355,15 +393,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hintStyle: const TextStyle(color: Colors.white38),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.1),
-                          // Gán thông báo lỗi vào đây, Flutter tự động style màu đỏ và đẩy xuống dưới box nhập
                           errorText: _passwordError,
-                          errorMaxLines:
-                              2, // Đảm bảo hiển thị đủ nội dung khi chuỗi lỗi dài
+                          errorMaxLines: 2,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide.none,
                           ),
-                          // Giữ nguyên viền khi có lỗi (hoặc tùy biến màu viền lỗi tại đây nếu muốn)
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: const BorderSide(
@@ -377,6 +412,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: Colors.redAccent,
                               width: 1.5,
                             ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'NHẬP LẠI MẬT KHẨU',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirmPassword,
+                        style: const TextStyle(color: Colors.white),
+                        onChanged: (value) {
+                          if (_passwordError != null) {
+                            _validatePassword(_passwordController.text, value);
+                          }
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.lock_outline,
+                            color: Colors.white70,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: Colors.white54,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                          hintText: '........',
+                          hintStyle: const TextStyle(color: Colors.white38),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.1),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
                           ),
                         ),
                       ),
