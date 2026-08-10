@@ -58,7 +58,7 @@ async def create_post(
 
 @router.post("/upload-image")
 async def upload_image(
-    file: UploadFile = File(...),
+    file: UploadFile = File(...),  # noqa: B008
     authorization: str = Header(...),
 ):
     """
