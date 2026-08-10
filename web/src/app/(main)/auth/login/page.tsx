@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (searchParams.get("registered") === "true") {
-      setShowSuccessPopup(true);
+      setTimeout(() => setShowSuccessPopup(true), 0);
     }
   }, [searchParams]);
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
           } else {
             router.push("/");
           }
-        } catch (e) {
+        } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
           // Fallback nếu lỗi
           setUser({ id: res.uid, name: email.split("@")[0], email, role: res.role });
           if (res.role === "admin") {
@@ -60,7 +60,7 @@ export default function LoginPage() {
       } else {
         setError(res.status === "success" ? "Thiếu Token." : res.status);
       }
-    } catch (err: any) {
+    } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.response?.data?.detail || "Lỗi máy chủ, vui lòng thử lại.");
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export default function LoginPage() {
           } else {
             router.push("/");
           }
-        } catch (e) {
+        } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
           setUser({ id: res.uid, name: result.user.displayName || "User", email: result.user.email || "", role: res.role });
           if (res.role === "admin") {
             router.push("/dashboard");
@@ -97,7 +97,7 @@ export default function LoginPage() {
       } else {
         setError(res.status !== "success" ? res.status : "Đăng nhập Google thất bại");
       }
-    } catch (err: any) {
+    } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error(err);
       setError("Lỗi kết nối Google.");
     } finally {

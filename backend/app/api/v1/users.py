@@ -3,18 +3,19 @@ Users Router (Python)
 Các endpoint quản lý thông tin người dùng (profile, cập nhật, premium status...).
 Sử dụng MongoDB thay cho Firestore.
 """
-from fastapi import APIRouter, HTTPException, Header
-from typing import Optional
+from datetime import datetime
+
 from app.core.mongodb import get_db
 from app.services.auth_service import AuthService
-from datetime import datetime
 from bson import ObjectId
+from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
 auth_service = AuthService()
 
 
 from app.models.user_models import UpdateProfileRequest
+
 
 async def get_current_uid(authorization: str) -> str:
     token = authorization.replace("Bearer ", "")
@@ -117,7 +118,7 @@ async def mark_notification_read(uid: str, notif_id: str, authorization: str = H
             {"$set": {"isRead": True}}
         )
         return {"status": "success"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}
 
 

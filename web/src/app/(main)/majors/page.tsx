@@ -21,7 +21,7 @@ export default function MajorsPage() {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/v1/majors");
         if (response.data && response.data.majors) {
-          const transformed: Major[] = Object.entries(response.data.majors).map(([name, info]: any) => ({
+          const transformed: Major[] = Object.entries(response.data.majors).map(([name, info]: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
             name,
             code: info.code,
             block: info.blocks.join(", "),

@@ -2,15 +2,14 @@
 News Service (Python)
 Xử lý CRUD tin tức tuyển sinh từ MongoDB.
 """
-from typing import List
 from app.core.mongodb import get_db
+
 
 class NewsService:
     def _get_collection(self):
-        from app.core.mongodb import get_db
         return get_db()["news"]
         
-    async def get_all_news(self, limit: int = 10) -> List[dict]:
+    async def get_all_news(self, limit: int = 10) -> list[dict]:
         """Lấy danh sách tin tức đã xuất bản."""
         cursor = self._get_collection().find({"status": "published"}).sort("createdAt", -1).limit(limit)
         news_list = await cursor.to_list(length=limit)
@@ -32,7 +31,7 @@ class NewsService:
                 news["id"] = str(news["_id"])
                 del news["_id"]
             return news
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print("Error getting news:", e)
             return None
 
@@ -77,9 +76,9 @@ class NewsService:
             ]
             
             # Thêm trường status = "published" và createdAt cho dữ liệu mẫu
-            from datetime import datetime
+            from datetime import datetime, timezone
             for news in mock_news:
                 news["status"] = "published"
-                news["createdAt"] = datetime.now().isoformat()
+                news["createdAt"] = datetime.now(timezone.utc).isoformat()
                 
             await collection.insert_many(mock_news)

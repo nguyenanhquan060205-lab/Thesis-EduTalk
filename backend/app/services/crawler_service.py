@@ -1,11 +1,11 @@
-import asyncio
-import httpx
-from bs4 import BeautifulSoup
-from datetime import datetime
-import google.generativeai as genai
 import os
-import json
+from datetime import datetime, timezone
+
+import google.generativeai as genai
+import httpx
 from app.core.mongodb import get_db
+from bs4 import BeautifulSoup
+
 
 class CrawlerService:
     def __init__(self):
@@ -26,7 +26,7 @@ class CrawlerService:
             short_text = text[:3000]
             response = await self.summary_model.generate_content_async(short_text)
             return response.text or "Không có tóm tắt AI."
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Lỗi AI tóm tắt: {e}")
             return "Lỗi khi dùng AI tóm tắt."
 
@@ -94,7 +94,7 @@ class CrawlerService:
                                 elif tag.name == 'a' and tag.has_attr('href') and tag['href'].startswith('/'):
                                     tag['href'] = base_url + tag['href']
                             content_html = str(post_content)
-                except Exception as ex:
+                except Exception as ex:  # noqa: BLE001
                     print(f"Lỗi khi cào nội dung chi tiết {link}: {ex}")
 
                 # Sinh tóm tắt bằng AI
@@ -105,19 +105,19 @@ class CrawlerService:
                     "title": title,
                     "excerpt": excerpt,
                     "image": image,
-                    "date": datetime.now().strftime("%d/%m/%Y"),
+                    "date": datetime.now(timezone.utc).strftime("%d/%m/%Y"),
                     "category": "Tin tức nổi bật",
                     "sourceUrl": link,
                     "content_html": content_html,
                     "ai_summary": ai_summary,
                     "status": "pending",
                     "isHot": False,
-                    "createdAt": datetime.now().isoformat()
+                    "createdAt": datetime.now(timezone.utc).isoformat()
                 }
                 
                 await collection.insert_one(new_doc)
                 new_articles += 1
                 
             print(f"[Crawler] Đã cào xong. Số bài mới (pending): {new_articles}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"[Crawler] Lỗi cào dữ liệu: {e}")

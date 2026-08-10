@@ -9,7 +9,7 @@ import api from "@/lib/api";
 
 export default function ProfilePage() {
   const { user } = useAuthStore();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<any> /* eslint-disable-line @typescript-eslint/no-explicit-any */(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

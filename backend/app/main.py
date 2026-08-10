@@ -1,7 +1,18 @@
+from app.api.v1 import (
+    admin,
+    auth,
+    chat,
+    majors,
+    news,
+    posts,
+    predict,
+    support,
+    survey,
+    users,
+)
+from app.core.firebase_admin_config import get_firebase_app
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import predict, majors, survey, users, auth, chat, posts, support, admin, news
-from app.core.firebase_admin_config import get_firebase_app
 
 app = FastAPI(
     title="EduTalk HUIT API",
@@ -9,7 +20,8 @@ app = FastAPI(
     version="2.0.0",
 )
 
-from app.core.mongodb import connect_to_mongo, close_mongo_connection
+from app.core.mongodb import close_mongo_connection, connect_to_mongo
+
 
 # Khởi tạo Firebase Admin SDK và MongoDB khi server bắt đầu
 @app.on_event("startup")
@@ -19,8 +31,8 @@ async def startup_event():
     await connect_to_mongo()
     
     # Khởi tạo Scheduler cào tin tức tự động
-    from apscheduler.schedulers.asyncio import AsyncIOScheduler
     from app.services.crawler_service import CrawlerService
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
     
     scheduler = AsyncIOScheduler()
     crawler_service = CrawlerService()
@@ -60,6 +72,7 @@ app.include_router(posts.router, prefix="/api/v1/posts", tags=["Posts"])  # 🆕
 app.include_router(support.router, prefix="/api/v1/support", tags=["Support"])  # 🆕 Mới thêm
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])    # 🆕 Mới thêm
 from app.api.v1 import admin_news
+
 app.include_router(admin_news.router, prefix="/api/v1/admin/news", tags=["Admin News"]) # API quản lý tin tức
 app.include_router(news.router, prefix="/api/v1/news", tags=["News"])       # 🆕 Thêm trang news
 

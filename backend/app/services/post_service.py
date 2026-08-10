@@ -3,11 +3,12 @@ Post Service (Python)
 Migrate từ: mobile/lib/services/post_service.dart
 Xử lý CRUD bài viết, comment, like, report và notification.
 """
-from datetime import datetime
-from app.core.mongodb import get_db
+import os
+from datetime import datetime, timezone
+
 import cloudinary
 import cloudinary.uploader
-import os
+from app.core.mongodb import get_db
 from bson import ObjectId
 
 
@@ -27,7 +28,6 @@ class PostService:
 
     @property
     def db(self):
-        from app.core.mongodb import get_db
         return get_db()
 
     # ============================================================
@@ -42,7 +42,7 @@ class PostService:
                 public_id=f"posts/{filename}",
             )
             return result.get("secure_url")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Lỗi upload Cloudinary: {e}")
             return None
 
@@ -65,7 +65,7 @@ class PostService:
                     doc["createdAt"] = doc["createdAt"].isoformat()
                 posts.append(doc)
             return posts
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Lỗi get_posts: {e}")
             return []
 
@@ -74,7 +74,7 @@ class PostService:
     # ============================================================
     async def create_post(self, post_data: dict) -> str:
         """Tạo bài viết mới, trả về ID của bài viết."""
-        post_data["createdAt"] = datetime.now()
+        post_data["createdAt"] = datetime.now(timezone.utc)
         post_data["isPending"] = False
         post_data["reportCount"] = 0
         post_data["reportedBy"] = []
@@ -101,7 +101,7 @@ class PostService:
                 {"_id": ObjectId(post_id)}, {"$set": {"content": new_content}}
             )
             return {"status": "success"}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -125,7 +125,7 @@ class PostService:
             # Xóa các bình luận liên quan (tuỳ chọn, nhưng khuyến nghị)
             await self.db["comments"].delete_many({"postId": post_id})
             return {"status": "success"}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -158,12 +158,12 @@ class PostService:
                 "type": "post_report",
                 "postId": post_id,
                 "reportCount": new_report_count,
-                "createdAt": datetime.now(),
+                "createdAt": datetime.now(timezone.utc),
                 "status": "unread",
                 "message": "Một bài viết trong cộng đồng vừa bị báo cáo!",
             })
             return "success"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Error report_post: {e}")
             return "error"
 
@@ -205,7 +205,7 @@ class PostService:
                 )
 
             return {"status": "success", "action": "liked" if is_upvoting else "unliked"}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -215,7 +215,7 @@ class PostService:
         """Thêm bình luận vào bài viết và gửi thông báo."""
         try:
             comment_data["postId"] = post_id
-            comment_data["createdAt"] = datetime.now()
+            comment_data["createdAt"] = datetime.now(timezone.utc)
             comment_data["authorId"] = author_id
             comment_data["upvotedBy"] = []
             comment_data["interactionCount"] = 0
@@ -258,7 +258,7 @@ class PostService:
                         )
 
             return {"status": "success", "commentId": comment_id}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -279,7 +279,7 @@ class PostService:
                     doc["createdAt"] = doc["createdAt"].isoformat()
                 comments.append(doc)
             return comments
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Lỗi get_comments: {e}")
             return []
 
@@ -313,5 +313,5 @@ class PostService:
             "type": notif_type,
             "postId": post_id,
             "isRead": False,
-            "createdAt": datetime.now(),
+            "createdAt": datetime.now(timezone.utc),
         })

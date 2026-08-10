@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException
-from app.services.news_service import NewsService
-
 from app.services.crawler_service import CrawlerService
+from app.services.news_service import NewsService
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 news_service = NewsService()
@@ -15,7 +14,7 @@ async def trigger_manual_crawl():
     try:
         await crawler_service.scrape_news()
         return {"status": "success", "message": "Đã cập nhật tin tức mới nhất từ HUIT"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/")

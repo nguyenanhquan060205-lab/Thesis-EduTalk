@@ -4,20 +4,18 @@ Migrate từ: mobile/lib/services/post_service.dart
 Định nghĩa các API Endpoints cho chức năng bài viết cộng đồng.
 """
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter, HTTPException, UploadFile, File, Header, Form
 # pyrefly: ignore [missing-import]
-from pydantic import BaseModel
-from typing import Optional
-from app.services.post_service import PostService
+
 from app.services.auth_service import AuthService
+from app.services.post_service import PostService
+from fastapi import APIRouter, File, Header, HTTPException, UploadFile
 
 router = APIRouter()
 post_service = PostService()
 auth_service = AuthService()
 
 
-from app.models.post_models import CreatePostRequest, EditPostRequest, AddCommentRequest
-
+from app.models.post_models import AddCommentRequest, CreatePostRequest, EditPostRequest
 
 # ==================== Helper ====================
 

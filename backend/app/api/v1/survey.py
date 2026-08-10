@@ -5,11 +5,11 @@ Xử lý bài khảo sát đánh giá sở thích để gợi ý ngành học ph
 Kết hợp với predict_service.py (ML model đã có sẵn).
 Sử dụng MongoDB thay cho Firestore.
 """
-from fastapi import APIRouter, HTTPException, Header
-from app.services.predict_service import predict_major
+from datetime import datetime, timezone
+
 from app.core.mongodb import get_db
 from app.services.auth_service import AuthService
-from datetime import datetime
+from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
 auth_service = AuthService()
@@ -51,8 +51,8 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
                 timeout=30.0
             )
             ml_data = resp.json()
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Lỗi kết nối ML API: {str(e)}")
+        except Exception as e:  # noqa: BLE001
+            raise HTTPException(status_code=500, detail=f"Lỗi kết nối ML API: {e!s}")
 
     if not ml_data.get("success"):
         raise HTTPException(status_code=400, detail="Lỗi dự đoán từ mô hình")
@@ -77,7 +77,7 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
         "major_requirements": major_reqs,
         "recommendations": unis,
         "input_scores": body.scores,
-        "createdAt": datetime.now(),
+        "createdAt": datetime.now(timezone.utc),
     }
     await db["prediction_history"].insert_one(history_data)
 

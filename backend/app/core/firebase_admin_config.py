@@ -3,11 +3,12 @@ Firebase Admin SDK Configuration
 Khởi tạo kết nối Firebase một lần duy nhất, dùng chung cho toàn bộ Backend.
 Tương đương với: FirebaseFirestore.instance và FirebaseAuth.instance trong Dart.
 """
-import os
 import json
+import os
+
 import firebase_admin
-from firebase_admin import credentials, firestore, auth
 from dotenv import load_dotenv
+from firebase_admin import auth, credentials, firestore
 
 load_dotenv()
 

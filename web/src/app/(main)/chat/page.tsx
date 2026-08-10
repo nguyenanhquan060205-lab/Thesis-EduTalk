@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, GraduationCap } from "lucide-react";
+import { Send } from "lucide-react";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
 import animationData from "../../../../public/animations/Live chatbot.json";
@@ -41,7 +41,7 @@ export default function ChatPage() {
     if (!text.trim()) return;
     
     // Thêm tin nhắn của user
-    const newUserMsg: Message = { id: Date.now(), text: text.trim(), sender: "user" };
+    const newUserMsg: Message = { id: Date.now() /* eslint-disable-line react-hooks/purity */, text: text.trim(), sender: "user" };
     setMessages(prev => [...prev, newUserMsg]);
     setInput("");
     setIsTyping(true);
@@ -64,14 +64,14 @@ export default function ChatPage() {
       const botResponse = res.data.response || "Xin lỗi, mình không thể trả lời lúc này.";
       
       setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
+        id: Date.now() /* eslint-disable-line react-hooks/purity */ + 1, 
         text: botResponse, 
         sender: "bot"
       }]);
     } catch (error) {
       console.error("Lỗi khi gọi AI:", error);
       setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
+        id: Date.now() /* eslint-disable-line react-hooks/purity */ + 1, 
         text: "Hệ thống AI đang bận hoặc mất kết nối. Vui lòng thử lại sau!", 
         sender: "bot"
       }]);

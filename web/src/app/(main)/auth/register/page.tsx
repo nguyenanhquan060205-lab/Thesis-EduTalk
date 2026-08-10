@@ -49,7 +49,7 @@ export default function RegisterPage() {
       } else {
         setError(res.detail || "Đăng ký thất bại");
       }
-    } catch (err: any) {
+    } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.response?.data?.detail || "Lỗi máy chủ, vui lòng thử lại.");
     } finally {
       setLoading(false);

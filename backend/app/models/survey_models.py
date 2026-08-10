@@ -1,6 +1,7 @@
 # pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 
+
 class SurveySubmitRequest(BaseModel):
     scores: list[int] = Field(
         ...,

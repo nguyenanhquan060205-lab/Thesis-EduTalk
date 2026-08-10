@@ -1,5 +1,7 @@
 import os
+
 from motor.motor_asyncio import AsyncIOMotorClient
+
 
 class MongoDB:
     client: AsyncIOMotorClient = None
@@ -13,7 +15,7 @@ async def connect_to_mongo():
         print("CẢNH BÁO: Không tìm thấy MONGO_URI trong .env. Ứng dụng sẽ không thể kết nối tới cơ sở dữ liệu.")
         return
         
-    print(f"Đang kết nối tới MongoDB Atlas...")
+    print("Đang kết nối tới MongoDB Atlas...")
     db.client = AsyncIOMotorClient(mongo_uri)
     db.db = db.client.get_default_database()
     print("Kết nối MongoDB thành công!")

@@ -4,12 +4,12 @@ Migrate từ: mobile/lib/screens/admin/ (toàn bộ màn hình admin)
 Các endpoint chỉ dành cho admin: quản lý user, posts, premium, support, dashboard.
 Sử dụng MongoDB thay cho Firestore.
 """
-from fastapi import APIRouter, HTTPException, Header
-from typing import Optional
 from datetime import datetime, timedelta, timezone
+
 from app.core.mongodb import get_db
 from app.services.auth_service import AuthService
 from bson import ObjectId
+from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
 auth_service = AuthService()
@@ -65,7 +65,7 @@ async def get_dashboard(authorization: str = Header(...)):
                     today_revenue += amount
                 if (now - ts_dt).days <= 30:
                     month_revenue += amount
-            except Exception:
+            except Exception:  # noqa: BLE001
                 pass
 
     # Admin notifications chưa đọc
@@ -121,7 +121,7 @@ async def update_user_premium(uid: str, body: UpdatePremiumRequest, authorizatio
         "subscriptionStatus": "active" if body.isPremium else "none",
     }
 
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     if body.isPremium:
         updates["premiumStart"] = now
         updates["premiumAt"] = now
@@ -189,7 +189,7 @@ async def admin_delete_post(post_id: str, authorization: str = Header(...)):
             {"$set": {"status": "read"}}
         )
         return {"status": "success"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}
 
 
@@ -216,7 +216,7 @@ async def dismiss_post_report(post_id: str, authorization: str = Header(...)):
             {"$set": {"status": "read"}}
         )
         return {"status": "success"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}
 
 
@@ -257,7 +257,7 @@ async def update_support_request(request_id: str, body: UpdateSupportRequest, au
     # Nếu resolve → lưu answer và gửi notification cho user
     if body.status == "resolved" and body.adminNote:
         update_data["answer"] = body.adminNote
-        update_data["answeredAt"] = datetime.now()
+        update_data["answeredAt"] = datetime.now(timezone.utc)
 
     try:
         await db["support_requests"].update_one(
@@ -278,10 +278,10 @@ async def update_support_request(request_id: str, body: UpdateSupportRequest, au
                         "type": "support",
                         "postId": request_id,
                         "isRead": False,
-                        "createdAt": datetime.now(),
+                        "createdAt": datetime.now(timezone.utc),
                     })
         return {"status": "success"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}
 
 
@@ -316,5 +316,5 @@ async def resolve_admin_notification(notif_id: str, authorization: str = Header(
             {"$set": {"status": "read"}}
         )
         return {"status": "success"}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}

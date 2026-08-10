@@ -4,23 +4,22 @@ Migrate từ: mobile/lib/services/auth_service.dart
 Định nghĩa các API Endpoints cho chức năng xác thực người dùng.
 """
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter, HTTPException, Header
 from app.services.auth_service import AuthService
+from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
 auth_service = AuthService()
 
 
 from app.models.auth_models import (
-    RegisterRequest,
-    LoginRequest,
-    GoogleSignInRequest,
-    ResendVerifyRequest,
     ChangePasswordRequest,
+    GoogleSignInRequest,
+    LoginRequest,
     OtpSendRequest,
-    OtpVerifyRequest
+    OtpVerifyRequest,
+    RegisterRequest,
+    ResendVerifyRequest,
 )
-
 
 # ==================== Endpoints ====================
 

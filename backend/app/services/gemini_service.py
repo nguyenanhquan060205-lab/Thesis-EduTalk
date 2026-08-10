@@ -4,8 +4,9 @@ Migrate từ: mobile/lib/services/ai_chat_service.dart
 Xử lý chat với Gemini AI và lấy xu hướng ngành nghề.
 Thay vì dùng firebase_ai (Flutter SDK), ta gọi trực tiếp Google Generative AI Python SDK.
 """
-import os
 import json
+import os
+
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -112,9 +113,9 @@ class GeminiService:
             response = await chat.send_message_async(message)
             return response.text or "Xin lỗi, mình không thể trả lời lúc này. Bạn thử hỏi lại nhé! 🙏"
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             raise RuntimeError(
-                f"Không thể kết nối với AI. Vui lòng kiểm tra kết nối mạng và thử lại. Lỗi: {str(e)}"
+                f"Không thể kết nối với AI. Vui lòng kiểm tra kết nối mạng và thử lại. Lỗi: {e!s}"
             )
 
     async def get_trending_majors(self) -> list[dict]:
@@ -130,6 +131,6 @@ class GeminiService:
             data = json.loads(raw_text)
             return data
 
-        except Exception:
+        except Exception:  # noqa: BLE001
             # Trả về dữ liệu mặc định nếu AI lỗi — Giống hệt Dart
             return _TRENDING_MAJORS_FALLBACK

@@ -4,13 +4,12 @@ Migrate từ: mobile/lib/services/auth_service.dart + OTP_service.dart + ChangeP
 Chứa toàn bộ logic: Đăng ký, Đăng nhập, Google Sign-in, Đổi mật khẩu, Xóa tài khoản, OTP.
 Sử dụng Firebase Admin SDK để thay thế FirebaseAuth + Firestore trong Dart.
 """
-from datetime import datetime
-from firebase_admin import auth, firestore
-from app.core.firebase_admin_config import get_db, get_auth
-import httpx
 import os
 import random
 from datetime import datetime, timedelta, timezone
+
+import httpx
+from app.core.firebase_admin_config import get_auth
 
 
 class AuthService:
@@ -31,7 +30,7 @@ class AuthService:
     # ĐĂNG KÝ TÀI KHOẢN
     # Tương đương: Future<Map<String, dynamic>> register(...) trong Dart
     # ============================================================
-    async def register(self, name: str, email: str, password: str, phone: str = None) -> dict:
+    async def register(self, name: str, email: str, password: str, phone: str | None = None) -> dict:
         """
         Tạo tài khoản mới bằng Email/Password.
         - Tạo user trong Firebase Authentication
@@ -52,7 +51,7 @@ class AuthService:
                 "name": name,
                 "email": email,
                 "role": "user",
-                "createdAt": datetime.now(),
+                "createdAt": datetime.now(timezone.utc),
                 "isPremium": False,
                 "usageCount": 0,
                 "isNotificationEnabled": True,
@@ -67,7 +66,7 @@ class AuthService:
 
         except self.auth.EmailAlreadyExistsError:
             return {"status": "Email này đã được đăng ký."}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             error_msg = str(e)
             if "WEAK_PASSWORD" in error_msg:
                 return {"status": "Mật khẩu quá yếu. Cần ít nhất 6 ký tự."}
@@ -124,8 +123,8 @@ class AuthService:
             else:
                 return {"status": "Không tìm thấy dữ liệu người dùng."}
 
-        except Exception as e:
-            return {"status": f"Lỗi hệ thống: {str(e)}"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": f"Lỗi hệ thống: {e!s}"}
 
     # ============================================================
     # ĐĂNG NHẬP GOOGLE
@@ -156,7 +155,7 @@ class AuthService:
                     "name": name,
                     "email": email,
                     "role": "user",
-                    "createdAt": datetime.now(),
+                    "createdAt": datetime.now(timezone.utc),
                     "isPremium": False,
                     "usageCount": 0,
                     "isNotificationEnabled": True,
@@ -169,8 +168,8 @@ class AuthService:
 
         except self.auth.InvalidIdTokenError:
             return {"status": "Token Google không hợp lệ."}
-        except Exception as e:
-            return {"status": f"Lỗi hệ thống: {str(e)}"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": f"Lỗi hệ thống: {e!s}"}
 
     # ============================================================
     # XÁC THỰC TOKEN (Dùng cho các route cần bảo vệ)
@@ -183,7 +182,7 @@ class AuthService:
         try:
             decoded = self.auth.verify_id_token(id_token)
             return decoded
-        except Exception:
+        except Exception:  # noqa: BLE001
             return None
 
     # ============================================================
@@ -208,7 +207,7 @@ class AuthService:
 
         except self.auth.UserNotFoundError:
             return {"status": "error", "message": "Không tìm thấy người dùng."}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -220,8 +219,8 @@ class AuthService:
         try:
             await self._send_email_verification(email, password)
             return {"status": "success"}
-        except Exception as e:
-            return {"status": f"Lỗi: {str(e)}"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": f"Lỗi: {e!s}"}
 
     # ============================================================
     # ĐỔI MẬT KHẨU
@@ -253,7 +252,7 @@ class AuthService:
             self.auth.update_user(uid, password=new_password)
             return {"status": "success"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -300,7 +299,7 @@ class AuthService:
                 return {"status": "success"}
             return {"status": "error", "message": f"Gửi email thất bại ({resp.status_code})."}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
@@ -336,7 +335,7 @@ class AuthService:
             self.db.collection("otp_codes").document(email).update({"verified": True})
             return {"status": "success"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================

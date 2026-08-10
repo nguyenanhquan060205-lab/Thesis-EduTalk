@@ -1,13 +1,13 @@
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter
-# pyrefly: ignore [missing-import]
-from pydantic import BaseModel, Field
 from app.services.predict_service import predict_major
+from fastapi import APIRouter
+
+# pyrefly: ignore [missing-import]
 
 router = APIRouter()
 
 
-from app.models.predict_models import SurveySubmit, PredictionResponse, PredictionResult
+from app.models.predict_models import PredictionResponse, SurveySubmit
 
 
 @router.post(

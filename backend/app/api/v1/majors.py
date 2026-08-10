@@ -1,5 +1,5 @@
-from fastapi import APIRouter
 from app.services.predict_service import HUIT_MAJORS
+from fastapi import APIRouter
 
 router = APIRouter()
 

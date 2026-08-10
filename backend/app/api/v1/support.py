@@ -4,11 +4,11 @@ Migrate từ: mobile/lib/screens/support_request_screen.dart + support_screen.da
 Xử lý yêu cầu hỗ trợ (Support Tickets) từ người dùng.
 Sử dụng MongoDB thay cho Firestore.
 """
-from fastapi import APIRouter, HTTPException, Header
-from typing import Optional
+from datetime import datetime, timezone
+
 from app.core.mongodb import get_db
 from app.services.auth_service import AuthService
-from datetime import datetime
+from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
 auth_service = AuthService()
@@ -50,7 +50,7 @@ async def send_support_request(body: SupportRequest, authorization: str = Header
         "message": body.message,
         "type": body.type,
         "status": "pending",
-        "createdAt": datetime.now(),
+        "createdAt": datetime.now(timezone.utc),
     })
     return {"status": "success"}
 

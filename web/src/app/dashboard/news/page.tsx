@@ -35,7 +35,7 @@ export default function AdminNewsApprovalPage() {
   };
 
   useEffect(() => {
-    fetchPendingNews();
+    setTimeout(() => fetchPendingNews(), 0);
   }, []);
 
   const handleApprove = async (id: string) => {
