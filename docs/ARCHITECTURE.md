@@ -732,5 +732,4 @@ Lệnh trên sẽ khởi động Backend (port 8000) + Web (port 3000) + Postgre
 
 ---
 
-> **Tài liệu này được tạo ngày 10/08/2026 bởi nhóm EduTalk K14.**
-> Nếu có thắc mắc, liên hệ trưởng nhóm hoặc đọc code trực tiếp từ repo.
+> **Tài liệu này được tạo ngày 10/08/2026**
