@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "@/components/Navbar";
-import ChatWidget from "@/components/ChatWidget";
+import Navbar from "@/components/layout/Navbar";
+import ChatWidget from "@/components/features/chat/ChatWidget";
 
 export default function MainLayout({
   children,
