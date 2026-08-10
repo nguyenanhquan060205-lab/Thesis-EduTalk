@@ -5,6 +5,7 @@ Xử lý bài khảo sát đánh giá sở thích để gợi ý ngành học ph
 Kết hợp với predict_service.py (ML model đã có sẵn).
 Sử dụng MongoDB thay cho Firestore.
 """
+
 from datetime import datetime, timezone
 
 from app.core.mongodb import get_db
@@ -22,7 +23,9 @@ async def get_current_uid(authorization: str) -> str:
     token = authorization.replace("Bearer ", "")
     decoded = await auth_service.verify_token(token)
     if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ hoặc đã hết hạn.")
+        raise HTTPException(
+            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
+        )
     return decoded["uid"]
 
 
@@ -42,13 +45,12 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
 
     # 1. Gọi API ML model cũ
     import httpx
+
     ml_url = "https://edutalk-7ndf.onrender.com/api/prediction/predict"
     async with httpx.AsyncClient() as client:
         try:
             resp = await client.post(
-                ml_url,
-                json={"scores": body.scores, "userId": uid},
-                timeout=30.0
+                ml_url, json={"scores": body.scores, "userId": uid}, timeout=30.0
             )
             ml_data = resp.json()
         except Exception as e:  # noqa: BLE001
@@ -69,7 +71,7 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
     unis = ml_data.get("recommendations", [])
     user_scores = ml_data.get("user_scores", [])
     major_reqs = ml_data.get("major_requirements", [])
-    
+
     history_data = {
         "user_id": uid,
         "predicted_major": major,
@@ -84,7 +86,6 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
     return {"status": "success", "results": ml_data}
 
 
-
 @router.get("/history/{uid}")
 async def get_survey_history(uid: str, authorization: str = Header(...)):
     """Lấy lịch sử các bài khảo sát đã làm của người dùng."""
@@ -94,17 +95,14 @@ async def get_survey_history(uid: str, authorization: str = Header(...)):
 
     db = get_db()
     cursor = (
-        db["prediction_history"]
-        .find({"user_id": uid})
-        .sort("createdAt", -1)
-        .limit(20)
+        db["prediction_history"].find({"user_id": uid}).sort("createdAt", -1).limit(20)
     )
-    
+
     history = []
     async for doc in cursor:
         doc["id"] = str(doc.pop("_id"))
         if "createdAt" in doc and isinstance(doc["createdAt"], datetime):
             doc["createdAt"] = doc["createdAt"].isoformat()
         history.append(doc)
-        
+
     return {"data": history}

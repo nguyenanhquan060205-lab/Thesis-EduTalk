@@ -3,6 +3,7 @@ Posts Router (Python)
 Migrate từ: mobile/lib/services/post_service.dart
 Định nghĩa các API Endpoints cho chức năng bài viết cộng đồng.
 """
+
 # pyrefly: ignore [missing-import]
 # pyrefly: ignore [missing-import]
 
@@ -19,16 +20,20 @@ from app.models.post_models import AddCommentRequest, CreatePostRequest, EditPos
 
 # ==================== Helper ====================
 
+
 async def get_current_uid(authorization: str) -> str:
     """Lấy UID từ Authorization header (Bearer token)."""
     token = authorization.replace("Bearer ", "")
     decoded = await auth_service.verify_token(token)
     if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ hoặc đã hết hạn.")
+        raise HTTPException(
+            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
+        )
     return decoded["uid"]
 
 
 # ==================== Endpoints ====================
+
 
 @router.get("/")
 async def get_posts(limit: int = 20):
@@ -84,7 +89,9 @@ async def edit_post(
     Tương đương: PostService.editPost() trong Dart.
     """
     uid = await get_current_uid(authorization)
-    result = await post_service.edit_post(post_id=post_id, new_content=body.content, author_id=uid)
+    result = await post_service.edit_post(
+        post_id=post_id, new_content=body.content, author_id=uid
+    )
     if result["status"] != "success":
         raise HTTPException(status_code=403, detail=result["message"])
     return result

@@ -3,6 +3,7 @@ Users Router (Python)
 Các endpoint quản lý thông tin người dùng (profile, cập nhật, premium status...).
 Sử dụng MongoDB thay cho Firestore.
 """
+
 from datetime import datetime
 
 from app.core.mongodb import get_db
@@ -21,7 +22,9 @@ async def get_current_uid(authorization: str) -> str:
     token = authorization.replace("Bearer ", "")
     decoded = await auth_service.verify_token(token)
     if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ hoặc đã hết hạn.")
+        raise HTTPException(
+            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
+        )
     return decoded["uid"]
 
 
@@ -44,11 +47,15 @@ async def get_user_profile(uid: str, authorization: str = Header(...)):
 
 
 @router.put("/{uid}")
-async def update_user_profile(uid: str, body: UpdateProfileRequest, authorization: str = Header(...)):
+async def update_user_profile(
+    uid: str, body: UpdateProfileRequest, authorization: str = Header(...)
+):
     """Cập nhật thông tin profile (tên, bật/tắt thông báo...)."""
     current_uid = await get_current_uid(authorization)
     if current_uid != uid:
-        raise HTTPException(status_code=403, detail="Không có quyền chỉnh sửa tài khoản này.")
+        raise HTTPException(
+            status_code=403, detail="Không có quyền chỉnh sửa tài khoản này."
+        )
 
     update_data = {k: v for k, v in body.model_dump().items() if v is not None}
     if not update_data:
@@ -92,12 +99,9 @@ async def get_notifications(uid: str, authorization: str = Header(...)):
 
     db = get_db()
     cursor = (
-        db["notifications"]
-        .find({"receiverId": uid})
-        .sort("createdAt", -1)
-        .limit(50)
+        db["notifications"].find({"receiverId": uid}).sort("createdAt", -1).limit(50)
     )
-    
+
     notifications = []
     async for doc in cursor:
         doc["id"] = str(doc.pop("_id"))
@@ -108,14 +112,15 @@ async def get_notifications(uid: str, authorization: str = Header(...)):
 
 
 @router.put("/{uid}/notifications/{notif_id}/read")
-async def mark_notification_read(uid: str, notif_id: str, authorization: str = Header(...)):
+async def mark_notification_read(
+    uid: str, notif_id: str, authorization: str = Header(...)
+):
     """Đánh dấu một thông báo là đã đọc."""
     await get_current_uid(authorization)
     db = get_db()
     try:
         await db["notifications"].update_one(
-            {"_id": ObjectId(notif_id)},
-            {"$set": {"isRead": True}}
+            {"_id": ObjectId(notif_id)}, {"$set": {"isRead": True}}
         )
         return {"status": "success"}
     except Exception as e:  # noqa: BLE001
@@ -128,7 +133,6 @@ async def mark_all_notifications_read(uid: str, authorization: str = Header(...)
     await get_current_uid(authorization)
     db = get_db()
     await db["notifications"].update_many(
-        {"receiverId": uid, "isRead": False},
-        {"$set": {"isRead": True}}
+        {"receiverId": uid, "isRead": False}, {"$set": {"isRead": True}}
     )
     return {"status": "success"}

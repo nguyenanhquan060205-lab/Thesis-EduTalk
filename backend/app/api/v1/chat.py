@@ -3,6 +3,7 @@ Chat Router (Python)
 Migrate từ: mobile/lib/services/ai_chat_service.dart
 Định nghĩa các API Endpoints cho chức năng Chat AI với Gemini.
 """
+
 # pyrefly: ignore [missing-import]
 from app.services.gemini_service import GeminiService
 from fastapi import APIRouter, HTTPException
@@ -14,6 +15,7 @@ gemini_service = GeminiService()
 from app.models.chat_models import SendMessageRequest
 
 # ==================== Endpoints ====================
+
 
 @router.get("/")
 def get_chat_status():

@@ -3,6 +3,7 @@ Post Service (Python)
 Migrate từ: mobile/lib/services/post_service.dart
 Xử lý CRUD bài viết, comment, like, report và notification.
 """
+
 import os
 from datetime import datetime, timezone
 
@@ -95,7 +96,10 @@ class PostService:
             if not post_doc:
                 return {"status": "error", "message": "Bài viết không tồn tại."}
             if post_doc.get("authorId") != author_id:
-                return {"status": "error", "message": "Không có quyền sửa bài viết này."}
+                return {
+                    "status": "error",
+                    "message": "Không có quyền sửa bài viết này.",
+                }
 
             await self.db["posts"].update_one(
                 {"_id": ObjectId(post_id)}, {"$set": {"content": new_content}}
@@ -119,7 +123,10 @@ class PostService:
             user_role = user_doc.get("role", "user") if user_doc else "user"
 
             if post_doc.get("authorId") != author_id and user_role != "admin":
-                return {"status": "error", "message": "Không có quyền xóa bài viết này."}
+                return {
+                    "status": "error",
+                    "message": "Không có quyền xóa bài viết này.",
+                }
 
             await self.db["posts"].delete_one({"_id": ObjectId(post_id)})
             # Xóa các bình luận liên quan (tuỳ chọn, nhưng khuyến nghị)
@@ -150,18 +157,20 @@ class PostService:
                 {
                     "$addToSet": {"reportedBy": uid},
                     "$set": {"reportCount": new_report_count, "isPending": is_pending},
-                }
+                },
             )
 
             # Tạo thông báo cho admin
-            await self.db["admin_notifications"].insert_one({
-                "type": "post_report",
-                "postId": post_id,
-                "reportCount": new_report_count,
-                "createdAt": datetime.now(timezone.utc),
-                "status": "unread",
-                "message": "Một bài viết trong cộng đồng vừa bị báo cáo!",
-            })
+            await self.db["admin_notifications"].insert_one(
+                {
+                    "type": "post_report",
+                    "postId": post_id,
+                    "reportCount": new_report_count,
+                    "createdAt": datetime.now(timezone.utc),
+                    "status": "unread",
+                    "message": "Một bài viết trong cộng đồng vừa bị báo cáo!",
+                }
+            )
             return "success"
         except Exception as e:  # noqa: BLE001
             print(f"Error report_post: {e}")
@@ -179,19 +188,19 @@ class PostService:
 
             upvoted_by = post_doc.get("upvotedBy", [])
             post_owner_id = post_doc.get("authorId")
-            
+
             if uid in upvoted_by:
                 # Unlike
                 await self.db["posts"].update_one(
                     {"_id": ObjectId(post_id)},
-                    {"$pull": {"upvotedBy": uid}, "$inc": {"interactionCount": -1}}
+                    {"$pull": {"upvotedBy": uid}, "$inc": {"interactionCount": -1}},
                 )
                 is_upvoting = False
             else:
                 # Like
                 await self.db["posts"].update_one(
                     {"_id": ObjectId(post_id)},
-                    {"$addToSet": {"upvotedBy": uid}, "$inc": {"interactionCount": 1}}
+                    {"$addToSet": {"upvotedBy": uid}, "$inc": {"interactionCount": 1}},
                 )
                 is_upvoting = True
 
@@ -204,14 +213,19 @@ class PostService:
                     post_id=post_id,
                 )
 
-            return {"status": "success", "action": "liked" if is_upvoting else "unliked"}
+            return {
+                "status": "success",
+                "action": "liked" if is_upvoting else "unliked",
+            }
         except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
 
     # ============================================================
     # THÊM BÌNH LUẬN
     # ============================================================
-    async def add_comment(self, post_id: str, comment_data: dict, author_id: str) -> dict:
+    async def add_comment(
+        self, post_id: str, comment_data: dict, author_id: str
+    ) -> dict:
         """Thêm bình luận vào bài viết và gửi thông báo."""
         try:
             comment_data["postId"] = post_id
@@ -227,14 +241,16 @@ class PostService:
             # Cập nhật số lượng comment trong post
             await self.db["posts"].update_one(
                 {"_id": ObjectId(post_id)},
-                {"$inc": {"interactionCount": 1, "commentCount": 1}}
+                {"$inc": {"interactionCount": 1, "commentCount": 1}},
             )
 
             # Gửi thông báo
             parent_id = comment_data.get("parentId")
             if parent_id:
                 # Reply một comment khác
-                parent_doc = await self.db["comments"].find_one({"_id": ObjectId(parent_id)})
+                parent_doc = await self.db["comments"].find_one(
+                    {"_id": ObjectId(parent_id)}
+                )
                 if parent_doc:
                     parent_author = parent_doc.get("authorId")
                     if parent_author:
@@ -267,11 +283,7 @@ class PostService:
     async def get_comments(self, post_id: str) -> list[dict]:
         """Lấy danh sách bình luận của một bài viết."""
         try:
-            cursor = (
-                self.db["comments"]
-                .find({"postId": post_id})
-                .sort("createdAt", -1)
-            )
+            cursor = self.db["comments"].find({"postId": post_id}).sort("createdAt", -1)
             comments = []
             async for doc in cursor:
                 doc["id"] = str(doc.pop("_id"))
@@ -306,12 +318,14 @@ class PostService:
         if sender_doc:
             sender_name = sender_doc.get("name", sender_name)
 
-        await self.db["notifications"].insert_one({
-            "receiverId": receiver_id,
-            "senderId": sender_id,
-            "senderName": sender_name,
-            "type": notif_type,
-            "postId": post_id,
-            "isRead": False,
-            "createdAt": datetime.now(timezone.utc),
-        })
+        await self.db["notifications"].insert_one(
+            {
+                "receiverId": receiver_id,
+                "senderId": sender_id,
+                "senderName": sender_name,
+                "type": notif_type,
+                "postId": post_id,
+                "isRead": False,
+                "createdAt": datetime.now(timezone.utc),
+            }
+        )

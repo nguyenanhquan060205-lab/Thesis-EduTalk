@@ -6,6 +6,7 @@ router = APIRouter()
 news_service = NewsService()
 crawler_service = CrawlerService()
 
+
 @router.post("/crawl")
 async def trigger_manual_crawl():
     """
@@ -16,6 +17,7 @@ async def trigger_manual_crawl():
         return {"status": "success", "message": "Đã cập nhật tin tức mới nhất từ HUIT"}
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/")
 async def get_all_news(limit: int = 10):

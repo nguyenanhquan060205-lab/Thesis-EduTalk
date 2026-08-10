@@ -10,8 +10,10 @@ class CreatePostRequest(BaseModel):
     imageUrl: str | None = None
     tags: list[str] | None = []
 
+
 class EditPostRequest(BaseModel):
     content: str
+
 
 class AddCommentRequest(BaseModel):
     text: str

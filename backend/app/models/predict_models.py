@@ -10,9 +10,11 @@ class SurveySubmit(BaseModel):
         description="10 scores from survey",
     )
 
+
 class PredictionResult(BaseModel):
     major: str
     similarity: float
+
 
 class PredictionResponse(BaseModel):
     results: list[PredictionResult]

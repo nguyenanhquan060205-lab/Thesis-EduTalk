@@ -4,6 +4,7 @@ Migrate từ: mobile/lib/screens/support_request_screen.dart + support_screen.da
 Xử lý yêu cầu hỗ trợ (Support Tickets) từ người dùng.
 Sử dụng MongoDB thay cho Firestore.
 """
+
 from datetime import datetime, timezone
 
 from app.core.mongodb import get_db
@@ -42,16 +43,18 @@ async def send_support_request(body: SupportRequest, authorization: str = Header
         user_name = user_doc.get("name", "Người dùng")
         user_email = user_doc.get("email", "")
 
-    await db["support_requests"].insert_one({
-        "userId": uid,
-        "userName": user_name,
-        "userEmail": user_email,
-        "title": body.title,
-        "message": body.message,
-        "type": body.type,
-        "status": "pending",
-        "createdAt": datetime.now(timezone.utc),
-    })
+    await db["support_requests"].insert_one(
+        {
+            "userId": uid,
+            "userName": user_name,
+            "userEmail": user_email,
+            "title": body.title,
+            "message": body.message,
+            "type": body.type,
+            "status": "pending",
+            "createdAt": datetime.now(timezone.utc),
+        }
+    )
     return {"status": "success"}
 
 
@@ -63,19 +66,16 @@ async def get_my_support_requests(authorization: str = Header(...)):
     """
     uid = await get_current_uid(authorization)
     db = get_db()
-    
+
     cursor = (
-        db["support_requests"]
-        .find({"userId": uid})
-        .sort("createdAt", -1)
-        .limit(20)
+        db["support_requests"].find({"userId": uid}).sort("createdAt", -1).limit(20)
     )
-    
+
     requests = []
     async for doc in cursor:
         doc["id"] = str(doc.pop("_id"))
         if "createdAt" in doc and isinstance(doc["createdAt"], datetime):
             doc["createdAt"] = doc["createdAt"].isoformat()
         requests.append(doc)
-        
+
     return {"data": requests}

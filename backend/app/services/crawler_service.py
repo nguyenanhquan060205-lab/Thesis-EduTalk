@@ -12,12 +12,12 @@ class CrawlerService:
         self.api_key = os.getenv("GEMINI_API_KEY")
         if self.api_key:
             genai.configure(api_key=self.api_key)
-        
+
         self.summary_model = genai.GenerativeModel(
             model_name="gemini-flash-lite-latest",
             system_instruction="Bạn là chuyên viên tổng hợp tin tức giáo dục. Hãy tóm tắt bài báo tuyển sinh đại học sau đây thành 1 đoạn ngắn khoảng 2-3 câu, giọng điệu thân thiện với Gen Z, tập trung vào thông tin cốt lõi nhất.",
         )
-    
+
     async def summarize_text(self, text: str) -> str:
         if not self.api_key or not text:
             return "Không có tóm tắt AI."
@@ -46,35 +46,39 @@ class CrawlerService:
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.get(url)
-                
+
             soup = BeautifulSoup(response.text, "html.parser")
             # Tìm thẻ div chứa bài báo
             articles = soup.find_all("div", class_="card", limit=5)
-            
+
             new_articles = 0
             for article in articles:
                 title_elem = article.find("h3")
                 if not title_elem:
                     continue
-                    
+
                 a_tag = title_elem.find("a")
                 title = a_tag.text.strip() if a_tag else title_elem.text.strip()
                 link = a_tag["href"] if a_tag else ""
-                
+
                 # Nếu link là relative thì thêm base_url
                 if link.startswith("/"):
                     link = base_url + link
-                
+
                 # Tránh trùng lặp
                 exists = await collection.find_one({"sourceUrl": link})
                 if exists:
                     continue
-                
+
                 desc_elem = article.find("p", class_="card-text")
                 excerpt = desc_elem.text.strip() if desc_elem else ""
-                
+
                 img_elem = article.find("img")
-                image = img_elem["src"] if img_elem and "src" in img_elem.attrs else "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3"
+                image = (
+                    img_elem["src"]
+                    if img_elem and "src" in img_elem.attrs
+                    else "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3"
+                )
                 if image.startswith("/"):
                     image = base_url + image
 
@@ -88,11 +92,19 @@ class CrawlerService:
                         post_content = detail_soup.find("div", class_="post-content")
                         if post_content:
                             # Chỉnh sửa lại các link tương đối thành tuyệt đối
-                            for tag in post_content.find_all(['img', 'a']):
-                                if tag.name == 'img' and tag.has_attr('src') and tag['src'].startswith('/'):
-                                    tag['src'] = base_url + tag['src']
-                                elif tag.name == 'a' and tag.has_attr('href') and tag['href'].startswith('/'):
-                                    tag['href'] = base_url + tag['href']
+                            for tag in post_content.find_all(["img", "a"]):
+                                if (
+                                    tag.name == "img"
+                                    and tag.has_attr("src")
+                                    and tag["src"].startswith("/")
+                                ):
+                                    tag["src"] = base_url + tag["src"]
+                                elif (
+                                    tag.name == "a"
+                                    and tag.has_attr("href")
+                                    and tag["href"].startswith("/")
+                                ):
+                                    tag["href"] = base_url + tag["href"]
                             content_html = str(post_content)
                 except Exception as ex:  # noqa: BLE001
                     print(f"Lỗi khi cào nội dung chi tiết {link}: {ex}")
@@ -100,7 +112,7 @@ class CrawlerService:
                 # Sinh tóm tắt bằng AI
                 full_text = f"{title}. {excerpt}"
                 ai_summary = await self.summarize_text(full_text)
-                
+
                 new_doc = {
                     "title": title,
                     "excerpt": excerpt,
@@ -112,12 +124,12 @@ class CrawlerService:
                     "ai_summary": ai_summary,
                     "status": "pending",
                     "isHot": False,
-                    "createdAt": datetime.now(timezone.utc).isoformat()
+                    "createdAt": datetime.now(timezone.utc).isoformat(),
                 }
-                
+
                 await collection.insert_one(new_doc)
                 new_articles += 1
-                
+
             print(f"[Crawler] Đã cào xong. Số bài mới (pending): {new_articles}")
         except Exception as e:  # noqa: BLE001
             print(f"[Crawler] Lỗi cào dữ liệu: {e}")

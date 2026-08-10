@@ -4,6 +4,7 @@ Migrate từ: mobile/lib/services/ai_chat_service.dart
 Xử lý chat với Gemini AI và lấy xu hướng ngành nghề.
 Thay vì dùng firebase_ai (Flutter SDK), ta gọi trực tiếp Google Generative AI Python SDK.
 """
+
 import json
 import os
 
@@ -79,7 +80,9 @@ class GeminiService:
         # Model riêng cho Trending Majors (không có system instruction)
         self._trend_model = genai.GenerativeModel(
             model_name="gemini-flash-lite-latest",
-            generation_config=genai.GenerationConfig(response_mime_type="application/json"),
+            generation_config=genai.GenerationConfig(
+                response_mime_type="application/json"
+            ),
         )
 
     async def send_message(self, message: str, history: list[dict]) -> str:
@@ -101,17 +104,19 @@ class GeminiService:
             # Chuyển đổi history sang format của Python SDK
             chat_history = []
             for msg in history:
-                chat_history.append({
-                    "role": msg.get("role", "user"),
-                    "parts": [msg.get("text", "")]
-                })
+                chat_history.append(
+                    {"role": msg.get("role", "user"), "parts": [msg.get("text", "")]}
+                )
 
             # Tạo chat session với lịch sử
             chat = self._chat_model.start_chat(history=chat_history)
 
             # Gửi tin nhắn
             response = await chat.send_message_async(message)
-            return response.text or "Xin lỗi, mình không thể trả lời lúc này. Bạn thử hỏi lại nhé! 🙏"
+            return (
+                response.text
+                or "Xin lỗi, mình không thể trả lời lúc này. Bạn thử hỏi lại nhé! 🙏"
+            )
 
         except Exception as e:  # noqa: BLE001
             raise RuntimeError(
@@ -124,7 +129,9 @@ class GeminiService:
         Tương đương: GeminiChatService.getTrendingMajors() trong Dart.
         """
         try:
-            response = await self._trend_model.generate_content_async(_TRENDING_MAJORS_PROMPT)
+            response = await self._trend_model.generate_content_async(
+                _TRENDING_MAJORS_PROMPT
+            )
             raw_text = response.text or "[]"
 
             # Parse JSON trả về

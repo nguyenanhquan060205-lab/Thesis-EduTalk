@@ -4,6 +4,7 @@ Migrate từ: mobile/lib/screens/admin/ (toàn bộ màn hình admin)
 Các endpoint chỉ dành cho admin: quản lý user, posts, premium, support, dashboard.
 Sử dụng MongoDB thay cho Firestore.
 """
+
 from datetime import datetime, timedelta, timezone
 
 from app.core.mongodb import get_db
@@ -16,6 +17,7 @@ auth_service = AuthService()
 
 
 # ==================== Helper ====================
+
 
 async def require_admin(authorization: str) -> str:
     """Kiểm tra token và đảm bảo người dùng có role=admin."""
@@ -33,6 +35,7 @@ async def require_admin(authorization: str) -> str:
 
 # ==================== Dashboard ====================
 
+
 @router.get("/dashboard")
 async def get_dashboard(authorization: str = Header(...)):
     """
@@ -47,7 +50,9 @@ async def get_dashboard(authorization: str = Header(...)):
     premium_users = await db["users"].count_documents({"isPremium": True})
 
     # Lấy giao dịch thành công
-    transactions = await db["transactions"].find({"status": "success"}).to_list(length=None)
+    transactions = (
+        await db["transactions"].find({"status": "success"}).to_list(length=None)
+    )
     total_revenue = 0.0
     today_revenue = 0.0
     month_revenue = 0.0
@@ -60,7 +65,11 @@ async def get_dashboard(authorization: str = Header(...)):
         if ts:
             try:
                 # MongoDB motor có thể trả về datetime object
-                ts_dt = ts.replace(tzinfo=timezone.utc) if isinstance(ts, datetime) else datetime.fromisoformat(ts).replace(tzinfo=timezone.utc)
+                ts_dt = (
+                    ts.replace(tzinfo=timezone.utc)
+                    if isinstance(ts, datetime)
+                    else datetime.fromisoformat(ts).replace(tzinfo=timezone.utc)
+                )
                 if (now - ts_dt).days == 0:
                     today_revenue += amount
                 if (now - ts_dt).days <= 30:
@@ -69,7 +78,9 @@ async def get_dashboard(authorization: str = Header(...)):
                 print(f"Lỗi parse ngày tháng: {e}")
 
     # Admin notifications chưa đọc
-    unread_notifs = await db["admin_notifications"].count_documents({"status": "unread"})
+    unread_notifs = await db["admin_notifications"].count_documents(
+        {"status": "unread"}
+    )
 
     return {
         "totalUsers": total_users,
@@ -83,6 +94,7 @@ async def get_dashboard(authorization: str = Header(...)):
 
 # ==================== User Management ====================
 
+
 @router.get("/users")
 async def get_all_users(authorization: str = Header(...)):
     """
@@ -91,7 +103,7 @@ async def get_all_users(authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     users = []
     async for doc in db["users"].find():
         doc["id"] = str(doc.pop("_id"))
@@ -107,7 +119,9 @@ from app.models.admin_models import UpdatePremiumRequest, UpdateSupportRequest
 
 
 @router.put("/users/{uid}/premium")
-async def update_user_premium(uid: str, body: UpdatePremiumRequest, authorization: str = Header(...)):
+async def update_user_premium(
+    uid: str, body: UpdatePremiumRequest, authorization: str = Header(...)
+):
     """
     Cập nhật trạng thái Premium cho người dùng.
     Migrate từ: premium_management_screen.dart — AdminService.updatePremiumStatus().
@@ -154,6 +168,7 @@ async def delete_user(uid: str, authorization: str = Header(...)):
 
 # ==================== Forum Management ====================
 
+
 @router.get("/posts")
 async def get_all_posts(authorization: str = Header(...)):
     """
@@ -162,7 +177,7 @@ async def get_all_posts(authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     posts = []
     async for doc in db["posts"].find().sort("createdAt", -1):
         doc["id"] = str(doc.pop("_id"))
@@ -180,13 +195,12 @@ async def admin_delete_post(post_id: str, authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     try:
         await db["posts"].delete_one({"_id": ObjectId(post_id)})
         # Đánh dấu thông báo liên quan đã xử lý
         await db["admin_notifications"].update_many(
-            {"postId": post_id, "status": "unread"},
-            {"$set": {"status": "read"}}
+            {"postId": post_id, "status": "unread"}, {"$set": {"status": "read"}}
         )
         return {"status": "success"}
     except Exception as e:  # noqa: BLE001
@@ -201,19 +215,20 @@ async def dismiss_post_report(post_id: str, authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     try:
         await db["posts"].update_one(
             {"_id": ObjectId(post_id)},
-            {"$set": {
-                "reportCount": 0,
-                "isPending": False,
-                "reportedBy": [],
-            }}
+            {
+                "$set": {
+                    "reportCount": 0,
+                    "isPending": False,
+                    "reportedBy": [],
+                }
+            },
         )
         await db["admin_notifications"].update_many(
-            {"postId": post_id, "status": "unread"},
-            {"$set": {"status": "read"}}
+            {"postId": post_id, "status": "unread"}, {"$set": {"status": "read"}}
         )
         return {"status": "success"}
     except Exception as e:  # noqa: BLE001
@@ -221,6 +236,7 @@ async def dismiss_post_report(post_id: str, authorization: str = Header(...)):
 
 
 # ==================== Support Management ====================
+
 
 @router.get("/support")
 async def get_all_support_requests(authorization: str = Header(...)):
@@ -230,7 +246,7 @@ async def get_all_support_requests(authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     result = []
     async for doc in db["support_requests"].find().sort("createdAt", -1):
         doc["id"] = str(doc.pop("_id"))
@@ -240,11 +256,10 @@ async def get_all_support_requests(authorization: str = Header(...)):
     return {"data": result}
 
 
-
-
-
 @router.put("/support/{request_id}")
-async def update_support_request(request_id: str, body: UpdateSupportRequest, authorization: str = Header(...)):
+async def update_support_request(
+    request_id: str, body: UpdateSupportRequest, authorization: str = Header(...)
+):
     """
     Cập nhật trạng thái yêu cầu hỗ trợ và gửi thông báo cho user.
     Migrate từ: support_management_screen.dart.
@@ -261,31 +276,35 @@ async def update_support_request(request_id: str, body: UpdateSupportRequest, au
 
     try:
         await db["support_requests"].update_one(
-            {"_id": ObjectId(request_id)},
-            {"$set": update_data}
+            {"_id": ObjectId(request_id)}, {"$set": update_data}
         )
 
         # Gửi notification cho user nếu resolve
         if body.status == "resolved":
-            req_doc = await db["support_requests"].find_one({"_id": ObjectId(request_id)})
+            req_doc = await db["support_requests"].find_one(
+                {"_id": ObjectId(request_id)}
+            )
             if req_doc:
                 user_uid = req_doc.get("userId") or req_doc.get("uid")
                 if user_uid:
-                    await db["notifications"].insert_one({
-                        "receiverId": user_uid,
-                        "senderId": "admin",
-                        "senderName": "Quản trị viên",
-                        "type": "support",
-                        "postId": request_id,
-                        "isRead": False,
-                        "createdAt": datetime.now(timezone.utc),
-                    })
+                    await db["notifications"].insert_one(
+                        {
+                            "receiverId": user_uid,
+                            "senderId": "admin",
+                            "senderName": "Quản trị viên",
+                            "type": "support",
+                            "postId": request_id,
+                            "isRead": False,
+                            "createdAt": datetime.now(timezone.utc),
+                        }
+                    )
         return {"status": "success"}
     except Exception as e:  # noqa: BLE001
         return {"status": "error", "message": str(e)}
 
 
 # ==================== Admin Notifications ====================
+
 
 @router.get("/notifications")
 async def get_admin_notifications(authorization: str = Header(...)):
@@ -295,9 +314,11 @@ async def get_admin_notifications(authorization: str = Header(...)):
     """
     await require_admin(authorization)
     db = get_db()
-    
+
     notifs = []
-    async for doc in db["admin_notifications"].find({"status": "unread"}).sort("createdAt", -1):
+    async for doc in (
+        db["admin_notifications"].find({"status": "unread"}).sort("createdAt", -1)
+    ):
         doc["id"] = str(doc.pop("_id"))
         if "createdAt" in doc and isinstance(doc["createdAt"], datetime):
             doc["createdAt"] = doc["createdAt"].isoformat()
@@ -312,8 +333,7 @@ async def resolve_admin_notification(notif_id: str, authorization: str = Header(
     db = get_db()
     try:
         await db["admin_notifications"].update_one(
-            {"_id": ObjectId(notif_id)},
-            {"$set": {"status": "read"}}
+            {"_id": ObjectId(notif_id)}, {"$set": {"status": "read"}}
         )
         return {"status": "success"}
     except Exception as e:  # noqa: BLE001

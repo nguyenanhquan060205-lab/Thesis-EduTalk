@@ -3,6 +3,7 @@ Firebase Admin SDK Configuration
 Khởi tạo kết nối Firebase một lần duy nhất, dùng chung cho toàn bộ Backend.
 Tương đương với: FirebaseFirestore.instance và FirebaseAuth.instance trong Dart.
 """
+
 import json
 import os
 
@@ -37,7 +38,9 @@ def _initialize_firebase() -> firebase_admin.App:
         cred = credentials.Certificate(cred_dict)
     else:
         # Đọc từ file local khi chạy development
-        key_path = os.path.join(os.path.dirname(__file__), "..", "..", "serviceAccountKey.json")
+        key_path = os.path.join(
+            os.path.dirname(__file__), "..", "..", "serviceAccountKey.json"
+        )
         if not os.path.exists(key_path):
             raise FileNotFoundError(
                 "Không tìm thấy Firebase credentials. "

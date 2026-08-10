@@ -3,6 +3,7 @@ Auth Router (Python)
 Migrate từ: mobile/lib/services/auth_service.dart
 Định nghĩa các API Endpoints cho chức năng xác thực người dùng.
 """
+
 # pyrefly: ignore [missing-import]
 from app.services.auth_service import AuthService
 from fastapi import APIRouter, Header, HTTPException
@@ -22,6 +23,7 @@ from app.models.auth_models import (
 )
 
 # ==================== Endpoints ====================
+
 
 @router.get("/")
 def get_auth_status():
@@ -80,11 +82,15 @@ async def delete_account(uid: str, authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "")
     decoded = await auth_service.verify_token(token)
     if not decoded or decoded.get("uid") != uid:
-        raise HTTPException(status_code=403, detail="Không có quyền thực hiện hành động này.")
+        raise HTTPException(
+            status_code=403, detail="Không có quyền thực hiện hành động này."
+        )
 
     result = await auth_service.delete_account(uid=uid)
     if result["status"] != "success":
-        raise HTTPException(status_code=400, detail=result.get("message", "Lỗi xóa tài khoản"))
+        raise HTTPException(
+            status_code=400, detail=result.get("message", "Lỗi xóa tài khoản")
+        )
     return result
 
 
@@ -95,14 +101,15 @@ async def resend_verification_email(body: ResendVerifyRequest):
     Tương đương: auth_service.resendVerificationEmail() trong Dart.
     """
     result = await auth_service.resend_verification_email(
-        email=body.email,
-        password=body.password
+        email=body.email, password=body.password
     )
     return result
 
 
 @router.post("/change-password")
-async def change_password(body: ChangePasswordRequest, authorization: str = Header(...)):
+async def change_password(
+    body: ChangePasswordRequest, authorization: str = Header(...)
+):
     """
     Đổi mật khẩu: xác minh mật khẩu cũ, sau đó cập nhật mật khẩu mới.
     Migrate từ: ChangePass.dart — _handleChangePassword().

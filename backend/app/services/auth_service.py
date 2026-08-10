@@ -4,6 +4,7 @@ Migrate từ: mobile/lib/services/auth_service.dart + OTP_service.dart + ChangeP
 Chứa toàn bộ logic: Đăng ký, Đăng nhập, Google Sign-in, Đổi mật khẩu, Xóa tài khoản, OTP.
 Sử dụng Firebase Admin SDK để thay thế FirebaseAuth + Firestore trong Dart.
 """
+
 import os
 import random
 from datetime import datetime, timedelta, timezone
@@ -24,13 +25,16 @@ class AuthService:
     @property
     def db(self):
         from app.core.mongodb import get_db as get_mongo_db
+
         return get_mongo_db()
 
     # ============================================================
     # ĐĂNG KÝ TÀI KHOẢN
     # Tương đương: Future<Map<String, dynamic>> register(...) trong Dart
     # ============================================================
-    async def register(self, name: str, email: str, password: str, phone: str | None = None) -> dict:
+    async def register(
+        self, name: str, email: str, password: str, phone: str | None = None
+    ) -> dict:
         """
         Tạo tài khoản mới bằng Email/Password.
         - Tạo user trong Firebase Authentication
@@ -57,7 +61,9 @@ class AuthService:
                 "isNotificationEnabled": True,
                 "phone": phone,
             }
-            await self.db["users"].update_one({"_id": uid}, {"$set": user_data}, upsert=True)
+            await self.db["users"].update_one(
+                {"_id": uid}, {"$set": user_data}, upsert=True
+            )
 
             # Gửi email xác thực qua Firebase REST API
             await self._send_email_verification(email, password)
@@ -91,8 +97,12 @@ class AuthService:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(
                     f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}",
-                    json={"email": email, "password": password, "returnSecureToken": True},
-                    timeout=10.0
+                    json={
+                        "email": email,
+                        "password": password,
+                        "returnSecureToken": True,
+                    },
+                    timeout=10.0,
                 )
 
             data = resp.json()
@@ -100,10 +110,16 @@ class AuthService:
             # Kiểm tra lỗi từ Firebase
             if "error" in data:
                 code = data["error"].get("message", "")
-                if code in ["EMAIL_NOT_FOUND", "INVALID_PASSWORD", "INVALID_LOGIN_CREDENTIALS"]:
+                if code in [
+                    "EMAIL_NOT_FOUND",
+                    "INVALID_PASSWORD",
+                    "INVALID_LOGIN_CREDENTIALS",
+                ]:
                     return {"status": "Sai email hoặc mật khẩu."}
                 if code == "EMAIL_NOT_VERIFIED":
-                    return {"status": "Vui lòng xác thực email trước khi đăng nhập. Kiểm tra hộp thư của bạn."}
+                    return {
+                        "status": "Vui lòng xác thực email trước khi đăng nhập. Kiểm tra hộp thư của bạn."
+                    }
                 return {"status": f"Lỗi đăng nhập: {code}"}
 
             uid = data["localId"]
@@ -113,13 +129,20 @@ class AuthService:
             if email != "admin@edutalk.com":
                 user_record = self.auth.get_user(uid)
                 if not user_record.email_verified:
-                    return {"status": "Vui lòng xác thực email trước khi đăng nhập. Kiểm tra hộp thư của bạn."}
+                    return {
+                        "status": "Vui lòng xác thực email trước khi đăng nhập. Kiểm tra hộp thư của bạn."
+                    }
 
             # Lấy role từ MongoDB
             user_doc = await self.db["users"].find_one({"_id": uid})
             if user_doc:
                 role = user_doc.get("role", "user")
-                return {"status": "success", "role": role, "uid": uid, "idToken": id_token}
+                return {
+                    "status": "success",
+                    "role": role,
+                    "uid": uid,
+                    "idToken": id_token,
+                }
             else:
                 return {"status": "Không tìm thấy dữ liệu người dùng."}
 
@@ -226,7 +249,9 @@ class AuthService:
     # ĐỔI MẬT KHẨU
     # Migrate từ: ChangePass.dart — _handleChangePassword()
     # ============================================================
-    async def change_password(self, uid: str, current_password: str, new_password: str) -> dict:
+    async def change_password(
+        self, uid: str, current_password: str, new_password: str
+    ) -> dict:
         """
         Đổi mật khẩu: Xác minh mật khẩu cũ trước (re-authenticate),
         sau đó cập nhật mật khẩu mới qua Firebase Admin SDK.
@@ -241,8 +266,12 @@ class AuthService:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(
                     f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}",
-                    json={"email": email, "password": current_password, "returnSecureToken": True},
-                    timeout=10.0
+                    json={
+                        "email": email,
+                        "password": current_password,
+                        "returnSecureToken": True,
+                    },
+                    timeout=10.0,
                 )
             data = resp.json()
             if "error" in data:
@@ -269,13 +298,15 @@ class AuthService:
             expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
             # Lưu OTP vào Firestore (server-side — bảo mật hơn Dart)
-            self.db.collection("otp_codes").document(email).set({
-                "otp": otp,
-                "email": email,
-                "expiresAt": expires_at,
-                "createdAt": datetime.now(timezone.utc),
-                "verified": False,
-            })
+            self.db.collection("otp_codes").document(email).set(
+                {
+                    "otp": otp,
+                    "email": email,
+                    "expiresAt": expires_at,
+                    "createdAt": datetime.now(timezone.utc),
+                    "verified": False,
+                }
+            )
 
             # Gửi email qua EmailJS
             service_id = os.getenv("EMAILJS_SERVICE_ID", "service_jz7he5o")
@@ -285,19 +316,25 @@ class AuthService:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(
                     "https://api.emailjs.com/api/v1.0/email/send",
-                    headers={"Content-Type": "application/json", "origin": "http://localhost"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "origin": "http://localhost",
+                    },
                     json={
                         "service_id": service_id,
                         "template_id": template_id,
                         "user_id": public_key,
                         "template_params": {"to_email": email, "otp_code": otp},
                     },
-                    timeout=15.0
+                    timeout=15.0,
                 )
 
             if resp.status_code == 200:
                 return {"status": "success"}
-            return {"status": "error", "message": f"Gửi email thất bại ({resp.status_code})."}
+            return {
+                "status": "error",
+                "message": f"Gửi email thất bại ({resp.status_code}).",
+            }
 
         except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
@@ -313,7 +350,10 @@ class AuthService:
         try:
             doc = self.db.collection("otp_codes").document(email).get()
             if not doc.exists:
-                return {"status": "error", "message": "Mã OTP không tồn tại. Vui lòng gửi lại."}
+                return {
+                    "status": "error",
+                    "message": "Mã OTP không tồn tại. Vui lòng gửi lại.",
+                }
 
             data = doc.to_dict()
             saved_otp = data.get("otp", "")
@@ -324,9 +364,16 @@ class AuthService:
                 return {"status": "error", "message": "Mã OTP này đã được sử dụng."}
 
             now = datetime.now(timezone.utc)
-            if expires_at and now > expires_at.replace(tzinfo=timezone.utc) if hasattr(expires_at, 'replace') else now > expires_at:
+            if (
+                expires_at and now > expires_at.replace(tzinfo=timezone.utc)
+                if hasattr(expires_at, "replace")
+                else now > expires_at
+            ):
                 self.db.collection("otp_codes").document(email).delete()
-                return {"status": "error", "message": "Mã OTP đã hết hạn. Vui lòng gửi lại."}
+                return {
+                    "status": "error",
+                    "message": "Mã OTP đã hết hạn. Vui lòng gửi lại.",
+                }
 
             if input_otp.strip() != saved_otp:
                 return {"status": "error", "message": "Mã OTP không đúng."}
@@ -352,7 +399,7 @@ class AuthService:
             sign_in = await client.post(
                 f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}",
                 json={"email": email, "password": password, "returnSecureToken": True},
-                timeout=10.0
+                timeout=10.0,
             )
             sign_in_data = sign_in.json()
             if "idToken" not in sign_in_data:
@@ -364,5 +411,5 @@ class AuthService:
             await client.post(
                 f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={api_key}",
                 json={"requestType": "VERIFY_EMAIL", "idToken": id_token},
-                timeout=10.0
+                timeout=10.0,
             )
