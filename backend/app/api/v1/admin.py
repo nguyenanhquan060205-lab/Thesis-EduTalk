@@ -65,8 +65,8 @@ async def get_dashboard(authorization: str = Header(...)):
                     today_revenue += amount
                 if (now - ts_dt).days <= 30:
                     month_revenue += amount
-            except Exception:  # noqa: BLE001
-                continue
+            except Exception as e:  # noqa: BLE001
+                print(f"Lỗi parse ngày tháng: {e}")
 
     # Admin notifications chưa đọc
     unread_notifs = await db["admin_notifications"].count_documents({"status": "unread"})
