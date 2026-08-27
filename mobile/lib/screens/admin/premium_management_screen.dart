@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import '../../services/admin_service.dart';
 import '../../models/user_model.dart';
@@ -89,7 +91,7 @@ class _PremiumManagementScreenState extends State<PremiumManagementScreen> {
       body: StreamBuilder<List<UserModel>>(
         stream: _adminService.getUsersStream(),
         builder: (context, userSnapshot) {
-          return StreamBuilder<QuerySnapshot>(
+          return StreamBuilder<List<Map<String, dynamic>>>(
             stream: _adminService.getSuccessfulTransactionsStream(),
             builder: (context, transSnapshot) {
               if (userSnapshot.hasError) {
@@ -111,10 +113,9 @@ class _PremiumManagementScreenState extends State<PremiumManagementScreen> {
               }).toList();
 
               // Tính tổng doanh thu từ transactions
-              final transactions = transSnapshot.data?.docs ?? [];
+              final transactions = transSnapshot.data ?? [];
               int totalRevenue = 0;
-              for (var doc in transactions) {
-                final data = doc.data() as Map<String, dynamic>;
+              for (var data in transactions) {
                 if (data['status']?.toString().toLowerCase() != 'success') continue;
                 
                 num amt = 0;

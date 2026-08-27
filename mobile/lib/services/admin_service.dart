@@ -24,7 +24,7 @@ class AdminService {
     final result = await ApiClient.get('/api/v1/admin/users', withAuth: true);
     if (result['data'] == null) return [];
     return (result['data'] as List)
-        .map((e) => UserModel.fromMap(Map<String, dynamic>.from(e)))
+        .map((e) => UserModel.fromMap(Map<String, dynamic>.from(e), e['id'] ?? ''))
         .toList();
   }
 

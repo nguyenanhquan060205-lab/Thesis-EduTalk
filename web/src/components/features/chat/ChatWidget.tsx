@@ -6,7 +6,7 @@ import { MessageSquare, X, Send, Maximize2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
-import animationData from "../../public/animations/Live chatbot.json";
+import animationData from "@/assets/animations/Live chatbot.json";
 import api from "@/lib/api";
 
 type Message = { id: number; text: string; sender: "bot" | "user" };

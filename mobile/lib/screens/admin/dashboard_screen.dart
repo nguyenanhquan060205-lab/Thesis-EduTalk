@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/admin_service.dart';
@@ -249,7 +251,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildMainContent(
     int users,
     int premium,
-    List<QueryDocumentSnapshot> transactions,
+    List<Map<String, dynamic>> transactions,
     double filteredRevenue,
   ) {
     return Padding(
@@ -391,7 +393,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       title: 'Giao dịch gần đây',
       icon: Icons.history_rounded,
       iconColor: const Color(0xFF2563EB),
-      child: StreamBuilder<QuerySnapshot>(
+      child: StreamBuilder<List<Map<String, dynamic>>>(
         stream: _adminService.getRecentTransactionsStream(limit: 5),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -399,7 +401,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
           if (!snapshot.hasData)
             return const Center(child: CircularProgressIndicator());
-          final docs = snapshot.data!.docs;
+          final docs = snapshot.data ?? [];
 
           if (docs.isEmpty) {
             return const Padding(
@@ -414,12 +416,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
 
           return Column(
-            children: docs.map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
+            children: docs.map((data) {
               final amount = ((data['amount'] ?? 0) as num).toDouble();
               final status = data['status'] ?? 'pending';
-              final userName =
-                  data['userName'] ?? data['userEmail'] ?? 'Người dùng';
+              final userName = data['userName'] ?? data['userEmail'] ?? 'Người dùng';
               final planName = data['plan'] ?? 'Gói cước';
 
               return _buildTransactionItem(

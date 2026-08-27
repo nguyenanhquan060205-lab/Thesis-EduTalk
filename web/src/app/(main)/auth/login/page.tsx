@@ -76,8 +76,8 @@ export default function LoginPage() {
       const idToken = await result.user.getIdToken();
       
       const res = await AuthService.googleLogin(idToken);
-      if (res.status === "success" && res.idToken) {
-        localStorage.setItem("authToken", res.idToken);
+      if (res.status === "success") {
+        localStorage.setItem("authToken", idToken);
         try {
           const profile = await AuthService.getProfile(res.uid);
           setUser(profile);

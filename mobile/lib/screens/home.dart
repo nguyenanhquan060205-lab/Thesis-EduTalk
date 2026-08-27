@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -195,6 +195,13 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           onDismiss: () {
             if (!isRemoved) {
+              isRemoved = true;
+              overlayEntry.remove();
+            }
+          },
+        );
+      },
+    );
 
     Overlay.of(context).insert(overlayEntry);
 
@@ -213,15 +220,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _usageSubscription = Stream.periodic(
       const Duration(seconds: 20),
-      (_) => _,
     ).asyncMap((_) async {
       return await ApiClient.get('/api/v1/users/$uid/premium', withAuth: true);
     }).listen((result) {
       if (!mounted) return;
       final isPremium = result['isPremium'] as bool? ?? false;
-      currentUserNotifier.value = currentUserNotifier.value?.copyWith(
-        isPremium: isPremium,
-      ) ?? currentUserNotifier.value;
+      final current = currentUserNotifier.value;
+      if (current != null) {
+        currentUserNotifier.value = UserModel(
+          uid: current.uid,
+          email: current.email,
+          name: current.name,
+          role: current.role,
+          createdAt: current.createdAt,
+          isPremium: isPremium,
+          usageCount: current.usageCount,
+          freeLimit: current.freeLimit,
+          plan: current.plan,
+          premiumStart: current.premiumStart,
+          premiumExpiry: current.premiumExpiry,
+          premiumAt: current.premiumAt,
+          subscriptionStatus: current.subscriptionStatus,
+        );
+      }
     });
 
     // Load lần đầu ngay khi khởi tạo
@@ -230,11 +251,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final usageCount = result['usageCount'] as int? ?? 0;
       freeUsageCount.value = (3 - usageCount).clamp(0, 3);
       try {
-        currentUserNotifier.value = UserModel.fromMap(result);
+        currentUserNotifier.value = UserModel.fromMap(result, uid);
       } catch (_) {}
     });
-  }
-
   }
 
   void _showUpgradeSuccessDialog(String planName) {

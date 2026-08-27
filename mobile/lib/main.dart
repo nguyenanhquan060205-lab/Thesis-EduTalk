@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -20,27 +21,52 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await dotenv.load(fileName: ".env");
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode
-        ? AndroidProvider.debug
-        : AndroidProvider.playIntegrity,
-  );
+    FlutterError.onError = (details) {
+      debugPrint('\n===== FLUTTER ERROR =====');
+      debugPrint(details.exceptionAsString());
+      debugPrint(details.stack.toString());
+    };
 
-  await NotificationService.initialize();
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    debugPrint('[STEP 1] Firebase init...');
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    debugPrint('[STEP 2] dotenv load...');
+    await dotenv.load(fileName: ".env");
+    debugPrint('[STEP 3] AppCheck activate...');
+    try {
+      await FirebaseAppCheck.instance.activate(
+        androidProvider: kDebugMode
+            ? AndroidProvider.debug
+            : AndroidProvider.playIntegrity,
+        appleProvider: kDebugMode
+            ? AppleProvider.debug
+            : AppleProvider.appAttest,
+      );
+    } catch (e) {
+      debugPrint('[STEP 3 ERROR] AppCheck error (ignored): $e');
+    }
+    debugPrint('[STEP 4] NotificationService init (background)...');
+    // Chạy background — không block runApp
+    NotificationService.initialize().catchError((e) {
+      debugPrint('[STEP 4 ERROR] Notification init error: $e');
+    });
+    debugPrint('[STEP 5] runApp...');
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  runApp(
-    // Bọc toàn bộ app bằng ChangeNotifierProvider để ThemeNotifier
-    // có thể được truy cập từ bất kỳ widget nào qua context.watch / context.read
-    ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
-      child: const MyApp(),
-    ),
-  );
+    runApp(
+      ChangeNotifierProvider(
+        create: (_) => ThemeNotifier(),
+        child: const MyApp(),
+      ),
+    );
+    debugPrint('[STEP 6] runApp done!');
+  }, (error, stack) {
+    debugPrint('\n===== UNCAUGHT ASYNC ERROR =====');
+    debugPrint(error.toString());
+    debugPrint(stack.toString());
+  });
 }
 
 class MyApp extends StatelessWidget {
