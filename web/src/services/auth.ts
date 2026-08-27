@@ -15,7 +15,7 @@ export const AuthService = {
 
   // Đăng nhập bằng Google (Truyền idToken lấy từ Firebase Web SDK)
   googleLogin: async (idToken: string) => {
-    const response = await api.post("/api/v1/auth/google-login", { idToken });
+    const response = await api.post("/api/v1/auth/google", { idToken });
     return response.data;
   },
 

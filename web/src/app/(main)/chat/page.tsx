@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
-import animationData from "../../../../public/animations/Live chatbot.json";
+import animationData from "@/assets/animations/Live chatbot.json";
 import api from "@/lib/api";
 
 type Message = { id: number; text: string; sender: "bot" | "user" };

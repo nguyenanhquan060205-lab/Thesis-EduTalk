@@ -22,7 +22,7 @@ class PostService {
         );
         if (result['data'] != null) {
           yield (result['data'] as List)
-              .map((e) => NotificationModel.fromMap(Map<String, dynamic>.from(e)))
+              .map((e) => NotificationModel.fromMap(Map<String, dynamic>.from(e), e['id'] ?? ''))
               .toList();
         } else {
           yield [];
@@ -175,17 +175,21 @@ class PostService {
   // 7. LẤY BÌNH LUẬN
   // → GET /api/v1/posts/{id}/comments
   // ===========================================================
-  Future<List<Map<String, dynamic>>> getComments(String postId) async {
+  Future<List<CommentModel>> getComments(String postId) async {
     final result = await ApiClient.get('/api/v1/posts/$postId/comments');
     if (result['data'] == null) return [];
-    return List<Map<String, dynamic>>.from(result['data']);
+    return (result['data'] as List).map((e) => CommentModel.fromMap(Map<String, dynamic>.from(e), e['id'] ?? '')).toList();
   }
 
-  Stream<List<Map<String, dynamic>>> getCommentsStream(String postId) async* {
+  Stream<List<CommentModel>> getCommentsStream(String postId) async* {
     while (true) {
       yield await getComments(postId);
       await Future.delayed(const Duration(seconds: 15));
     }
+  }
+  
+  Future<void> upvoteComment(String postId, String commentId, String uid) async {
+    await ApiClient.post('/api/v1/posts/$postId/comments/$commentId/upvote', withAuth: true);
   }
 
   // ===========================================================

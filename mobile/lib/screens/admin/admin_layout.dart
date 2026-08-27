@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Login.dart';
@@ -130,7 +132,7 @@ class _AdminLayoutState extends State<AdminLayout> {
   }
 
   /// Thông báo báo cáo bài viết — Giao diện màu đỏ cảnh báo
-  Widget _buildPostReportNotification(DocumentSnapshot doc, Map<String, dynamic> data) {
+  Widget _buildPostReportNotification(String docId, Map<String, dynamic> data) {
     final String targetTitle = data['targetTitle'] ?? '';
     final String displayMessage = targetTitle.isNotEmpty
         ? 'Bài viết "$targetTitle" vừa bị báo cáo!'
@@ -190,7 +192,7 @@ class _AdminLayoutState extends State<AdminLayout> {
               ),
               const SizedBox(width: 8),
               TextButton(
-                onPressed: () => _adminService.resolveAdminNotification(doc.id),
+                onPressed: () => _adminService.resolveAdminNotification(docId),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey[700],
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -205,7 +207,7 @@ class _AdminLayoutState extends State<AdminLayout> {
   }
 
   /// Thông báo thanh toán Premium — Giao diện màu xanh lá / vàng gold
-  Widget _buildPremiumPaymentNotification(DocumentSnapshot doc, Map<String, dynamic> data) {
+  Widget _buildPremiumPaymentNotification(String docId, Map<String, dynamic> data) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -240,7 +242,7 @@ class _AdminLayoutState extends State<AdminLayout> {
           Row(
             children: [
               TextButton(
-                onPressed: () => _adminService.resolveAdminNotification(doc.id),
+                onPressed: () => _adminService.resolveAdminNotification(docId),
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF059669),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

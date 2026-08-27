@@ -51,20 +51,19 @@ class _SupportRequestScreenState
       if (mounted) {
         setState(() => isLoading = false);
         if (result['status'] == 'success') {
-          ScaffoldMessenger.of(context).showSnackBar(
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Gửi hỗ trợ thành công')),
           );
-          Navigator.pop(context);
+          if (mounted) Navigator.pop(context);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(result['message']?.toString() ?? 'Gửi thất bại')),
           );
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          content: Text("Lỗi: $e"),
-        ),
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e')),
       );
     } finally {
       setState(() {

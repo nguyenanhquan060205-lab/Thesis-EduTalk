@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -53,10 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD9RVsNefgZMqQikyoIO2mjCLDVJwogO1w',
-    appId: '1:404877063083:android:5efa2f4a8b41b603bdd8ee',
-    messagingSenderId: '404877063083',
-    projectId: 'edutalk-a2f80',
-    storageBucket: 'edutalk-a2f80.firebasestorage.app',
+    apiKey: 'AIzaSyByAcOx46TZchEHMq8bKIp17b6nOHEyIkA',
+    appId: '1:912812536868:android:3927862449c23055bf94b1',
+    messagingSenderId: '912812536868',
+    projectId: 'thesis-edutalk',
+    storageBucket: 'thesis-edutalk.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBGTQ_ZcVYJAOJVO5gBFKPFQKDvUelqYwI',
+    appId: '1:912812536868:ios:aa862627519340fabf94b1',
+    messagingSenderId: '912812536868',
+    projectId: 'thesis-edutalk',
+    storageBucket: 'thesis-edutalk.firebasestorage.app',
+    iosBundleId: 'com.edutalk.vn',
+    iosClientId: '912812536868-9e6hvpaea178s8t87igj2tq5n8m3q4j7.apps.googleusercontent.com',
   );
 }
