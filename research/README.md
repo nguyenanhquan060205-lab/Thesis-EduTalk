@@ -24,6 +24,7 @@ research/
 
 ## Quy trình
 data/raw → EDA → Preprocessing → Train → Evaluate → models/
+Notebook: 01 -> 02 -> 03 -> 04 -> 06 -> 05 -> -07
 
 ## Cài đặt
 ```bash
