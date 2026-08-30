@@ -1,0 +1,1329 @@
+{
+  "theo_nganh": {
+    "7220201": {
+      "so_mau": 22,
+      "gioi_tinh_ty_le_nam": 0.5909090909090909,
+      "likert_mean": {
+        "likert_nang_dong": 4.090909090909091,
+        "likert_huong_noi": 2.909090909090909,
+        "likert_sang_tao": 3.9545454545454546,
+        "likert_logic": 3.3181818181818183,
+        "likert_to_mo": 4.409090909090909,
+        "likert_thi_nghiem": 2.909090909090909,
+        "likert_moi_truong": 3.272727272727273,
+        "likert_dinh_duong": 3.3181818181818183,
+        "likert_tranh_luan": 3.3181818181818183,
+        "likert_thiet_ke": 3.3636363636363638
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0192943828752512,
+        "likert_huong_noi": 1.2309149097933274,
+        "likert_sang_tao": 0.998917162649385,
+        "likert_logic": 1.1705254675272427,
+        "likert_to_mo": 1.0075472768815938,
+        "likert_thi_nghiem": 1.444499943433743,
+        "likert_moi_truong": 1.5790840679034455,
+        "likert_dinh_duong": 1.4924050144892729,
+        "likert_tranh_luan": 0.9945740239808646,
+        "likert_thiet_ke": 1.1358007263790995
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.5909090909090909,
+        "Kinh doanh": 0.22727272727272727,
+        "Chưa xác định": 0.09090909090909091,
+        "Nghiên cứu": 0.09090909090909091
+      }
+    },
+    "7220204": {
+      "so_mau": 17,
+      "gioi_tinh_ty_le_nam": 0.29411764705882354,
+      "likert_mean": {
+        "likert_nang_dong": 3.8823529411764706,
+        "likert_huong_noi": 3.4705882352941178,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 3.2941176470588234,
+        "likert_to_mo": 3.764705882352941,
+        "likert_thi_nghiem": 2.764705882352941,
+        "likert_moi_truong": 2.9411764705882355,
+        "likert_dinh_duong": 3.5294117647058822,
+        "likert_tranh_luan": 3.0,
+        "likert_thiet_ke": 3.7058823529411766
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.1663164740528442,
+        "likert_huong_noi": 1.3284223283101428,
+        "likert_sang_tao": 1.0,
+        "likert_logic": 1.1048023512348792,
+        "likert_to_mo": 1.0914103126634984,
+        "likert_thi_nghiem": 1.6019289842524966,
+        "likert_moi_truong": 1.2485285456935955,
+        "likert_dinh_duong": 1.328422328310143,
+        "likert_tranh_luan": 1.0,
+        "likert_thiet_ke": 0.985184366143778
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6470588235294118,
+        "Chưa xác định": 0.23529411764705882,
+        "Kinh doanh": 0.11764705882352941
+      }
+    },
+    "7340101": {
+      "so_mau": 21,
+      "gioi_tinh_ty_le_nam": 0.47619047619047616,
+      "likert_mean": {
+        "likert_nang_dong": 3.8095238095238093,
+        "likert_huong_noi": 2.857142857142857,
+        "likert_sang_tao": 3.761904761904762,
+        "likert_logic": 3.2857142857142856,
+        "likert_to_mo": 3.238095238095238,
+        "likert_thi_nghiem": 2.3333333333333335,
+        "likert_moi_truong": 2.7142857142857144,
+        "likert_dinh_duong": 2.9047619047619047,
+        "likert_tranh_luan": 3.4285714285714284,
+        "likert_thiet_ke": 3.238095238095238
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.9283882603225668,
+        "likert_huong_noi": 1.2363540870525032,
+        "likert_sang_tao": 0.9952267030562386,
+        "likert_logic": 1.1464230084422218,
+        "likert_to_mo": 0.9436504599035548,
+        "likert_thi_nghiem": 1.1972189997378646,
+        "likert_moi_truong": 1.52127765851133,
+        "likert_dinh_duong": 1.3749458863810566,
+        "likert_tranh_luan": 1.0757057484009545,
+        "likert_thiet_ke": 1.2611408289624877
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.47619047619047616,
+        "Kinh doanh": 0.38095238095238093,
+        "Chưa xác định": 0.09523809523809523,
+        "Nghiên cứu": 0.047619047619047616
+      }
+    },
+    "7340115": {
+      "so_mau": 21,
+      "gioi_tinh_ty_le_nam": 0.19047619047619047,
+      "likert_mean": {
+        "likert_nang_dong": 4.0476190476190474,
+        "likert_huong_noi": 2.5238095238095237,
+        "likert_sang_tao": 3.9523809523809526,
+        "likert_logic": 3.5714285714285716,
+        "likert_to_mo": 3.6666666666666665,
+        "likert_thi_nghiem": 2.619047619047619,
+        "likert_moi_truong": 2.6666666666666665,
+        "likert_dinh_duong": 2.9523809523809526,
+        "likert_tranh_luan": 3.6666666666666665,
+        "likert_thiet_ke": 3.380952380952381
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.9206622874969125,
+        "likert_huong_noi": 1.0779168622415933,
+        "likert_sang_tao": 0.6690433824641325,
+        "likert_logic": 0.8701395618766321,
+        "likert_to_mo": 1.064581294844754,
+        "likert_thi_nghiem": 1.2031704150364766,
+        "likert_moi_truong": 1.4259499757471628,
+        "likert_dinh_duong": 1.4654757069358222,
+        "likert_tranh_luan": 0.7958224257542215,
+        "likert_thiet_ke": 1.2440333788202982
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8095238095238095,
+        "Chưa xác định": 0.14285714285714285,
+        "Kinh doanh": 0.047619047619047616
+      }
+    },
+    "7340120": {
+      "so_mau": 14,
+      "gioi_tinh_ty_le_nam": 0.2857142857142857,
+      "likert_mean": {
+        "likert_nang_dong": 3.7142857142857144,
+        "likert_huong_noi": 3.2857142857142856,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 3.857142857142857,
+        "likert_to_mo": 3.7142857142857144,
+        "likert_thi_nghiem": 2.7857142857142856,
+        "likert_moi_truong": 3.0714285714285716,
+        "likert_dinh_duong": 2.857142857142857,
+        "likert_tranh_luan": 3.7857142857142856,
+        "likert_thiet_ke": 3.357142857142857
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.7262730392025629,
+        "likert_huong_noi": 1.2043875831929896,
+        "likert_sang_tao": 0.9607689228305228,
+        "likert_logic": 0.6629935441317958,
+        "likert_to_mo": 1.0690449676496974,
+        "likert_thi_nghiem": 1.4769288003552106,
+        "likert_moi_truong": 1.3847680013570567,
+        "likert_dinh_duong": 1.5118578920369088,
+        "likert_tranh_luan": 0.8017837257372732,
+        "likert_thiet_ke": 1.27744594087896
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.42857142857142855,
+        "Kinh doanh": 0.35714285714285715,
+        "Chưa xác định": 0.14285714285714285,
+        "Nghiên cứu": 0.07142857142857142
+      }
+    },
+    "7340122": {
+      "so_mau": 16,
+      "gioi_tinh_ty_le_nam": 0.3125,
+      "likert_mean": {
+        "likert_nang_dong": 3.6875,
+        "likert_huong_noi": 3.0,
+        "likert_sang_tao": 3.6875,
+        "likert_logic": 3.5625,
+        "likert_to_mo": 3.375,
+        "likert_thi_nghiem": 2.9375,
+        "likert_moi_truong": 2.875,
+        "likert_dinh_duong": 3.1875,
+        "likert_tranh_luan": 3.6875,
+        "likert_thiet_ke": 3.25
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.4476993242152645,
+        "likert_huong_noi": 1.3662601021279464,
+        "likert_sang_tao": 1.1954775893619531,
+        "likert_logic": 0.8920949127381756,
+        "likert_to_mo": 1.0878112581387147,
+        "likert_thi_nghiem": 1.3889444433333777,
+        "likert_moi_truong": 1.5,
+        "likert_dinh_duong": 1.558578412100805,
+        "likert_tranh_luan": 1.1954775893619531,
+        "likert_thiet_ke": 1.2382783747337807
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.625,
+        "Kinh doanh": 0.3125,
+        "Nghiên cứu": 0.0625
+      }
+    },
+    "7340123": {
+      "so_mau": 8,
+      "gioi_tinh_ty_le_nam": 0.25,
+      "likert_mean": {
+        "likert_nang_dong": 3.25,
+        "likert_huong_noi": 2.375,
+        "likert_sang_tao": 4.125,
+        "likert_logic": 2.875,
+        "likert_to_mo": 3.375,
+        "likert_thi_nghiem": 2.25,
+        "likert_moi_truong": 2.625,
+        "likert_dinh_duong": 3.0,
+        "likert_tranh_luan": 3.0,
+        "likert_thiet_ke": 4.625
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0350983390135313,
+        "likert_huong_noi": 0.9161253813129043,
+        "likert_sang_tao": 0.6408699444616557,
+        "likert_logic": 1.1259916264596033,
+        "likert_to_mo": 0.9161253813129043,
+        "likert_thi_nghiem": 1.3887301496588271,
+        "likert_moi_truong": 1.5059406173077154,
+        "likert_dinh_duong": 1.0690449676496976,
+        "likert_tranh_luan": 1.0690449676496976,
+        "likert_thiet_ke": 0.5175491695067657
+      },
+      "muc_tieu_phan_phoi": {
+        "Kinh doanh": 0.5,
+        "Đi làm": 0.5
+      }
+    },
+    "7340129": {
+      "so_mau": 11,
+      "gioi_tinh_ty_le_nam": 0.2727272727272727,
+      "likert_mean": {
+        "likert_nang_dong": 3.0,
+        "likert_huong_noi": 3.0,
+        "likert_sang_tao": 3.1818181818181817,
+        "likert_logic": 3.4545454545454546,
+        "likert_to_mo": 3.5454545454545454,
+        "likert_thi_nghiem": 3.6363636363636362,
+        "likert_moi_truong": 3.1818181818181817,
+        "likert_dinh_duong": 3.4545454545454546,
+        "likert_tranh_luan": 3.090909090909091,
+        "likert_thiet_ke": 2.909090909090909
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.2649110640673518,
+        "likert_huong_noi": 1.3416407864998738,
+        "likert_sang_tao": 1.2504544628399563,
+        "likert_logic": 1.1281521496355325,
+        "likert_to_mo": 1.2135597524338357,
+        "likert_thi_nghiem": 1.12006493318265,
+        "likert_moi_truong": 1.3280197150781925,
+        "likert_dinh_duong": 1.3684762594679065,
+        "likert_tranh_luan": 1.1361818036340359,
+        "likert_thiet_ke": 1.4459976109624424
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.45454545454545453,
+        "Chưa xác định": 0.18181818181818182,
+        "Nghiên cứu": 0.18181818181818182,
+        "Kinh doanh": 0.18181818181818182
+      }
+    },
+    "7340201": {
+      "so_mau": 25,
+      "gioi_tinh_ty_le_nam": 0.28,
+      "likert_mean": {
+        "likert_nang_dong": 3.88,
+        "likert_huong_noi": 3.56,
+        "likert_sang_tao": 3.84,
+        "likert_logic": 3.84,
+        "likert_to_mo": 3.56,
+        "likert_thi_nghiem": 3.2,
+        "likert_moi_truong": 3.44,
+        "likert_dinh_duong": 3.6,
+        "likert_tranh_luan": 3.76,
+        "likert_thiet_ke": 3.92
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.8326663997864531,
+        "likert_huong_noi": 1.2935738607954836,
+        "likert_sang_tao": 0.8504900548115384,
+        "likert_logic": 0.8981462390204987,
+        "likert_to_mo": 1.044030650891055,
+        "likert_thi_nghiem": 1.2583057392117918,
+        "likert_moi_truong": 1.260952021291849,
+        "likert_dinh_duong": 1.3228756555322954,
+        "likert_tranh_luan": 0.8306623862918076,
+        "likert_thiet_ke": 0.9092121131323904
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.88,
+        "Kinh doanh": 0.04,
+        "Chưa xác định": 0.04,
+        "Nghiên cứu": 0.04
+      }
+    },
+    "7340205": {
+      "so_mau": 21,
+      "gioi_tinh_ty_le_nam": 0.5714285714285714,
+      "likert_mean": {
+        "likert_nang_dong": 3.5714285714285716,
+        "likert_huong_noi": 2.857142857142857,
+        "likert_sang_tao": 3.7142857142857144,
+        "likert_logic": 3.7142857142857144,
+        "likert_to_mo": 3.238095238095238,
+        "likert_thi_nghiem": 3.0952380952380953,
+        "likert_moi_truong": 3.0476190476190474,
+        "likert_dinh_duong": 2.857142857142857,
+        "likert_tranh_luan": 3.1904761904761907,
+        "likert_thiet_ke": 3.2857142857142856
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.3989792196965818,
+        "likert_huong_noi": 1.590148241067929,
+        "likert_sang_tao": 1.2305631695633161,
+        "likert_logic": 1.3093073414159544,
+        "likert_to_mo": 1.2611408289624877,
+        "likert_thi_nghiem": 1.3749458863810566,
+        "likert_moi_truong": 1.5961262630566067,
+        "likert_dinh_duong": 1.5259657363687522,
+        "likert_tranh_luan": 1.327367606168224,
+        "likert_thiet_ke": 1.1892374507581378
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6666666666666666,
+        "Kinh doanh": 0.2857142857142857,
+        "Chưa xác định": 0.047619047619047616
+      }
+    },
+    "7340301": {
+      "so_mau": 27,
+      "gioi_tinh_ty_le_nam": 0.18518518518518517,
+      "likert_mean": {
+        "likert_nang_dong": 3.5185185185185186,
+        "likert_huong_noi": 2.925925925925926,
+        "likert_sang_tao": 3.7777777777777777,
+        "likert_logic": 3.2962962962962963,
+        "likert_to_mo": 3.4814814814814814,
+        "likert_thi_nghiem": 2.740740740740741,
+        "likert_moi_truong": 2.962962962962963,
+        "likert_dinh_duong": 3.4814814814814814,
+        "likert_tranh_luan": 3.5185185185185186,
+        "likert_thiet_ke": 3.2222222222222223
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0141449740988853,
+        "likert_huong_noi": 1.1410496492240387,
+        "likert_sang_tao": 0.9336995618478524,
+        "likert_logic": 0.8234456132997965,
+        "likert_to_mo": 1.014144974098885,
+        "likert_thi_nghiem": 1.0225380411427467,
+        "likert_moi_truong": 1.2551886613169254,
+        "likert_dinh_duong": 1.4242506901841503,
+        "likert_tranh_luan": 1.08735283249559,
+        "likert_thiet_ke": 1.0500305245868344
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7777777777777778,
+        "Kinh doanh": 0.14814814814814814,
+        "Chưa xác định": 0.07407407407407407
+      }
+    },
+    "7380101": {
+      "so_mau": 9,
+      "gioi_tinh_ty_le_nam": 0.4444444444444444,
+      "likert_mean": {
+        "likert_nang_dong": 3.6666666666666665,
+        "likert_huong_noi": 3.0,
+        "likert_sang_tao": 2.5555555555555554,
+        "likert_logic": 3.7777777777777777,
+        "likert_to_mo": 4.0,
+        "likert_thi_nghiem": 2.0,
+        "likert_moi_truong": 2.0,
+        "likert_dinh_duong": 2.3333333333333335,
+        "likert_tranh_luan": 3.5555555555555554,
+        "likert_thiet_ke": 1.8888888888888888
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.118033988749895,
+        "likert_huong_noi": 0.8660254037844386,
+        "likert_sang_tao": 0.7264831572567788,
+        "likert_logic": 1.6414763002993507,
+        "likert_to_mo": 1.0,
+        "likert_thi_nghiem": 1.224744871391589,
+        "likert_moi_truong": 1.118033988749895,
+        "likert_dinh_duong": 1.3228756555322954,
+        "likert_tranh_luan": 1.509230856356236,
+        "likert_thiet_ke": 0.6009252125773316
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8888888888888888,
+        "Nghiên cứu": 0.1111111111111111
+      }
+    },
+    "7380107": {
+      "so_mau": 20,
+      "gioi_tinh_ty_le_nam": 0.15,
+      "likert_mean": {
+        "likert_nang_dong": 3.3,
+        "likert_huong_noi": 3.3,
+        "likert_sang_tao": 3.1,
+        "likert_logic": 3.7,
+        "likert_to_mo": 4.0,
+        "likert_thi_nghiem": 3.2,
+        "likert_moi_truong": 3.65,
+        "likert_dinh_duong": 3.6,
+        "likert_tranh_luan": 3.9,
+        "likert_thiet_ke": 3.0
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.1285761872936695,
+        "likert_huong_noi": 1.3416407864998738,
+        "likert_sang_tao": 1.2096106376585989,
+        "likert_logic": 1.0310954828418377,
+        "likert_to_mo": 0.9176629354822471,
+        "likert_thi_nghiem": 1.1516578439248717,
+        "likert_moi_truong": 1.268027892769755,
+        "likert_dinh_duong": 1.3138933706635725,
+        "likert_tranh_luan": 1.0711528467275953,
+        "likert_thiet_ke": 1.2139539573337679
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8,
+        "Kinh doanh": 0.15,
+        "Chưa xác định": 0.05
+      }
+    },
+    "7420201": {
+      "so_mau": 25,
+      "gioi_tinh_ty_le_nam": 0.36,
+      "likert_mean": {
+        "likert_nang_dong": 3.12,
+        "likert_huong_noi": 3.36,
+        "likert_sang_tao": 3.44,
+        "likert_logic": 3.52,
+        "likert_to_mo": 3.96,
+        "likert_thi_nghiem": 4.12,
+        "likert_moi_truong": 3.92,
+        "likert_dinh_duong": 3.96,
+        "likert_tranh_luan": 3.8,
+        "likert_thiet_ke": 3.24
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0535653752852738,
+        "likert_huong_noi": 1.3190905958272918,
+        "likert_sang_tao": 0.916515138991168,
+        "likert_logic": 1.004987562112089,
+        "likert_to_mo": 0.7895146188218007,
+        "likert_thi_nghiem": 0.725718035235908,
+        "likert_moi_truong": 0.9966610925150702,
+        "likert_dinh_duong": 1.0598742063723097,
+        "likert_tranh_luan": 1.0801234497346435,
+        "likert_thiet_ke": 1.3316656236958786
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.44,
+        "Nghiên cứu": 0.24,
+        "Chưa xác định": 0.2,
+        "Kinh doanh": 0.12
+      }
+    },
+    "7460108": {
+      "so_mau": 9,
+      "gioi_tinh_ty_le_nam": 0.3333333333333333,
+      "likert_mean": {
+        "likert_nang_dong": 2.7777777777777777,
+        "likert_huong_noi": 3.7777777777777777,
+        "likert_sang_tao": 3.5555555555555554,
+        "likert_logic": 4.222222222222222,
+        "likert_to_mo": 4.444444444444445,
+        "likert_thi_nghiem": 3.0,
+        "likert_moi_truong": 3.2222222222222223,
+        "likert_dinh_duong": 3.111111111111111,
+        "likert_tranh_luan": 3.3333333333333335,
+        "likert_thiet_ke": 3.7777777777777777
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0929064207170003,
+        "likert_huong_noi": 1.2018504251546631,
+        "likert_sang_tao": 1.0137937550497031,
+        "likert_logic": 0.9718253158075502,
+        "likert_to_mo": 0.7264831572567788,
+        "likert_thi_nghiem": 1.5,
+        "likert_moi_truong": 1.481365736219265,
+        "likert_dinh_duong": 1.8333333333333333,
+        "likert_tranh_luan": 1.5,
+        "likert_thiet_ke": 1.481365736219265
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.4444444444444444,
+        "Nghiên cứu": 0.3333333333333333,
+        "Chưa xác định": 0.2222222222222222
+      }
+    },
+    "7480107": {
+      "so_mau": 13,
+      "gioi_tinh_ty_le_nam": 0.6153846153846154,
+      "likert_mean": {
+        "likert_nang_dong": 2.076923076923077,
+        "likert_huong_noi": 3.6153846153846154,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 4.538461538461538,
+        "likert_to_mo": 4.076923076923077,
+        "likert_thi_nghiem": 1.6923076923076923,
+        "likert_moi_truong": 1.6153846153846154,
+        "likert_dinh_duong": 2.076923076923077,
+        "likert_tranh_luan": 2.076923076923077,
+        "likert_thiet_ke": 1.6923076923076923
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.1875421719907089,
+        "likert_huong_noi": 1.12089707663561,
+        "likert_sang_tao": 0.7071067811865476,
+        "likert_logic": 0.6602252917735247,
+        "likert_to_mo": 0.9540735874430286,
+        "likert_thi_nghiem": 1.031553471276484,
+        "likert_moi_truong": 0.869718492622904,
+        "likert_dinh_duong": 0.9540735874430285,
+        "likert_tranh_luan": 1.0377490433255414,
+        "likert_thiet_ke": 1.3155870289605438
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8461538461538461,
+        "Kinh doanh": 0.15384615384615385
+      }
+    },
+    "7480201": {
+      "so_mau": 43,
+      "gioi_tinh_ty_le_nam": 0.6744186046511628,
+      "likert_mean": {
+        "likert_nang_dong": 3.0930232558139537,
+        "likert_huong_noi": 3.511627906976744,
+        "likert_sang_tao": 3.697674418604651,
+        "likert_logic": 3.7906976744186047,
+        "likert_to_mo": 3.883720930232558,
+        "likert_thi_nghiem": 3.186046511627907,
+        "likert_moi_truong": 3.395348837209302,
+        "likert_dinh_duong": 3.4651162790697674,
+        "likert_tranh_luan": 3.372093023255814,
+        "likert_thiet_ke": 3.372093023255814
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.1915167102793236,
+        "likert_huong_noi": 1.202618037435229,
+        "likert_sang_tao": 0.8319479070496523,
+        "likert_logic": 0.8879655595767568,
+        "likert_to_mo": 0.9052571938032017,
+        "likert_thi_nghiem": 1.1803109750337666,
+        "likert_moi_truong": 1.15757412359026,
+        "likert_dinh_duong": 1.1821859737932285,
+        "likert_tranh_luan": 1.0240734677410204,
+        "likert_thiet_ke": 1.0915968166810772
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7209302325581395,
+        "Chưa xác định": 0.11627906976744186,
+        "Kinh doanh": 0.11627906976744186,
+        "Nghiên cứu": 0.046511627906976744
+      }
+    },
+    "7480202": {
+      "so_mau": 11,
+      "gioi_tinh_ty_le_nam": 0.6363636363636364,
+      "likert_mean": {
+        "likert_nang_dong": 2.272727272727273,
+        "likert_huong_noi": 3.6363636363636362,
+        "likert_sang_tao": 4.181818181818182,
+        "likert_logic": 4.0,
+        "likert_to_mo": 3.727272727272727,
+        "likert_thi_nghiem": 2.1818181818181817,
+        "likert_moi_truong": 2.8181818181818183,
+        "likert_dinh_duong": 2.6363636363636362,
+        "likert_tranh_luan": 2.909090909090909,
+        "likert_thiet_ke": 2.4545454545454546
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.4893561757289013,
+        "likert_huong_noi": 1.3618169680781096,
+        "likert_sang_tao": 0.8738628975053029,
+        "likert_logic": 1.0,
+        "likert_to_mo": 0.7862453931068966,
+        "likert_thi_nghiem": 1.2504544628399563,
+        "likert_moi_truong": 1.250454462839956,
+        "likert_dinh_duong": 1.6292775867068985,
+        "likert_tranh_luan": 1.3751033019046572,
+        "likert_thiet_ke": 1.4396969378057567
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6363636363636364,
+        "Chưa xác định": 0.18181818181818182,
+        "Kinh doanh": 0.09090909090909091,
+        "Nghiên cứu": 0.09090909090909091
+      }
+    },
+    "7510202": {
+      "so_mau": 13,
+      "gioi_tinh_ty_le_nam": 0.6923076923076923,
+      "likert_mean": {
+        "likert_nang_dong": 3.1538461538461537,
+        "likert_huong_noi": 3.3076923076923075,
+        "likert_sang_tao": 3.769230769230769,
+        "likert_logic": 4.076923076923077,
+        "likert_to_mo": 3.923076923076923,
+        "likert_thi_nghiem": 3.0,
+        "likert_moi_truong": 2.8461538461538463,
+        "likert_dinh_duong": 2.8461538461538463,
+        "likert_tranh_luan": 3.230769230769231,
+        "likert_thiet_ke": 2.8461538461538463
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.4632243987255136,
+        "likert_huong_noi": 1.5483655567842813,
+        "likert_sang_tao": 1.0127393670836666,
+        "likert_logic": 0.8623164985025763,
+        "likert_to_mo": 1.3204505835470495,
+        "likert_thi_nghiem": 1.632993161855452,
+        "likert_moi_truong": 1.5730095277394138,
+        "likert_dinh_duong": 1.6251232694862383,
+        "likert_tranh_luan": 1.4806443503784734,
+        "likert_thiet_ke": 1.5191090506254998
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6923076923076923,
+        "Kinh doanh": 0.15384615384615385,
+        "Nghiên cứu": 0.07692307692307693,
+        "Chưa xác định": 0.07692307692307693
+      }
+    },
+    "7510203": {
+      "so_mau": 23,
+      "gioi_tinh_ty_le_nam": 0.8260869565217391,
+      "likert_mean": {
+        "likert_nang_dong": 3.347826086956522,
+        "likert_huong_noi": 3.260869565217391,
+        "likert_sang_tao": 3.869565217391304,
+        "likert_logic": 4.086956521739131,
+        "likert_to_mo": 3.782608695652174,
+        "likert_thi_nghiem": 3.217391304347826,
+        "likert_moi_truong": 3.391304347826087,
+        "likert_dinh_duong": 3.4347826086956523,
+        "likert_tranh_luan": 3.608695652173913,
+        "likert_thiet_ke": 3.217391304347826
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.26522350350995,
+        "likert_huong_noi": 1.388831795049606,
+        "likert_sang_tao": 0.967863055024125,
+        "likert_logic": 0.996039588400019,
+        "likert_to_mo": 1.2044056149717561,
+        "likert_thi_nghiem": 1.4446302370292305,
+        "likert_moi_truong": 1.3052039351200886,
+        "likert_dinh_duong": 1.4717363572115556,
+        "likert_tranh_luan": 1.3052039351200886,
+        "likert_thiet_ke": 1.5062452335384542
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.5217391304347826,
+        "Chưa xác định": 0.2608695652173913,
+        "Kinh doanh": 0.21739130434782608
+      }
+    },
+    "7510301": {
+      "so_mau": 27,
+      "gioi_tinh_ty_le_nam": 0.9259259259259259,
+      "likert_mean": {
+        "likert_nang_dong": 3.5925925925925926,
+        "likert_huong_noi": 3.3333333333333335,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 4.296296296296297,
+        "likert_to_mo": 4.074074074074074,
+        "likert_thi_nghiem": 3.4444444444444446,
+        "likert_moi_truong": 3.185185185185185,
+        "likert_dinh_duong": 3.1481481481481484,
+        "likert_tranh_luan": 3.4444444444444446,
+        "likert_thiet_ke": 2.925925925925926
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.1851406686796317,
+        "likert_huong_noi": 1.270977818604485,
+        "likert_sang_tao": 0.8320502943378437,
+        "likert_logic": 0.6688000054526371,
+        "likert_to_mo": 1.1068293567986103,
+        "likert_thi_nghiem": 1.476308632870234,
+        "likert_moi_truong": 1.4945294355141467,
+        "likert_dinh_duong": 1.4598130466104662,
+        "likert_tranh_luan": 1.4232501627054273,
+        "likert_thiet_ke": 1.4121975762272054
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6296296296296297,
+        "Kinh doanh": 0.18518518518518517,
+        "Chưa xác định": 0.18518518518518517
+      }
+    },
+    "7510303": {
+      "so_mau": 18,
+      "gioi_tinh_ty_le_nam": 0.6666666666666666,
+      "likert_mean": {
+        "likert_nang_dong": 2.0555555555555554,
+        "likert_huong_noi": 3.7777777777777777,
+        "likert_sang_tao": 3.3333333333333335,
+        "likert_logic": 3.9444444444444446,
+        "likert_to_mo": 3.5,
+        "likert_thi_nghiem": 2.5,
+        "likert_moi_truong": 2.2777777777777777,
+        "likert_dinh_duong": 2.111111111111111,
+        "likert_tranh_luan": 2.2777777777777777,
+        "likert_thiet_ke": 1.6666666666666667
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.9983646759294875,
+        "likert_huong_noi": 1.4775000967674123,
+        "likert_sang_tao": 1.3284223283101428,
+        "likert_logic": 1.2589548523523144,
+        "likert_to_mo": 1.2947859237091257,
+        "likert_thi_nghiem": 1.5048939771136507,
+        "likert_moi_truong": 1.3636264606493256,
+        "likert_dinh_duong": 1.278274981412284,
+        "likert_tranh_luan": 1.3636264606493256,
+        "likert_thiet_ke": 0.8401680504168058
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.5555555555555556,
+        "Nghiên cứu": 0.16666666666666666,
+        "Kinh doanh": 0.16666666666666666,
+        "Chưa xác định": 0.1111111111111111
+      }
+    },
+    "7510401": {
+      "so_mau": 23,
+      "gioi_tinh_ty_le_nam": 0.5652173913043478,
+      "likert_mean": {
+        "likert_nang_dong": 3.5652173913043477,
+        "likert_huong_noi": 3.260869565217391,
+        "likert_sang_tao": 3.739130434782609,
+        "likert_logic": 4.086956521739131,
+        "likert_to_mo": 4.130434782608695,
+        "likert_thi_nghiem": 4.304347826086956,
+        "likert_moi_truong": 3.608695652173913,
+        "likert_dinh_duong": 4.043478260869565,
+        "likert_tranh_luan": 3.5652173913043477,
+        "likert_thiet_ke": 3.391304347826087
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0368697190241638,
+        "likert_huong_noi": 1.1761799222424119,
+        "likert_sang_tao": 1.1761799222424119,
+        "likert_logic": 0.8481554037632528,
+        "likert_to_mo": 0.8148813536665074,
+        "likert_thi_nghiem": 0.764840007553312,
+        "likert_moi_truong": 0.98807114368361,
+        "likert_dinh_duong": 0.9759965009980693,
+        "likert_tranh_luan": 1.0368697190241638,
+        "likert_thiet_ke": 1.3052039351200886
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6086956521739131,
+        "Nghiên cứu": 0.21739130434782608,
+        "Chưa xác định": 0.08695652173913043,
+        "Kinh doanh": 0.08695652173913043
+      }
+    },
+    "7510402": {
+      "so_mau": 18,
+      "gioi_tinh_ty_le_nam": 0.5555555555555556,
+      "likert_mean": {
+        "likert_nang_dong": 3.2222222222222223,
+        "likert_huong_noi": 3.2777777777777777,
+        "likert_sang_tao": 3.2777777777777777,
+        "likert_logic": 3.6666666666666665,
+        "likert_to_mo": 3.7222222222222223,
+        "likert_thi_nghiem": 4.388888888888889,
+        "likert_moi_truong": 3.5555555555555554,
+        "likert_dinh_duong": 3.2777777777777777,
+        "likert_tranh_luan": 3.2777777777777777,
+        "likert_thiet_ke": 2.6666666666666665
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0032626514091005,
+        "likert_huong_noi": 0.9582800496696001,
+        "likert_sang_tao": 1.0178151661369075,
+        "likert_logic": 1.028991510855053,
+        "likert_to_mo": 0.751903901522118,
+        "likert_thi_nghiem": 0.9164438231805327,
+        "likert_moi_truong": 1.0966377611066325,
+        "likert_dinh_duong": 0.9582800496696001,
+        "likert_tranh_luan": 1.0178151661369075,
+        "likert_thiet_ke": 1.6087993330796875
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7222222222222222,
+        "Chưa xác định": 0.2222222222222222,
+        "Kinh doanh": 0.05555555555555555
+      }
+    },
+    "7510406": {
+      "so_mau": 5,
+      "gioi_tinh_ty_le_nam": 0.4,
+      "likert_mean": {
+        "likert_nang_dong": 2.6,
+        "likert_huong_noi": 2.6,
+        "likert_sang_tao": 2.6,
+        "likert_logic": 3.2,
+        "likert_to_mo": 4.0,
+        "likert_thi_nghiem": 2.8,
+        "likert_moi_truong": 4.4,
+        "likert_dinh_duong": 3.2,
+        "likert_tranh_luan": 2.8,
+        "likert_thiet_ke": 2.2
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.140175425099138,
+        "likert_huong_noi": 0.8944271909999159,
+        "likert_sang_tao": 0.8944271909999159,
+        "likert_logic": 1.4832396974191326,
+        "likert_to_mo": 1.0,
+        "likert_thi_nghiem": 0.8366600265340756,
+        "likert_moi_truong": 0.5477225575051662,
+        "likert_dinh_duong": 0.8366600265340756,
+        "likert_tranh_luan": 1.3038404810405297,
+        "likert_thiet_ke": 1.6431676725154984
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8,
+        "Chưa xác định": 0.2
+      }
+    },
+    "7510601": {
+      "so_mau": 6,
+      "gioi_tinh_ty_le_nam": 0.6666666666666666,
+      "likert_mean": {
+        "likert_nang_dong": 4.333333333333333,
+        "likert_huong_noi": 2.3333333333333335,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 4.333333333333333,
+        "likert_to_mo": 2.6666666666666665,
+        "likert_thi_nghiem": 1.3333333333333333,
+        "likert_moi_truong": 1.3333333333333333,
+        "likert_dinh_duong": 1.5,
+        "likert_tranh_luan": 3.0,
+        "likert_thiet_ke": 2.3333333333333335
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.5163977794943222,
+        "likert_huong_noi": 0.5163977794943222,
+        "likert_sang_tao": 0.8944271909999159,
+        "likert_logic": 1.0327955589886444,
+        "likert_to_mo": 0.5163977794943222,
+        "likert_thi_nghiem": 0.5163977794943223,
+        "likert_moi_truong": 0.5163977794943223,
+        "likert_dinh_duong": 0.5477225575051661,
+        "likert_tranh_luan": 0.8944271909999159,
+        "likert_thiet_ke": 0.5163977794943222
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6666666666666666,
+        "Kinh doanh": 0.3333333333333333
+      }
+    },
+    "7510605": {
+      "so_mau": 9,
+      "gioi_tinh_ty_le_nam": 0.5555555555555556,
+      "likert_mean": {
+        "likert_nang_dong": 3.5555555555555554,
+        "likert_huong_noi": 2.0,
+        "likert_sang_tao": 3.888888888888889,
+        "likert_logic": 3.4444444444444446,
+        "likert_to_mo": 3.0,
+        "likert_thi_nghiem": 2.6666666666666665,
+        "likert_moi_truong": 2.7777777777777777,
+        "likert_dinh_duong": 3.0,
+        "likert_tranh_luan": 3.3333333333333335,
+        "likert_thiet_ke": 2.888888888888889
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0137937550497031,
+        "likert_huong_noi": 0.8660254037844386,
+        "likert_sang_tao": 1.1666666666666667,
+        "likert_logic": 1.0137937550497031,
+        "likert_to_mo": 1.0,
+        "likert_thi_nghiem": 1.2247448713915892,
+        "likert_moi_truong": 1.3944333775567928,
+        "likert_dinh_duong": 1.4142135623730951,
+        "likert_tranh_luan": 1.0,
+        "likert_thiet_ke": 0.6009252125773316
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.5555555555555556,
+        "Kinh doanh": 0.4444444444444444
+      }
+    },
+    "7520115": {
+      "so_mau": 16,
+      "gioi_tinh_ty_le_nam": 0.875,
+      "likert_mean": {
+        "likert_nang_dong": 3.5625,
+        "likert_huong_noi": 3.875,
+        "likert_sang_tao": 4.0,
+        "likert_logic": 4.25,
+        "likert_to_mo": 4.1875,
+        "likert_thi_nghiem": 3.6875,
+        "likert_moi_truong": 3.6875,
+        "likert_dinh_duong": 3.6875,
+        "likert_tranh_luan": 3.875,
+        "likert_thiet_ke": 3.875
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.631716887208072,
+        "likert_huong_noi": 1.6683325008322931,
+        "likert_sang_tao": 1.1547005383792515,
+        "likert_logic": 0.9309493362512627,
+        "likert_to_mo": 1.0468205831628137,
+        "likert_thi_nghiem": 1.3022416570411703,
+        "likert_moi_truong": 1.352466881911223,
+        "likert_dinh_duong": 1.25,
+        "likert_tranh_luan": 1.0878112581387147,
+        "likert_thiet_ke": 1.3601470508735443
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.875,
+        "Chưa xác định": 0.0625,
+        "Nghiên cứu": 0.0625
+      }
+    },
+    "7540101": {
+      "so_mau": 42,
+      "gioi_tinh_ty_le_nam": 0.11904761904761904,
+      "likert_mean": {
+        "likert_nang_dong": 2.9523809523809526,
+        "likert_huong_noi": 3.0238095238095237,
+        "likert_sang_tao": 3.3095238095238093,
+        "likert_logic": 3.261904761904762,
+        "likert_to_mo": 3.5,
+        "likert_thi_nghiem": 3.4285714285714284,
+        "likert_moi_truong": 3.357142857142857,
+        "likert_dinh_duong": 4.0,
+        "likert_tranh_luan": 3.4285714285714284,
+        "likert_thiet_ke": 3.3333333333333335
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.0809296123917653,
+        "likert_huong_noi": 1.0473682521046934,
+        "likert_sang_tao": 0.8968262533442989,
+        "likert_logic": 0.7981540840764962,
+        "likert_to_mo": 0.9173131497117799,
+        "likert_thi_nghiem": 1.039297538158491,
+        "likert_moi_truong": 0.905846284580998,
+        "likert_dinh_duong": 0.7963330593811955,
+        "likert_tranh_luan": 1.0155584104409858,
+        "likert_thiet_ke": 1.1617200591945374
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6904761904761905,
+        "Nghiên cứu": 0.14285714285714285,
+        "Kinh doanh": 0.11904761904761904,
+        "Chưa xác định": 0.047619047619047616
+      }
+    },
+    "7540105": {
+      "so_mau": 7,
+      "gioi_tinh_ty_le_nam": 0.5714285714285714,
+      "likert_mean": {
+        "likert_nang_dong": 2.5714285714285716,
+        "likert_huong_noi": 2.5714285714285716,
+        "likert_sang_tao": 2.857142857142857,
+        "likert_logic": 3.5714285714285716,
+        "likert_to_mo": 4.0,
+        "likert_thi_nghiem": 3.857142857142857,
+        "likert_moi_truong": 2.7142857142857144,
+        "likert_dinh_duong": 4.428571428571429,
+        "likert_tranh_luan": 2.5714285714285716,
+        "likert_thiet_ke": 2.0
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.5345224838248487,
+        "likert_huong_noi": 0.7867957924694432,
+        "likert_sang_tao": 0.6900655593423543,
+        "likert_logic": 0.9759000729485333,
+        "likert_to_mo": 1.0,
+        "likert_thi_nghiem": 0.6900655593423541,
+        "likert_moi_truong": 0.7559289460184545,
+        "likert_dinh_duong": 0.5345224838248488,
+        "likert_tranh_luan": 0.7867957924694432,
+        "likert_thiet_ke": 1.4142135623730951
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7142857142857143,
+        "Kinh doanh": 0.14285714285714285,
+        "Nghiên cứu": 0.14285714285714285
+      }
+    },
+    "7540106": {
+      "so_mau": 9,
+      "gioi_tinh_ty_le_nam": 0.5555555555555556,
+      "likert_mean": {
+        "likert_nang_dong": 2.5555555555555554,
+        "likert_huong_noi": 2.5555555555555554,
+        "likert_sang_tao": 2.6666666666666665,
+        "likert_logic": 3.0,
+        "likert_to_mo": 3.7777777777777777,
+        "likert_thi_nghiem": 3.888888888888889,
+        "likert_moi_truong": 3.0,
+        "likert_dinh_duong": 4.111111111111111,
+        "likert_tranh_luan": 2.3333333333333335,
+        "likert_thiet_ke": 2.4444444444444446
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.130388330520878,
+        "likert_huong_noi": 0.8819171036881968,
+        "likert_sang_tao": 1.0,
+        "likert_logic": 0.7071067811865476,
+        "likert_to_mo": 1.2018504251546631,
+        "likert_thi_nghiem": 1.0540925533894598,
+        "likert_moi_truong": 0.7071067811865476,
+        "likert_dinh_duong": 0.7817359599705715,
+        "likert_tranh_luan": 0.8660254037844386,
+        "likert_thiet_ke": 1.130388330520878
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.5555555555555556,
+        "Kinh doanh": 0.3333333333333333,
+        "Chưa xác định": 0.1111111111111111
+      }
+    },
+    "7540204": {
+      "so_mau": 18,
+      "gioi_tinh_ty_le_nam": 0.0,
+      "likert_mean": {
+        "likert_nang_dong": 3.611111111111111,
+        "likert_huong_noi": 3.388888888888889,
+        "likert_sang_tao": 3.6666666666666665,
+        "likert_logic": 3.5555555555555554,
+        "likert_to_mo": 3.888888888888889,
+        "likert_thi_nghiem": 3.2777777777777777,
+        "likert_moi_truong": 3.6666666666666665,
+        "likert_dinh_duong": 3.611111111111111,
+        "likert_tranh_luan": 3.5,
+        "likert_thiet_ke": 3.888888888888889
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.2897281468629185,
+        "likert_huong_noi": 1.1950332945836273,
+        "likert_sang_tao": 1.3719886811400708,
+        "likert_logic": 1.3814835257889049,
+        "likert_to_mo": 1.367216532138064,
+        "likert_thi_nghiem": 1.4473324572571657,
+        "likert_moi_truong": 1.4142135623730951,
+        "likert_dinh_duong": 1.3345582608616182,
+        "likert_tranh_luan": 1.3394467690277294,
+        "likert_thiet_ke": 1.2782749814122842
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7777777777777778,
+        "Kinh doanh": 0.16666666666666666,
+        "Nghiên cứu": 0.05555555555555555
+      }
+    },
+    "7810101": {
+      "so_mau": 9,
+      "gioi_tinh_ty_le_nam": 0.6666666666666666,
+      "likert_mean": {
+        "likert_nang_dong": 4.0,
+        "likert_huong_noi": 1.8888888888888888,
+        "likert_sang_tao": 3.111111111111111,
+        "likert_logic": 2.7777777777777777,
+        "likert_to_mo": 3.111111111111111,
+        "likert_thi_nghiem": 2.7777777777777777,
+        "likert_moi_truong": 2.2222222222222223,
+        "likert_dinh_duong": 3.6666666666666665,
+        "likert_tranh_luan": 3.0,
+        "likert_thiet_ke": 2.7777777777777777
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.3228756555322954,
+        "likert_huong_noi": 1.2692955176439846,
+        "likert_sang_tao": 1.2692955176439846,
+        "likert_logic": 1.3944333775567928,
+        "likert_to_mo": 1.3642254619787415,
+        "likert_thi_nghiem": 1.7159383568311668,
+        "likert_moi_truong": 1.6414763002993507,
+        "likert_dinh_duong": 1.3228756555322954,
+        "likert_tranh_luan": 1.118033988749895,
+        "likert_thiet_ke": 1.3017082793177759
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8888888888888888,
+        "Nghiên cứu": 0.1111111111111111
+      }
+    },
+    "7810103": {
+      "so_mau": 23,
+      "gioi_tinh_ty_le_nam": 0.21739130434782608,
+      "likert_mean": {
+        "likert_nang_dong": 3.6956521739130435,
+        "likert_huong_noi": 3.3043478260869565,
+        "likert_sang_tao": 3.4782608695652173,
+        "likert_logic": 3.4782608695652173,
+        "likert_to_mo": 3.5217391304347827,
+        "likert_thi_nghiem": 3.0,
+        "likert_moi_truong": 3.5217391304347827,
+        "likert_dinh_duong": 3.652173913043478,
+        "likert_tranh_luan": 3.608695652173913,
+        "likert_thiet_ke": 3.608695652173913
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.3959285801180923,
+        "likert_huong_noi": 1.5502135515263595,
+        "likert_sang_tao": 1.122884484360431,
+        "likert_logic": 1.1626601636447695,
+        "likert_to_mo": 1.2745610730183763,
+        "likert_thi_nghiem": 1.4459976109624424,
+        "likert_moi_truong": 1.4100149972571634,
+        "likert_dinh_duong": 1.3006535298622315,
+        "likert_tranh_luan": 1.269900870676083,
+        "likert_thiet_ke": 1.1961730809233635
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.6521739130434783,
+        "Chưa xác định": 0.17391304347826086,
+        "Kinh doanh": 0.17391304347826086
+      }
+    },
+    "7810201": {
+      "so_mau": 12,
+      "gioi_tinh_ty_le_nam": 0.3333333333333333,
+      "likert_mean": {
+        "likert_nang_dong": 4.25,
+        "likert_huong_noi": 2.0,
+        "likert_sang_tao": 2.8333333333333335,
+        "likert_logic": 2.8333333333333335,
+        "likert_to_mo": 3.0833333333333335,
+        "likert_thi_nghiem": 2.25,
+        "likert_moi_truong": 2.25,
+        "likert_dinh_duong": 4.083333333333333,
+        "likert_tranh_luan": 2.9166666666666665,
+        "likert_thiet_ke": 2.8333333333333335
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.9653072991634227,
+        "likert_huong_noi": 1.348399724926484,
+        "likert_sang_tao": 1.1146408580454255,
+        "likert_logic": 0.9374368665610922,
+        "likert_to_mo": 0.9962049198956219,
+        "likert_thi_nghiem": 1.2154310870109943,
+        "likert_moi_truong": 1.4222261679238197,
+        "likert_dinh_duong": 1.0836246694508318,
+        "likert_tranh_luan": 1.0836246694508316,
+        "likert_thiet_ke": 1.1146408580454255
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.75,
+        "Kinh doanh": 0.08333333333333333,
+        "Nghiên cứu": 0.08333333333333333,
+        "Chưa xác định": 0.08333333333333333
+      }
+    },
+    "7810202": {
+      "so_mau": 14,
+      "gioi_tinh_ty_le_nam": 0.42857142857142855,
+      "likert_mean": {
+        "likert_nang_dong": 4.071428571428571,
+        "likert_huong_noi": 2.7142857142857144,
+        "likert_sang_tao": 3.0714285714285716,
+        "likert_logic": 2.7142857142857144,
+        "likert_to_mo": 3.2142857142857144,
+        "likert_thi_nghiem": 2.357142857142857,
+        "likert_moi_truong": 2.357142857142857,
+        "likert_dinh_duong": 3.9285714285714284,
+        "likert_tranh_luan": 3.0714285714285716,
+        "likert_thiet_ke": 3.2857142857142856
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.071611705960535,
+        "likert_huong_noi": 1.6374732612530445,
+        "likert_sang_tao": 1.1411388181101378,
+        "likert_logic": 1.1387288073563857,
+        "likert_to_mo": 1.3688047244316384,
+        "likert_thi_nghiem": 1.4468609447374665,
+        "likert_moi_truong": 1.499083969380217,
+        "likert_dinh_duong": 1.071611705960535,
+        "likert_tranh_luan": 1.2688144505364485,
+        "likert_thiet_ke": 1.2043875831929896
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.7142857142857143,
+        "Chưa xác định": 0.21428571428571427,
+        "Kinh doanh": 0.07142857142857142
+      }
+    },
+    "7819009": {
+      "so_mau": 10,
+      "gioi_tinh_ty_le_nam": 0.4,
+      "likert_mean": {
+        "likert_nang_dong": 3.2,
+        "likert_huong_noi": 2.5,
+        "likert_sang_tao": 3.1,
+        "likert_logic": 3.4,
+        "likert_to_mo": 3.9,
+        "likert_thi_nghiem": 4.0,
+        "likert_moi_truong": 3.2,
+        "likert_dinh_duong": 4.0,
+        "likert_tranh_luan": 2.9,
+        "likert_thiet_ke": 2.1
+      },
+      "likert_std": {
+        "likert_nang_dong": 1.3165611772087666,
+        "likert_huong_noi": 1.4337208778404378,
+        "likert_sang_tao": 1.4491376746189437,
+        "likert_logic": 1.07496769977314,
+        "likert_to_mo": 1.3703203194062976,
+        "likert_thi_nghiem": 1.247219128924647,
+        "likert_moi_truong": 1.398411797560202,
+        "likert_dinh_duong": 1.247219128924647,
+        "likert_tranh_luan": 1.1005049346146119,
+        "likert_thiet_ke": 1.3703203194062978
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.8,
+        "Kinh doanh": 0.1,
+        "Nghiên cứu": 0.1
+      }
+    },
+    "7819010": {
+      "so_mau": 8,
+      "gioi_tinh_ty_le_nam": 0.5,
+      "likert_mean": {
+        "likert_nang_dong": 2.5,
+        "likert_huong_noi": 3.0,
+        "likert_sang_tao": 2.5,
+        "likert_logic": 3.625,
+        "likert_to_mo": 3.5,
+        "likert_thi_nghiem": 4.0,
+        "likert_moi_truong": 2.5,
+        "likert_dinh_duong": 4.125,
+        "likert_tranh_luan": 2.625,
+        "likert_thiet_ke": 1.875
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.5345224838248488,
+        "likert_huong_noi": 0.0,
+        "likert_sang_tao": 0.7559289460184544,
+        "likert_logic": 0.9161253813129043,
+        "likert_to_mo": 0.9258200997725514,
+        "likert_thi_nghiem": 1.1952286093343936,
+        "likert_moi_truong": 0.5345224838248488,
+        "likert_dinh_duong": 0.6408699444616557,
+        "likert_tranh_luan": 0.5175491695067657,
+        "likert_thiet_ke": 1.1259916264596033
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.875,
+        "Kinh doanh": 0.125
+      }
+    },
+    "7850101": {
+      "so_mau": 8,
+      "gioi_tinh_ty_le_nam": 0.5,
+      "likert_mean": {
+        "likert_nang_dong": 2.5,
+        "likert_huong_noi": 2.25,
+        "likert_sang_tao": 2.875,
+        "likert_logic": 3.625,
+        "likert_to_mo": 4.0,
+        "likert_thi_nghiem": 2.625,
+        "likert_moi_truong": 4.375,
+        "likert_dinh_duong": 2.625,
+        "likert_tranh_luan": 2.5,
+        "likert_thiet_ke": 2.0
+      },
+      "likert_std": {
+        "likert_nang_dong": 0.9258200997725514,
+        "likert_huong_noi": 0.7071067811865476,
+        "likert_sang_tao": 0.6408699444616557,
+        "likert_logic": 0.9161253813129043,
+        "likert_to_mo": 0.7559289460184544,
+        "likert_thi_nghiem": 0.5175491695067657,
+        "likert_moi_truong": 0.5175491695067657,
+        "likert_dinh_duong": 1.0606601717798212,
+        "likert_tranh_luan": 0.7559289460184544,
+        "likert_thiet_ke": 1.3093073414159542
+      },
+      "muc_tieu_phan_phoi": {
+        "Đi làm": 0.75,
+        "Kinh doanh": 0.125,
+        "Chưa xác định": 0.125
+      }
+    }
+  },
+  "toan_cuc": {
+    "gioi_tinh_ty_le_nam": 0.4500768049155146,
+    "likert_mean": {
+      "likert_nang_dong": 3.3732718894009217,
+      "likert_huong_noi": 3.1136712749615976,
+      "likert_sang_tao": 3.5806451612903225,
+      "likert_logic": 3.632872503840246,
+      "likert_to_mo": 3.7127496159754223,
+      "likert_thi_nghiem": 3.1013824884792625,
+      "likert_moi_truong": 3.118279569892473,
+      "likert_dinh_duong": 3.3732718894009217,
+      "likert_tranh_luan": 3.327188940092166,
+      "likert_thiet_ke": 3.1167434715821813
+    },
+    "likert_std": {
+      "likert_nang_dong": 1.2268125873269982,
+      "likert_huong_noi": 1.2982759725899466,
+      "likert_sang_tao": 1.0630262526841856,
+      "likert_logic": 1.0592134443268733,
+      "likert_to_mo": 1.0779497477850497,
+      "likert_thi_nghiem": 1.3651197500362482,
+      "likert_moi_truong": 1.3586715645004015,
+      "likert_dinh_duong": 1.353226873283933,
+      "likert_tranh_luan": 1.16705332800201,
+      "likert_thiet_ke": 1.3273035106849318
+    },
+    "muc_tieu_phan_phoi": {
+      "Đi làm": 0.674347158218126,
+      "Kinh doanh": 0.15668202764976957,
+      "Chưa xác định": 0.10445468509984639,
+      "Nghiên cứu": 0.06451612903225806
+    }
+  }
+}
