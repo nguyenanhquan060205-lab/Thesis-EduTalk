@@ -27,8 +27,7 @@ import {
   type UserProfile,
   type ProfileEditable,
 } from "@/services/profile";
-import { AuthService } from "@/services/auth";
-import OtpDialog from "@/components/ui/OtpDialog";
+import OtpDialog, { bocLoiOtp } from "@/components/ui/OtpDialog";
 import {
   HistoryService,
   favouriteMajor,
@@ -87,7 +86,7 @@ function Field({
 }
 
 export default function ProfilePage() {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   // ?setup=1 — vừa đăng nhập Google lần đầu, hồ sơ còn thiếu giới tính
   const setup = useSearchParams()?.get("setup") === "1";
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -99,8 +98,15 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  // Đổi email đi đường riêng vì phải xác minh OTP
-  const [emailStep, setEmailStep] = useState<"none" | "nhap" | "otp">("none");
+  // Đổi email đi đường riêng vì phải xác minh OTP hai chặng:
+  //   nhap_cu  → gõ lại địa chỉ đang dùng (giao diện chỉ hiện bản đã che)
+  //   otp_cu   → mã gửi về hộp thư CŨ
+  //   nhap_moi → nhập địa chỉ mới
+  //   otp_moi  → mã gửi về hộp thư MỚI, đúng thì mới ghi thay đổi
+  const [emailStep, setEmailStep] = useState<
+    "none" | "nhap_cu" | "otp_cu" | "nhap_moi" | "otp_moi"
+  >("none");
+  const [currentEmail, setCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
   const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -179,45 +185,84 @@ export default function ProfilePage() {
     }
   };
 
-  const guiMa = async () => {
-    const e = newEmail.trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) {
+  const HOP_LE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /** Bước 1: gõ đúng địa chỉ đang dùng → mã 6 số gửi về hộp thư CŨ. */
+  const xacNhanEmailCu = async () => {
+    const e = currentEmail.trim().toLowerCase();
+    if (!HOP_LE.test(e)) {
       setEmailMsg({ ok: false, text: "Email không hợp lệ." });
-      return;
-    }
-    if (e === (profile?.email ?? "").toLowerCase()) {
-      setEmailMsg({ ok: false, text: "Email mới trùng với email hiện tại." });
       return;
     }
     setEmailBusy(true);
     setEmailMsg(null);
     try {
-      await ProfileService.sendOtp(e);
-      setEmailStep("otp");
-      setEmailMsg(null);
+      await ProfileService.emailChangeStart(e);
+      setEmailStep("otp_cu");
     } catch (err) {
-      setEmailMsg({ ok: false, text: apiError(err, "Không gửi được mã xác minh.") });
+      const f = bocLoiOtp(err, "Không gửi được mã xác minh.");
+      if (f.reset) datLaiDoiEmail(f);
+      else setEmailMsg({ ok: false, text: f.message });
     } finally {
       setEmailBusy(false);
     }
   };
 
+  /** Bước 3: có địa chỉ mới → mã 6 số gửi về chính hộp thư đó. */
+  const guiMaEmailMoi = async () => {
+    const e = newEmail.trim().toLowerCase();
+    if (!HOP_LE.test(e)) {
+      setEmailMsg({ ok: false, text: "Email không hợp lệ." });
+      return;
+    }
+    setEmailBusy(true);
+    setEmailMsg(null);
+    try {
+      await ProfileService.emailChangeSetNew(e);
+      setEmailStep("otp_moi");
+    } catch (err) {
+      const f = bocLoiOtp(err, "Không gửi được mã xác minh.");
+      if (f.reset) datLaiDoiEmail(f);
+      else setEmailMsg({ ok: false, text: f.message });
+    } finally {
+      setEmailBusy(false);
+    }
+  };
+
+  /**
+   * Sai quá số lần ở bất kỳ chặng nào — backend đã huỷ phiên và giữ nguyên email
+   * cũ, phía này chỉ cần dọn form rồi quay về bước đầu.
+   */
   const datLaiDoiEmail = (f: { message?: string }) => {
     setEmailStep("none");
+    setCurrentEmail("");
     setNewEmail("");
     setEmailMsg({
       ok: false,
-      text: f.message || "Phiên xác thực bị huỷ. Hãy thử đổi email lại từ đầu.",
+      text:
+        f.message ||
+        "Phiên xác thực bị huỷ, email giữ nguyên. Hãy thử đổi lại từ đầu.",
     });
   };
 
-  /** Gửi lại mã xác minh cho email HIỆN TẠI (khi hồ sơ chưa xác minh). */
+  /** Đóng giữa chừng thì dọn phiên ở server, lần sau bắt đầu sạch. */
+  const huyDoiEmail = () => {
+    void ProfileService.emailChangeCancel().catch(() => {});
+    setEmailStep("none");
+    setCurrentEmail("");
+    setNewEmail("");
+    setEmailMsg(null);
+  };
+
+  /** Gửi lại mã xác minh cho email HIỆN TẠI (khi hồ sơ chưa xác minh).
+   *
+   * Không truyền địa chỉ lên: `profile.email` giờ là bản đã che
+   * (`co**********@gmail.com`), gửi bản đó đi thì thành địa chỉ rác. Server tự
+   * tra email thật từ token. */
   const guiLaiXacMinh = async () => {
-    const em = profile?.email ?? user?.email;
-    if (!em) return;
     setEmailBusy(true);
     try {
-      await ProfileService.sendOtp(em);
+      await ProfileService.verifyMyEmailSend();
       setXacMinhOpen(true);
     } catch (e) {
       alert(apiError(e, "Không gửi được mã xác minh."));
@@ -417,12 +462,18 @@ export default function ProfilePage() {
                     <strong className="text-xs font-bold text-slate-800 break-words">
                       {p.email || user.email}
                     </strong>
+                    {p.emailDaChe && (
+                      <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
+                        Đã ẩn bớt để bảo mật
+                      </span>
+                    )}
                   </div>
                   {emailStep === "none" && (
                     <button
                       onClick={() => {
-                        setEmailStep("nhap");
+                        setEmailStep("nhap_cu");
                         setEmailMsg(null);
+                        setCurrentEmail("");
                         setNewEmail("");
                       }}
                       className="text-[11px] font-black text-[#0054A6] hover:underline shrink-0"
@@ -432,8 +483,77 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {emailStep === "nhap" && (
+                {emailStep !== "none" && (
+                  <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-200">
+                    {[
+                      { m: "nhap_cu", n: "Xác nhận" },
+                      { m: "otp_cu", n: "Mã hộp thư cũ" },
+                      { m: "nhap_moi", n: "Email mới" },
+                      { m: "otp_moi", n: "Mã hộp thư mới" },
+                    ].map((b, i, ds) => {
+                      const dang = ds.findIndex((x) => x.m === emailStep);
+                      const xong = i < dang;
+                      return (
+                        <div key={b.m} className="flex items-center gap-1.5 min-w-0">
+                          <span
+                            className={`text-[9px] font-black px-1.5 py-0.5 rounded whitespace-nowrap ${
+                              i === dang
+                                ? "bg-[#0054A6] text-white"
+                                : xong
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : "bg-slate-100 text-slate-400"
+                            }`}
+                          >
+                            {i + 1}. {b.n}
+                          </span>
+                          {i < ds.length - 1 && (
+                            <span className="text-slate-300 text-[9px]">›</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Bước 1 — gõ lại địa chỉ đang dùng. Bắt gõ vì phía trên chỉ
+                    hiện bản đã che; sai 3 lần thì backend huỷ phiên. */}
+                {emailStep === "nhap_cu" && (
                   <div className="space-y-2 pt-1.5 border-t border-slate-200">
+                    <p className="text-[11px] text-slate-500 font-medium">
+                      Nhập <strong className="text-slate-700">đầy đủ</strong> email đang
+                      dùng để xác nhận đây là bạn. Mã 6 số sẽ gửi tới chính hộp thư đó.
+                    </p>
+                    <input
+                      type="email"
+                      value={currentEmail}
+                      onChange={(e) => setCurrentEmail(e.target.value)}
+                      placeholder={p.email || "email-hien-tai@gmail.com"}
+                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-bold text-slate-800 outline-none focus:border-[#0054A6] focus:ring-2 focus:ring-blue-500/15"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={xacNhanEmailCu}
+                        disabled={emailBusy}
+                        className="flex-1 py-2 rounded-lg bg-[#0054A6] hover:bg-[#0072CE] text-white text-[11px] font-black transition disabled:opacity-60"
+                      >
+                        {emailBusy ? "Đang gửi…" : "Gửi mã tới hộp thư này"}
+                      </button>
+                      <button
+                        onClick={huyDoiEmail}
+                        className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-[11px] font-bold"
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bước 3 — chỉ mở sau khi mã của hộp thư cũ đã đúng */}
+                {emailStep === "nhap_moi" && (
+                  <div className="space-y-2 pt-1.5 border-t border-slate-200">
+                    <p className="text-[11px] text-emerald-700 font-bold">
+                      Đã xác minh hộp thư hiện tại.
+                    </p>
                     <p className="text-[11px] text-slate-500 font-medium">
                       Nhập email mới, mã 6 số sẽ được gửi tới địa chỉ đó.
                     </p>
@@ -446,17 +566,14 @@ export default function ProfilePage() {
                     />
                     <div className="flex gap-2">
                       <button
-                        onClick={guiMa}
+                        onClick={guiMaEmailMoi}
                         disabled={emailBusy}
                         className="flex-1 py-2 rounded-lg bg-[#0054A6] hover:bg-[#0072CE] text-white text-[11px] font-black transition disabled:opacity-60"
                       >
                         {emailBusy ? "Đang gửi…" : "Gửi mã xác minh"}
                       </button>
                       <button
-                        onClick={() => {
-                          setEmailStep("none");
-                          setEmailMsg(null);
-                        }}
+                        onClick={huyDoiEmail}
                         className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-[11px] font-bold"
                       >
                         Hủy
@@ -604,15 +721,32 @@ export default function ProfilePage() {
         </Link>
       </div>
 
-      {/* Đổi email: mã gửi tới địa chỉ MỚI */}
+      {/* Chặng 1 — mã gửi tới hộp thư CŨ. Qua được mới cho nhập địa chỉ mới. */}
       <OtpDialog
-        open={emailStep === "otp"}
-        target={newEmail}
+        open={emailStep === "otp_cu"}
+        target={currentEmail.trim().toLowerCase()}
+        title="Xác minh hộp thư hiện tại"
+        onVerify={(otp) => ProfileService.emailChangeVerifyOld(otp)}
+        onResend={() => ProfileService.emailChangeStart(currentEmail.trim().toLowerCase())}
+        onSuccess={() => {
+          setEmailStep("nhap_moi");
+          setEmailMsg(null);
+        }}
+        onReset={datLaiDoiEmail}
+        onClose={huyDoiEmail}
+      />
+
+      {/* Chặng 2 — mã gửi tới hộp thư MỚI. Đúng thì backend mới ghi thay đổi;
+          sai 3 lần thì huỷ phiên và email giữ nguyên như cũ. */}
+      <OtpDialog
+        open={emailStep === "otp_moi"}
+        target={newEmail.trim().toLowerCase()}
         title="Xác minh email mới"
         onVerify={(otp) => ProfileService.changeEmail(newEmail.trim().toLowerCase(), otp)}
-        onResend={() => ProfileService.sendOtp(newEmail.trim().toLowerCase())}
+        onResend={() => ProfileService.emailChangeSetNew(newEmail.trim().toLowerCase())}
         onSuccess={async () => {
           setEmailStep("none");
+          setCurrentEmail("");
           setNewEmail("");
           if (user?.id) await nap(user.id);
           setEmailMsg({
@@ -621,7 +755,7 @@ export default function ProfilePage() {
           });
         }}
         onReset={datLaiDoiEmail}
-        onClose={() => setEmailStep("nhap")}
+        onClose={huyDoiEmail}
       />
 
       {/* Xác minh email hiện tại — dành cho ai đóng popup lúc đăng ký */}
@@ -629,18 +763,17 @@ export default function ProfilePage() {
         open={xacMinhOpen}
         target={p.email || user.email || ""}
         title="Xác minh email"
-        onVerify={(otp) =>
-          AuthService.verifyRegistration(p.email || user.email || "", otp)
-        }
-        onResend={() => ProfileService.sendOtp(p.email || user.email || "")}
+        onVerify={(otp) => ProfileService.verifyMyEmailConfirm(otp)}
+        onResend={() => ProfileService.verifyMyEmailSend()}
         onSuccess={async () => {
           setXacMinhOpen(false);
           if (user?.id) await nap(user.id);
         }}
         onReset={(f) => {
+          // Tài khoản này đã đăng nhập được nên sai mã KHÔNG bị xoá như lúc đăng
+          // ký; chỉ đóng popup và giữ nguyên phiên.
           setXacMinhOpen(false);
           alert(f.message);
-          logout();
         }}
         onClose={() => setXacMinhOpen(false)}
       />

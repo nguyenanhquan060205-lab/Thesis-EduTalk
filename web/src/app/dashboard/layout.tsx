@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Cpu, History, Users, LifeBuoy, BarChart3, MessageSquare, LayoutDashboard, Newspaper, Settings, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Cpu, History, Users, LifeBuoy, BarChart3, MessageSquare, LayoutDashboard, Newspaper, Settings, LogOut, Loader2, ShieldAlert } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Tổng quan", icon: LayoutDashboard, exact: true },
@@ -19,6 +20,55 @@ const NAV_ITEMS = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+
+  // Phiên đăng nhập nằm trong localStorage nên lần render đầu chưa có. Nếu chặn
+  // ngay lúc đó thì chính admin cũng bị đá ra, nên phải đợi persist nạp xong.
+  const [daNapPhien, setDaNapPhien] = useState(
+    () => typeof window !== "undefined" && useAuthStore.persist.hasHydrated()
+  );
+  useEffect(
+    () => useAuthStore.persist.onFinishHydration(() => setDaNapPhien(true)),
+    []
+  );
+
+  const laAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    if (daNapPhien && !laAdmin) router.replace("/");
+  }, [daNapPhien, laAdmin, router]);
+
+  if (!daNapPhien) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0F1014] text-gray-400">
+        <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  // Chặn ở đây chỉ để đỡ rối mắt: người không phải admin trước đây vẫn thấy đủ
+  // menu quản trị rồi bấm vào trang nào cũng báo lỗi đỏ. Dữ liệu thì backend đã
+  // chặn sẵn bằng require_admin(), nên sửa localStorage cũng không lấy được gì.
+  if (!laAdmin) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3 bg-[#0F1014] px-6 text-center">
+        <ShieldAlert className="w-9 h-9 text-rose-400" />
+        <p className="text-base font-black text-white">Khu vực dành riêng cho quản trị viên</p>
+        <p className="text-sm font-medium text-gray-400">
+          {user
+            ? `Tài khoản ${user.email} không có quyền quản trị.`
+            : "Bạn cần đăng nhập bằng tài khoản quản trị."}
+        </p>
+        <Link
+          href="/"
+          className="mt-2 rounded-xl bg-cyan-400 px-4 py-2 text-sm font-extrabold text-slate-900 transition hover:bg-cyan-300"
+        >
+          Về trang chủ
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-[#0F1014] text-white font-sans overflow-hidden">

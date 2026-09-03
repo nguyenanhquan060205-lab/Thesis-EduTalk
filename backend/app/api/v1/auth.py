@@ -32,8 +32,11 @@ auth_service = AuthService()
 from app.models.auth_models import (
     ChangeEmailRequest,
     ChangePasswordRequest,
+    EmailChangeSetNewRequest,
+    EmailChangeStartRequest,
     GoogleSignInRequest,
     LoginRequest,
+    OtpOnlyRequest,
     OtpSendRequest,
     OtpVerifyRequest,
     RegisterRequest,
@@ -150,24 +153,109 @@ async def change_password(
     return result
 
 
-@router.post("/change-email")
-async def change_email(body: ChangeEmailRequest, authorization: str = Header(...)):
-    """Đổi email đăng nhập — **bắt buộc** xác minh OTP gửi tới địa chỉ mới.
-
-    Luồng đúng phía client:
-    1. `POST /api/v1/auth/otp/send` với email mới → người dùng nhận mã 6 số
-    2. `POST /api/v1/auth/change-email` kèm `newEmail` + `otp`
-
-    Không có bước OTP thì người dùng có thể gán email của người khác cho tài khoản
-    mình, hoặc gõ nhầm địa chỉ rồi mất luôn đường đăng nhập.
-    """
+async def _uid_tu_token(authorization: str) -> str:
     token = authorization.replace("Bearer ", "")
     decoded = await auth_service.verify_token(token)
     if not decoded:
         raise HTTPException(status_code=401, detail="Token không hợp lệ.")
+    return decoded["uid"]
 
+
+# ==================== ĐỔI EMAIL — 4 bước ====================
+#
+#   1. email-change/start       gõ đúng email hiện tại → mã về hộp thư CŨ
+#   2. email-change/verify-old  nhập mã của hộp thư CŨ
+#   3. email-change/set-new     nhập email MỚI        → mã về hộp thư MỚI
+#   4. change-email             nhập mã của hộp thư MỚI → ghi thay đổi
+#
+# Người dùng chỉ nhìn thấy email đã che nên bước 1 vừa là xác nhận danh tính vừa
+# là điều kiện mở phiên. Trạng thái giữ ở MongoDB, bước 4 từ chối nếu chưa qua
+# bước 2 — nên gọi thẳng bằng curl cũng không bỏ qua được chặng nào.
+
+
+@router.post("/email-change/start", summary="Bước 1 — xác nhận email hiện tại")
+async def email_change_start(
+    body: EmailChangeStartRequest, authorization: str = Header(...)
+):
+    """Đối chiếu email người dùng gõ với email thật, đúng thì gửi mã về hộp thư cũ.
+
+    Sai 3 lần → huỷ phiên, trả `reset: true`.
+    """
+    uid = await _uid_tu_token(authorization)
+    result = await auth_service.bat_dau_doi_email(uid, body.currentEmail)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/email-change/verify-old", summary="Bước 2 — mã của hộp thư cũ")
+async def email_change_verify_old(
+    body: OtpOnlyRequest, authorization: str = Header(...)
+):
+    """Sai 3 lần → huỷ phiên, email **không** đổi, phải làm lại từ bước 1."""
+    uid = await _uid_tu_token(authorization)
+    result = await auth_service.xac_minh_email_cu(uid, body.otp)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/email-change/set-new", summary="Bước 3 — nhận email mới")
+async def email_change_set_new(
+    body: EmailChangeSetNewRequest, authorization: str = Header(...)
+):
+    """Chỉ chạy được sau khi bước 2 thành công. Gửi mã tới địa chỉ mới."""
+    uid = await _uid_tu_token(authorization)
+    result = await auth_service.dat_email_moi(uid, body.newEmail)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/verify-my-email/send", summary="Gửi mã xác minh cho chính mình")
+async def verify_my_email_send(authorization: str = Header(...)):
+    """Dành cho người đã đăng nhập nhưng chưa xác minh email (đóng popup lúc đăng ký).
+
+    Địa chỉ nhận mã do server tra từ token, **không nhận từ client** — phía người
+    dùng chỉ có bản đã che nên gửi lên sẽ thành địa chỉ rác.
+    """
+    uid = await _uid_tu_token(authorization)
+    result = await auth_service.gui_ma_xac_minh_cua_toi(uid)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/verify-my-email/confirm", summary="Xác minh email của chính mình")
+async def verify_my_email_confirm(
+    body: OtpOnlyRequest, authorization: str = Header(...)
+):
+    """Khác `/registration/verify`: sai quá số lần **không xoá tài khoản**, vì
+    người dùng ở đây đã đăng nhập được và chỉ đang xác minh muộn."""
+    uid = await _uid_tu_token(authorization)
+    result = await auth_service.xac_minh_email_cua_toi(uid, body.otp)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/email-change/cancel", summary="Huỷ phiên đổi email")
+async def email_change_cancel(authorization: str = Header(...)):
+    """Gọi khi người dùng đóng hộp thoại giữa chừng hoặc sai quá số lần."""
+    uid = await _uid_tu_token(authorization)
+    return await auth_service.huy_phien_doi_email(uid)
+
+
+@router.post("/change-email", summary="Bước 4 — mã của hộp thư mới, ghi thay đổi")
+async def change_email(body: ChangeEmailRequest, authorization: str = Header(...)):
+    """Bước cuối. **Từ chối** nếu phiên chưa qua bước 2 xác minh hộp thư cũ.
+
+    Sai 3 lần → huỷ phiên, giữ nguyên email cũ. Email chỉ được ghi ở bước này nên
+    không có gì phải hoàn tác.
+    """
+    uid = await _uid_tu_token(authorization)
     result = await auth_service.change_email(
-        uid=decoded["uid"], new_email=body.newEmail, otp=body.otp
+        uid=uid, new_email=body.newEmail, otp=body.otp
     )
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))

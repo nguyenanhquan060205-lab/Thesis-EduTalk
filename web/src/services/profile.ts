@@ -13,6 +13,8 @@ export interface UserProfile {
   isPremium?: boolean;
   emailVerified?: boolean;
   usageCount?: number;
+  /** `email` trả về đã bị che (`co**********@gmail.com`) — đừng hiện như địa chỉ thật */
+  emailDaChe?: boolean;
 }
 
 /** Các trường sửa được qua `PUT /api/v1/users/{uid}`. Email KHÔNG nằm ở đây. */
@@ -41,21 +43,67 @@ export const ProfileService = {
     return data;
   },
 
-  /**
-   * Đổi email phải qua 2 bước — không thể sửa thẳng như các trường khác:
-   * email chính là tài khoản đăng nhập, gõ nhầm là mất đường vào.
-   *
-   * 1. `sendOtp(emailMới)` → mã 6 số gửi tới hộp thư MỚI
-   * 2. `changeEmail(emailMới, otp)` → backend xác minh rồi đổi cả Firebase Auth
-   *    lẫn bản ghi MongoDB
-   */
   sendOtp: async (email: string) => {
     const { data } = await api.post("/api/v1/auth/otp/send", { email });
     return data;
   },
 
+  /**
+   * ĐỔI EMAIL — bốn bước, mỗi bước là một lời gọi riêng.
+   *
+   *   1. emailChangeStart(emailHiệnTại)  gõ đúng địa chỉ đang dùng (tối đa 3 lần)
+   *                                      → mã 6 số về hộp thư CŨ
+   *   2. emailChangeVerifyOld(otp)       nhập mã của hộp thư CŨ (90s, 3 lần)
+   *   3. emailChangeSetNew(emailMới)     → mã 6 số về hộp thư MỚI
+   *   4. changeEmail(emailMới, otp)      nhập mã của hộp thư MỚI → ghi thay đổi
+   *
+   * Bắt gõ lại địa chỉ hiện tại ở bước 1 vì giao diện chỉ hiện bản đã che.
+   * Sai quá số lần ở bất kỳ bước nào → backend huỷ phiên, trả `reset: true`,
+   * email giữ nguyên và phải làm lại từ bước 1.
+   *
+   * Thứ tự này được ép ở backend chứ không chỉ ở đây, nên không gọi tắt được.
+   */
+  emailChangeStart: async (currentEmail: string) => {
+    const { data } = await api.post("/api/v1/auth/email-change/start", {
+      currentEmail,
+    });
+    return data;
+  },
+
+  emailChangeVerifyOld: async (otp: string) => {
+    const { data } = await api.post("/api/v1/auth/email-change/verify-old", { otp });
+    return data;
+  },
+
+  emailChangeSetNew: async (newEmail: string) => {
+    const { data } = await api.post("/api/v1/auth/email-change/set-new", { newEmail });
+    return data;
+  },
+
   changeEmail: async (newEmail: string, otp: string) => {
     const { data } = await api.post("/api/v1/auth/change-email", { newEmail, otp });
+    return data;
+  },
+
+  /** Người dùng đóng hộp thoại giữa chừng — dọn phiên để lần sau bắt đầu sạch. */
+  emailChangeCancel: async () => {
+    const { data } = await api.post("/api/v1/auth/email-change/cancel");
+    return data;
+  },
+
+  /**
+   * Xác minh email cho người đã đăng nhập nhưng bỏ dở lúc đăng ký.
+   *
+   * Không truyền địa chỉ lên: `GET /users/{uid}` chỉ trả bản đã che, gửi bản đó
+   * đi thì thành địa chỉ rác. Server tự tra email thật từ token.
+   */
+  verifyMyEmailSend: async () => {
+    const { data } = await api.post("/api/v1/auth/verify-my-email/send");
+    return data;
+  },
+
+  verifyMyEmailConfirm: async (otp: string) => {
+    const { data } = await api.post("/api/v1/auth/verify-my-email/confirm", { otp });
     return data;
   },
 };

@@ -9,7 +9,6 @@ import json
 from datetime import datetime, timedelta, timezone
 
 from app.core.mongodb import get_db
-from app.core.privacy import che_ho_so
 from app.models.post_models import RejectPostRequest
 from app.services.auth_service import AuthService
 from bson import ObjectId
@@ -454,15 +453,19 @@ async def get_all_users(authorization: str = Header(...)):
     await require_admin(authorization)
     db = get_db()
 
-    # Danh sách quản trị chỉ cần đủ để nhận ra tài khoản, không cần email và số
-    # điện thoại đầy đủ của từng người. Bản trước trả nguyên vẹn mọi trường.
+    # Trang quản trị hiện email đầy đủ: admin cần tra đúng tài khoản khi xử lý
+    # khiếu nại hay hỗ trợ, che đi thì không đối chiếu được. Người dùng thường
+    # thì ngược lại — kể cả xem hồ sơ của chính mình cũng chỉ thấy bản đã che.
     users = []
     async for doc in db["users"].find():
         doc["id"] = str(doc.pop("_id"))
         for k in ["createdAt", "premiumExpiry", "premiumStart"]:
             if k in doc and isinstance(doc[k], datetime):
                 doc[k] = doc[k].isoformat()
-        users.append(che_ho_so(doc))
+        # Token thiết bị không phục vụ hiển thị, mà lộ ra thì gửi được thông báo giả
+        doc.pop("fcmToken", None)
+        doc.pop("hashed_password", None)
+        users.append(doc)
     return {"data": users}
 
 
