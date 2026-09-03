@@ -7,7 +7,7 @@ Sử dụng MongoDB thay cho Firestore.
 from datetime import datetime
 
 from app.core.mongodb import get_db
-from app.core.privacy import che_ho_so
+from app.core.privacy import che_email, che_ho_so
 from app.services.auth_service import AuthService
 from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException
@@ -58,10 +58,19 @@ async def get_user_profile(uid: str, authorization: str = Header(...)):
     user_doc["id"] = user_doc.pop("_id")
     user_doc.pop("hashed_password", None)  # Không trả về password nếu có
 
-    # Admin xem hồ sơ người khác thì nhận bản đã che email / SĐT / ngày sinh.
-    # Chỉ chính chủ mới thấy đầy đủ.
     if current_uid != uid:
         return che_ho_so(user_doc)
+
+    # Chính chủ cũng chỉ thấy email đã che, để người ngồi cạnh hay ảnh chụp màn
+    # hình không đọc được địa chỉ đầy đủ. Muốn đổi email thì phải gõ lại đúng
+    # địa chỉ hiện tại — xem luồng /auth/email-change/*.
+    #
+    # CHỈ che `email`. Không che `phone` và `dob`: hai trường đó nằm trong
+    # UpdateProfileRequest và được form sửa hồ sơ nạp thẳng vào ô nhập, nên trả
+    # bản đã che về sẽ bị ghi ngược chuỗi sao xuống cơ sở dữ liệu ngay lần lưu
+    # kế tiếp. `email` không ghi được qua PUT nên che là an toàn.
+    user_doc["email"] = che_email(user_doc.get("email"))
+    user_doc["emailDaChe"] = True
     return user_doc
 
 
