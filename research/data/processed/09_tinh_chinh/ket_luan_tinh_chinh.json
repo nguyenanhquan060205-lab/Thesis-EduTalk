@@ -1,0 +1,48 @@
+{
+ "n_cau_hinh_gd8": 28,
+ "n_cau_hinh_gd9": 200,
+ "tang1": {
+  "gd8": 0.4654,
+  "gd9": 0.46881436870458987,
+  "chenh": 0.0034143687045898874
+ },
+ "tang2": {
+  "gd8": 0.1345,
+  "gd9": 0.14278809342157758,
+  "chenh": 0.008288093421577575
+ },
+ "trong_so_nguon": {
+  "dang_dung": 24.03,
+  "tot_nhat": 48.06,
+  "macro_f1_tot_nhat": 0.14278809342157758,
+  "gap_tai_24": 0.7430347536929849,
+  "gap_tai_tot_nhat": 0.7935652074203696
+ },
+ "sieu_tham_so_tot_nhat": {
+  "tang1": {
+   "max_depth": 4,
+   "learning_rate": 0.05,
+   "n_estimators": 600,
+   "subsample": 0.9,
+   "colsample_bytree": 0.4,
+   "min_child_weight": 3,
+   "reg_alpha": 2.0,
+   "reg_lambda": 100.0,
+   "gamma": 0.1,
+   "max_delta_step": 0
+  },
+  "tang2": {
+   "max_depth": 10,
+   "learning_rate": 0.2,
+   "n_estimators": 600,
+   "subsample": 0.7,
+   "colsample_bytree": 0.4,
+   "min_child_weight": 3,
+   "reg_alpha": 2.0,
+   "reg_lambda": 100.0,
+   "gamma": 1.0,
+   "max_delta_step": 0
+  },
+  "ty_le_that": 2.0
+ }
+}

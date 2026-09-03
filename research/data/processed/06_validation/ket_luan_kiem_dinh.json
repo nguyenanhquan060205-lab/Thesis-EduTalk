@@ -1,0 +1,25 @@
+{
+  "phuong_phap": "so với dòng thật out-of-fold, khớp tỷ lệ ngành",
+  "n_that": 574,
+  "n_tong_hop": 574,
+  "ks_dat_tren_10_cau": 10,
+  "auc_phan_biet": {
+    "Có hiệp phương sai (đang dùng)": 0.6195735084402878,
+    "10 phân phối độc lập (đối chứng)": 0.8145557655954632
+  },
+  "joint": {
+    "Có hiệp phương sai (đang dùng)": {
+      "Sai lệch tương quan TB": 0.030560351342908118,
+      "Sai lệch tương quan max": 0.08871154499149288,
+      "|r| trung bình": 0.23668834943709152,
+      "Energy distance": 0.014743194520024261
+    },
+    "10 phân phối độc lập (đối chứng)": {
+      "Sai lệch tương quan TB": 0.23056023959858163,
+      "Sai lệch tương quan max": 0.5654654832352991,
+      "|r| trung bình": 0.04142996018559336,
+      "Energy distance": 0.044885192723512546
+    }
+  },
+  "dat_chuan": true
+}

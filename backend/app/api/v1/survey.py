@@ -36,54 +36,79 @@ def get_survey_status():
 
 @router.post("/submit")
 async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(...)):
+    """Chạy mô hình XGBoost 2 tầng ngay trong tiến trình này, tăng usageCount
+    (nếu không phải Premium), rồi lưu lịch sử vào MongoDB.
+
+    Trước đây hàm này gọi ra `edutalk-7ndf.onrender.com` (mô hình cũ). Đã bỏ:
+    mô hình hiện nằm luôn trong backend nên không còn phụ thuộc mạng, không còn
+    độ trễ vòng ngoài, và kết quả khớp đúng số liệu đã báo cáo trong khoá luận.
     """
-    Nhận điểm khảo sát, gọi API ML model để dự đoán ngành,
-    tăng usageCount (nếu ko premium), và lưu kết quả vào MongoDB.
-    """
+    from app.services.major_predictor import get_predictor
+
     uid = await get_current_uid(authorization)
     db = get_db()
 
-    # 1. Gọi API ML model cũ
-    import httpx
+    try:
+        predictor = get_predictor()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
 
-    ml_url = "https://edutalk-7ndf.onrender.com/api/prediction/predict"
-    async with httpx.AsyncClient() as client:
-        try:
-            resp = await client.post(
-                ml_url, json={"scores": body.scores, "userId": uid}, timeout=30.0
-            )
-            ml_data = resp.json()
-        except Exception as e:  # noqa: BLE001
-            raise HTTPException(status_code=500, detail=f"Lỗi kết nối ML API: {e!s}")
-
-    if not ml_data.get("success"):
-        raise HTTPException(status_code=400, detail="Lỗi dự đoán từ mô hình")
-
-    # 2. Tăng usageCount trên MongoDB TRƯỚC (chỉ khi không phải Premium)
+    # 1. Giới tính lấy từ hồ sơ đăng ký, không hỏi lại người dùng
     user_doc = await db["users"].find_one({"_id": uid})
-    if user_doc:
-        is_premium = user_doc.get("isPremium", False)
-        if not is_premium:
-            await db["users"].update_one({"_id": uid}, {"$inc": {"usageCount": 1}})
+    gender = (user_doc or {}).get("gender")
+    warnings: list[str] = []
+    # Ghi lại việc hồ sơ THIẾU giới tính. Không có cờ này thì bản ghi lưu "Nu"
+    # y hệt một nữ thật, và về sau không cách nào đếm được bao nhiêu lượt tư vấn
+    # chạy ở trạng thái kém chính xác.
+    thieu_gioi_tinh = gender not in ("Nam", "Nu")
+    if thieu_gioi_tinh:
+        gender = "Nu"
+        warnings.append(
+            "Hồ sơ chưa có giới tính — hãy cập nhật trong phần tài khoản "
+            "để gợi ý chính xác hơn."
+        )
 
-    # 3. Lưu lịch sử dự đoán
-    major = ml_data.get("predicted_major", "")
-    unis = ml_data.get("recommendations", [])
-    user_scores = ml_data.get("user_scores", [])
-    major_reqs = ml_data.get("major_requirements", [])
+    # 2. Chạy mô hình
+    try:
+        result = predictor.recommend(
+            interests=body.interests,
+            subject_group=body.subjectGroup,
+            gender=gender,
+            goal=body.goal,
+            scores=body.scores,
+            field_id=body.fieldId,
+            limit=body.limit,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    result["warnings"] = warnings + result["warnings"]
 
-    history_data = {
-        "user_id": uid,
-        "predicted_major": major,
-        "user_scores": user_scores,
-        "major_requirements": major_reqs,
-        "recommendations": unis,
-        "input_scores": body.scores,
-        "createdAt": datetime.now(timezone.utc),
-    }
-    await db["prediction_history"].insert_one(history_data)
+    # 3. Tăng usageCount (chỉ khi không phải Premium)
+    if user_doc and not user_doc.get("isPremium", False):
+        await db["users"].update_one({"_id": uid}, {"$inc": {"usageCount": 1}})
 
-    return {"status": "success", "results": ml_data}
+    # 4. Lưu lịch sử — giữ cả đầu vào để sau này dùng cho vòng lặp phản hồi
+    await db["prediction_history"].insert_one(
+        {
+            "user_id": uid,
+            "mode": result["mode"],
+            "predicted_major": result["majors"][0]["name"] if result["majors"] else "",
+            "fields": result["fields"],
+            "majors": result["majors"],
+            "input": {
+                "interests": body.interests,
+                "subjectGroup": body.subjectGroup,
+                "scores": body.scores,
+                "goal": body.goal,
+                "gender": gender,
+                "genderMissing": thieu_gioi_tinh,
+                "fieldId": body.fieldId,
+            },
+            "createdAt": datetime.now(timezone.utc),
+        }
+    )
+
+    return {"status": "success", "results": result}
 
 
 @router.get("/history/{uid}")
