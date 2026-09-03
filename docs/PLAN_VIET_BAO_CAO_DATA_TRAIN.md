@@ -19,6 +19,44 @@
 
 ---
 
+## ✅ Đã kiểm chứng (03/09/2026)
+
+Đối chiếu toàn bộ số liệu trong kế hoạch này với file kết quả thật — **khớp**, trừ 2 chỗ đã sửa
+(đánh dấu ⚠️ ở §4.3 và §4.6 bên dưới).
+
+| Kiểm chứng | Cách kiểm | Kết quả |
+|---|---|---|
+| 34 hình | `find research -name "hinh_*.png"` | ✅ đúng 34 |
+| Số dòng dữ liệu | đọc trực tiếp CSV | ✅ 574 / 102 / 13.796 / 14.370 |
+| 43 đặc trưng | `X_train.shape` | ✅ (14370, 43), test (102, 43) |
+| Trọng số 0,361–20,86 | `w_train.csv` min/max | ✅ khớp |
+| 4 phép kiểm định GA | `ket_luan_kiem_dinh.json` | ✅ 10/10 · 0,0306 · 0,0147 · 0,620 |
+| Chỉ số test | `metrics_summary.json` | ✅ khớp từng chữ số |
+| **Nạp lại model, chạy lại suy diễn** | `xgb.load_model` + β=0,6 | ✅ Top-1 **0,1765** · Top-3 **0,3922** · Top-5 **0,5294** |
+| Trung vị hạng ngành đúng | tính lại từ ma trận xác suất | ✅ **thứ 5**/39 (trung bình 7,7) |
+| 25/39 ngành F1 = 0 | `f1_score(average=None)` | ✅ đúng 25 |
+
+> **Kết luận:** mô hình đã lưu tái lập chính xác số liệu trong `metrics_summary.json`.
+> Mọi con số trong kế hoạch này dùng được để viết báo cáo.
+
+### Bổ sung nên có thêm một mục
+
+`topk_kich_ban_trien_khai.json` đo sẵn kịch bản **người dùng chưa có điểm thi** — học sinh
+THPT dùng hệ thống trước kỳ thi rơi đúng vào trường hợp này, nhưng kế hoạch chưa có mục nào
+trình bày. Số liệu:
+
+| Chỉ số | Có điểm thi | Chưa có điểm thi | Chênh |
+|---|---|---|---|
+| Khối ngành Top-1 | 54,9% | 40,2% | −14,7 điểm |
+| Khối ngành Top-3 | 86,3% | 68,6% | −17,6 điểm |
+| Khám phá Top-3 | 39,2% | 28,4% | −10,8 điểm |
+| Tư vấn Top-3 | 69,6% | 66,7% | −2,9 điểm |
+
+→ Hệ thống vẫn chạy khi thiếu điểm nhưng giảm rõ. Nên thêm vào mục 4.5 để nêu khuyến nghị:
+khuyến khích nhập điểm nếu đã có, cảnh báo độ tin cậy thấp hơn khi chưa có.
+
+---
+
 ## 📖 Cấu Trúc Chương Đề Xuất Cho Báo Cáo
 
 Dựa trên 9 giai đoạn pipeline, tổ chức thành **2 chương lớn**:
@@ -187,7 +225,10 @@ Dựa trên 9 giai đoạn pipeline, tổ chức thành **2 chương lớn**:
 - CV 15 fold, VAL chỉ thật, tổng hợp chỉ TRAIN (sinh riêng/fold).
 - Baseline: phổ biến nhất (Top-3 = 17,4%), đoán bừa (7,7%).
 - Random search 14 cấu hình/tầng + early stopping.
-- So sánh kiến trúc: 2 tầng (β=0,6) thắng phẳng ở mọi chỉ số.
+- So sánh kiến trúc: 2 tầng (β=0,6) thắng phẳng ở mọi chỉ số **trên CV** (0,137 vs 0,125 macro-F1).
+  ⚠️ **Trên tập test thì không thắng tuyệt đối:** Top-1 17,6% < 19,6% và Top-5 52,9% < 55,9%;
+  chỉ Top-3 (39,2% > 38,2%) và AUC (0,844 > 0,821) là hơn. Phải ghi nguyên trạng, và nêu 3 lý do
+  giữ kiến trúc 2 tầng: thắng đều trên 15 lượt CV, AUC cao hơn, và là điều kiện để có chế độ Tư vấn.
 - Overfitting: train 94,6% vs val 16,9% → khoảng cách 77,7%.
 
 **Hình:** `hinh_8_1_tim_sieu_tham_so.png` + `hinh_8_2_so_sanh_kien_truc.png`
@@ -257,7 +298,8 @@ Dựa trên 9 giai đoạn pipeline, tổ chức thành **2 chương lớn**:
 
 - Mở rộng 200 cấu hình (so 28 ở GĐ8).
 - Quét trọng số nguồn 1×–96×, tốt nhất = 48×.
-- **Kết quả:** Cải thiện rất nhỏ: Tầng 1 +0,34%, Tầng 2 +0,83%.
+- **Kết quả:** Cải thiện rất nhỏ. Ghi theo **điểm tuyệt đối của macro-F1** (không phải %):
+  Tầng 1 0,4654 → 0,4688 (**+0,0034**); Tầng 2 0,1345 → 0,1428 (**+0,0083**).
 - **Kết luận:** Giới hạn ở **dữ liệu**, không phải siêu tham số.
 
 **Hình:** `hinh_9_1_do_rong.png` + `hinh_9_2_trong_so_nguon.png`
