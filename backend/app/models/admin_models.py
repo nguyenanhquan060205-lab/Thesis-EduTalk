@@ -11,3 +11,10 @@ class UpdatePremiumRequest(BaseModel):
 class UpdateSupportRequest(BaseModel):
     status: str  # "pending", "processing", "resolved"
     adminNote: str | None = None
+
+
+class LockUserRequest(BaseModel):
+    """Khoá / mở khoá tài khoản. `reason` để admin ghi lại vì sao khoá."""
+
+    disabled: bool
+    reason: str = ""

@@ -7,6 +7,7 @@ Sử dụng MongoDB thay cho Firestore.
 from datetime import datetime
 
 from app.core.mongodb import get_db
+from app.core.privacy import che_ho_so
 from app.services.auth_service import AuthService
 from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException
@@ -35,14 +36,32 @@ def get_users_status():
 
 @router.get("/{uid}")
 async def get_user_profile(uid: str, authorization: str = Header(...)):
-    """Lấy thông tin profile của người dùng."""
-    await get_current_uid(authorization)
+    """Lấy hồ sơ của **chính mình** (hoặc bất kỳ ai, nếu là admin).
+
+    Bản trước gọi `get_current_uid()` rồi **vứt kết quả đi**, không so với `uid`
+    trên URL — nghĩa là bất kỳ ai đăng nhập cũng đọc được email, số điện thoại,
+    ngày sinh của người khác chỉ bằng cách đổi uid trên đường dẫn.
+    """
+    current_uid = await get_current_uid(authorization)
     db = get_db()
+
+    if current_uid != uid:
+        nguoi_goi = await db["users"].find_one({"_id": current_uid})
+        if (nguoi_goi or {}).get("role") != "admin":
+            raise HTTPException(
+                status_code=403, detail="Không có quyền xem hồ sơ này."
+            )
+
     user_doc = await db["users"].find_one({"_id": uid})
     if not user_doc:
         raise HTTPException(status_code=404, detail="Không tìm thấy người dùng.")
     user_doc["id"] = user_doc.pop("_id")
     user_doc.pop("hashed_password", None)  # Không trả về password nếu có
+
+    # Admin xem hồ sơ người khác thì nhận bản đã che email / SĐT / ngày sinh.
+    # Chỉ chính chủ mới thấy đầy đủ.
+    if current_uid != uid:
+        return che_ho_so(user_doc)
     return user_doc
 
 

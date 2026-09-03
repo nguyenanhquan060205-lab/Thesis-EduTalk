@@ -33,7 +33,12 @@ class AuthService:
     # Tương đương: Future<Map<String, dynamic>> register(...) trong Dart
     # ============================================================
     async def register(
-        self, name: str, email: str, password: str, phone: str | None = None
+        self,
+        name: str,
+        email: str,
+        password: str,
+        phone: str | None = None,
+        gender: str | None = None,
     ) -> dict:
         """
         Tạo tài khoản mới bằng Email/Password.
@@ -60,6 +65,11 @@ class AuthService:
                 "usageCount": 0,
                 "isNotificationEnabled": True,
                 "phone": phone,
+                # Chưa nhập OTP thì chưa được coi là đã xác minh. Người dùng vẫn
+                # vào được ứng dụng, chỉ bị chặn đăng bài và bình luận.
+                "emailVerified": False,
+                # "Nam" | "Nu" — mô hình gợi ý ngành đọc trường này
+                "gender": gender if gender in ("Nam", "Nu") else None,
             }
             await self.db["users"].update_one(
                 {"_id": uid}, {"$set": user_data}, upsert=True
@@ -110,6 +120,11 @@ class AuthService:
             # Kiểm tra lỗi từ Firebase
             if "error" in data:
                 code = data["error"].get("message", "")
+                if code == "USER_DISABLED":
+                    return {
+                        "status": "Tài khoản này đã bị khoá. "
+                        "Vui lòng liên hệ quản trị viên để được hỗ trợ."
+                    }
                 if code in [
                     "EMAIL_NOT_FOUND",
                     "INVALID_PASSWORD",
@@ -125,13 +140,11 @@ class AuthService:
             uid = data["localId"]
             id_token = data["idToken"]
 
-            # Kiểm tra email đã xác thực chưa (trừ admin)
-            if email != "admin@edutalk.com":
-                user_record = self.auth.get_user(uid)
-                if not user_record.email_verified:
-                    return {
-                        "status": "Vui lòng xác thực email trước khi đăng nhập. Kiểm tra hộp thư của bạn."
-                    }
+            # KHÔNG chặn đăng nhập khi email chưa xác minh.
+            # Đã chốt: người dùng vào được ứng dụng, chỉ bị khoá đăng bài và bình
+            # luận (xem `yeu_cau_da_xac_minh` trong posts.py). Chặn ở đây còn tạo
+            # thế bí: muốn xác minh thì cần token, mà muốn có token thì phải đăng
+            # nhập được trước.
 
             # Lấy role từ MongoDB
             user_doc = await self.db["users"].find_one({"_id": uid})
@@ -142,6 +155,7 @@ class AuthService:
                     "role": role,
                     "uid": uid,
                     "idToken": id_token,
+                    "emailVerified": user_doc.get("emailVerified") is not False,
                 }
             else:
                 return {"status": "Không tìm thấy dữ liệu người dùng."}
@@ -184,10 +198,24 @@ class AuthService:
                     "isNotificationEnabled": True,
                 }
                 await self.db["users"].insert_one(user_data)
-                return {"status": "success", "role": "user", "uid": uid}
+                # Token Google chỉ có uid/name/email/picture/email_verified — KHÔNG có
+                # giới tính. Mô hình gợi ý ngành lại dùng trường này: thiếu nó thì
+                # Top-3 tụt từ 41,2% xuống 37,3% (đo trên 102 sinh viên thật).
+                # Báo `needsProfile` để client hỏi ngay sau lần đăng nhập đầu.
+                return {
+                    "status": "success",
+                    "role": "user",
+                    "uid": uid,
+                    "needsProfile": True,
+                }
             else:
                 role = user_doc.get("role", "user")
-                return {"status": "success", "role": role, "uid": uid}
+                return {
+                    "status": "success",
+                    "role": role,
+                    "uid": uid,
+                    "needsProfile": user_doc.get("gender") not in ("Nam", "Nu"),
+                }
 
         except self.auth.InvalidIdTokenError:
             return {"status": "Token Google không hợp lệ."}
@@ -207,6 +235,44 @@ class AuthService:
             return decoded
         except Exception:  # noqa: BLE001
             return None
+
+    # ============================================================
+    # XÁC MINH EMAIL LÚC ĐĂNG KÝ
+    # ============================================================
+    async def verify_registration(self, email: str, otp: str) -> dict:
+        """Nhập đúng mã thì đánh dấu hồ sơ đã xác minh.
+
+        Sai quá số lần cho phép thì **xoá luôn tài khoản vừa tạo** (cả Firebase
+        lẫn MongoDB) để người dùng đăng ký lại từ đầu, không để lại tài khoản
+        treo chưa xác minh.
+        """
+        # Không cần token: bản thân mã OTP đã chứng minh người nhập đọc được hộp
+        # thư đó. Bắt phải có token sẽ tạo thế bí — muốn xác minh cần đăng nhập,
+        # mà chưa xác minh thì không nên phải đăng nhập trước.
+        email = email.strip().lower()
+        user_doc = await self.db["users"].find_one({"email": email})
+        if not user_doc:
+            return {"status": "error", "message": "Không tìm thấy tài khoản."}
+        uid = user_doc["_id"]
+
+        kt = await self.verify_otp(target=email, input_otp=otp)
+
+        if kt.get("reset"):
+            await self.delete_account(uid)
+            kt["deleted"] = True
+            return kt
+        if kt["status"] != "success":
+            return kt
+
+        await self.db["users"].update_one(
+            {"_id": uid}, {"$set": {"emailVerified": True}}
+        )
+        try:
+            self.auth.update_user(uid, email_verified=True)
+        except Exception:  # noqa: BLE001 — không chặn luồng nếu Firebase lỗi
+            pass
+        await self.db["otp_codes"].delete_one({"_id": email})
+        return {"status": "success"}
 
     # ============================================================
     # XÓA TÀI KHOẢN
@@ -288,31 +354,70 @@ class AuthService:
     # GỬI OTP
     # Migrate từ: OTP_service.dart — sendOtp()
     # ============================================================
-    async def send_otp(self, email: str) -> dict:
-        """
-        Sinh OTP 6 số, lưu vào Firestore với TTL 10 phút,
-        và gửi email qua EmailJS API.
-        """
-        try:
-            otp = "".join([str(random.randint(0, 9)) for _ in range(6)])
-            expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+    # Mã có hiệu lực 90 giây; sai quá 3 lần thì huỷ mã và bắt làm lại từ đầu.
+    OTP_SONG_GIAY = 90
+    OTP_TOI_DA_SAI = 3
 
-            # Lưu OTP vào Firestore (server-side — bảo mật hơn Dart)
-            self.db.collection("otp_codes").document(email).set(
-                {
-                    "otp": otp,
-                    "email": email,
-                    "expiresAt": expires_at,
-                    "createdAt": datetime.now(timezone.utc),
-                    "verified": False,
-                }
+    async def send_otp(self, target: str, channel: str = "email") -> dict:
+        """Sinh mã 6 số, lưu vào MongoDB và gửi tới `target`.
+
+        `channel` = "email" (qua EmailJS) hoặc "sms" (qua nhà cung cấp SMS).
+        Gửi lại sẽ ghi đè mã cũ, nên mã cũ mất hiệu lực ngay lập tức.
+        """
+        target = target.strip().lower()
+        try:
+            # Chặn bấm "gửi lại" dồn dập. Chỉ cho gửi mã mới sau khi mã cũ hết hạn,
+            # đúng như giao diện (nút gửi lại chỉ bật khi đồng hồ về 0).
+            cu = await self.db["otp_codes"].find_one({"_id": target})
+            if cu and (het := cu.get("expiresAt")):
+                if het.tzinfo is None:
+                    het = het.replace(tzinfo=timezone.utc)
+                con = (het - datetime.now(timezone.utc)).total_seconds()
+                if con > 0:
+                    return {
+                        "status": "error",
+                        "message": f"Mã trước còn hiệu lực, thử lại sau {int(con) + 1} giây.",
+                        "retryAfter": int(con) + 1,
+                    }
+
+            otp = "".join([str(random.randint(0, 9)) for _ in range(6)])
+            het_han = datetime.now(timezone.utc) + timedelta(
+                seconds=self.OTP_SONG_GIAY
             )
 
-            # Gửi email qua EmailJS
-            service_id = os.getenv("EMAILJS_SERVICE_ID", "service_jz7he5o")
-            template_id = os.getenv("EMAILJS_TEMPLATE_ID", "template_ntv9o9c")
-            public_key = os.getenv("EMAILJS_PUBLIC_KEY", "Ezr_VkJnGkvD-1Ma0")
+            await self.db["otp_codes"].update_one(
+                {"_id": target},
+                {
+                    "$set": {
+                        "otp": otp,
+                        "target": target,
+                        "channel": channel,
+                        "expiresAt": het_han,
+                        "createdAt": datetime.now(timezone.utc),
+                        "verified": False,
+                        "attempts": 0,
+                    }
+                },
+                upsert=True,
+            )
 
+            gui = (
+                await self._gui_otp_sms(target, otp)
+                if channel == "sms"
+                else await self._gui_otp_email(target, otp)
+            )
+            if gui["status"] != "success":
+                return gui
+
+            return {"status": "success", "expiresIn": self.OTP_SONG_GIAY}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    async def _gui_otp_email(self, email: str, otp: str) -> dict:
+        service_id = os.getenv("EMAILJS_SERVICE_ID", "service_jz7he5o")
+        template_id = os.getenv("EMAILJS_TEMPLATE_ID", "template_ntv9o9c")
+        public_key = os.getenv("EMAILJS_PUBLIC_KEY", "Ezr_VkJnGkvD-1Ma0")
+        try:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(
                     "https://api.emailjs.com/api/v1.0/email/send",
@@ -328,62 +433,135 @@ class AuthService:
                     },
                     timeout=15.0,
                 )
-
             if resp.status_code == 200:
                 return {"status": "success"}
             return {
                 "status": "error",
                 "message": f"Gửi email thất bại ({resp.status_code}).",
             }
-
         except Exception as e:  # noqa: BLE001
-            return {"status": "error", "message": str(e)}
+            return {"status": "error", "message": f"Không gửi được email: {e!s}"}
+
+    async def _gui_otp_sms(self, phone: str, otp: str) -> dict:
+        """Gửi OTP qua SMS.
+
+        ⚠️ CHƯA CẮM NHÀ CUNG CẤP SMS. Dự án hiện chỉ có EMAILJS trong `.env`,
+        không có Twilio/eSMS/Stringee nào. Muốn chạy thật thì đặt các biến
+        SMS_API_URL / SMS_API_KEY / SMS_BRANDNAME rồi hiện thực lời gọi HTTP ở đây.
+
+        Khi chưa cấu hình:
+        - `SMS_DEV_MODE=true` → in mã ra log server để tự kiểm thử (CHỈ dùng khi dev)
+        - ngược lại → báo lỗi rõ ràng thay vì im lặng coi như đã gửi
+        """
+        if not os.getenv("SMS_API_KEY"):
+            if os.getenv("SMS_DEV_MODE", "").lower() == "true":
+                print(f"[SMS-DEV] Mã OTP gửi tới {phone}: {otp}")
+                return {"status": "success"}
+            return {
+                "status": "error",
+                "message": "Hệ thống chưa cấu hình dịch vụ gửi SMS. "
+                "Vui lòng liên hệ quản trị viên.",
+            }
+        return {
+            "status": "error",
+            "message": "Chưa hiện thực lời gọi tới nhà cung cấp SMS.",
+        }
 
     # ============================================================
     # XÁC MINH OTP
-    # Migrate từ: OTP_service.dart — verifyOtp()
     # ============================================================
-    async def verify_otp(self, email: str, input_otp: str) -> dict:
+    async def verify_otp(self, target: str, input_otp: str) -> dict:
+        """Kiểm tra mã: đúng, còn hạn, chưa dùng, chưa sai quá số lần cho phép.
+
+        Trả về `reset=True` khi đã sai đủ `OTP_TOI_DA_SAI` lần — lúc đó mã bị xoá
+        và phía gọi phải bắt người dùng làm lại từ đầu.
         """
-        Kiểm tra OTP: đúng, chưa hết hạn, chưa dùng.
-        """
+        target = target.strip().lower()
         try:
-            doc = self.db.collection("otp_codes").document(email).get()
-            if not doc.exists:
+            doc = await self.db["otp_codes"].find_one({"_id": target})
+            if not doc:
                 return {
                     "status": "error",
-                    "message": "Mã OTP không tồn tại. Vui lòng gửi lại.",
+                    "message": "Mã không tồn tại hoặc đã hết hiệu lực. Hãy gửi lại mã.",
+                    "reset": True,
                 }
 
-            data = doc.to_dict()
-            saved_otp = data.get("otp", "")
-            expires_at = data.get("expiresAt")
-            already_verified = data.get("verified", False)
+            if doc.get("verified", False):
+                return {"status": "error", "message": "Mã này đã được sử dụng."}
 
-            if already_verified:
-                return {"status": "error", "message": "Mã OTP này đã được sử dụng."}
+            het_han = doc.get("expiresAt")
+            if het_han is not None:
+                if het_han.tzinfo is None:
+                    het_han = het_han.replace(tzinfo=timezone.utc)
+                if datetime.now(timezone.utc) > het_han:
+                    await self.db["otp_codes"].delete_one({"_id": target})
+                    return {
+                        "status": "error",
+                        "message": "Mã đã hết hạn. Hãy bấm gửi lại mã.",
+                        "expired": True,
+                    }
 
-            now = datetime.now(timezone.utc)
-            if (
-                expires_at and now > expires_at.replace(tzinfo=timezone.utc)
-                if hasattr(expires_at, "replace")
-                else now > expires_at
-            ):
-                self.db.collection("otp_codes").document(email).delete()
+            if input_otp.strip() != doc.get("otp", ""):
+                so_sai = doc.get("attempts", 0) + 1
+                con_lai = self.OTP_TOI_DA_SAI - so_sai
+                if con_lai <= 0:
+                    await self.db["otp_codes"].delete_one({"_id": target})
+                    return {
+                        "status": "error",
+                        "message": f"Bạn đã nhập sai {self.OTP_TOI_DA_SAI} lần. "
+                        "Phiên xác thực bị huỷ, vui lòng làm lại từ đầu.",
+                        "reset": True,
+                    }
+                await self.db["otp_codes"].update_one(
+                    {"_id": target}, {"$set": {"attempts": so_sai}}
+                )
                 return {
                     "status": "error",
-                    "message": "Mã OTP đã hết hạn. Vui lòng gửi lại.",
+                    "message": f"Mã không đúng. Còn {con_lai} lần thử.",
+                    "attemptsLeft": con_lai,
                 }
 
-            if input_otp.strip() != saved_otp:
-                return {"status": "error", "message": "Mã OTP không đúng."}
-
-            # Đánh dấu đã dùng
-            self.db.collection("otp_codes").document(email).update({"verified": True})
+            await self.db["otp_codes"].update_one(
+                {"_id": target}, {"$set": {"verified": True}}
+            )
             return {"status": "success"}
-
         except Exception as e:  # noqa: BLE001
             return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # ĐỔI EMAIL — bắt buộc xác minh OTP gửi tới địa chỉ MỚI
+    # ============================================================
+    async def change_email(self, uid: str, new_email: str, otp: str) -> dict:
+        """Đổi email đăng nhập sau khi người dùng nhập đúng OTP gửi về hộp thư mới.
+
+        Xác minh quyền sở hữu địa chỉ mới trước khi đổi, nếu không người dùng có thể
+        chiếm một email không phải của mình và mất luôn đường đăng nhập.
+        """
+        new_email = new_email.strip().lower()
+
+        trung = await self.db["users"].find_one(
+            {"email": new_email, "_id": {"$ne": uid}}
+        )
+        if trung:
+            return {
+                "status": "error",
+                "message": "Email này đã có tài khoản khác sử dụng.",
+            }
+
+        kt = await self.verify_otp(target=new_email, input_otp=otp)
+        if kt["status"] != "success":
+            return kt
+
+        try:
+            self.auth.update_user(uid, email=new_email, email_verified=True)
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": f"Không đổi được email: {e!s}"}
+
+        await self.db["users"].update_one(
+            {"_id": uid}, {"$set": {"email": new_email, "emailVerified": True}}
+        )
+        await self.db["otp_codes"].delete_one({"_id": new_email})
+        return {"status": "success", "email": new_email}
 
     # ============================================================
     # HELPER: Gửi email xác thực qua Firebase REST API

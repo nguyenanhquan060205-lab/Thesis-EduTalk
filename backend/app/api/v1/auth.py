@@ -9,10 +9,28 @@ from app.services.auth_service import AuthService
 from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
+
+
+def chi_tiet_otp(result: dict) -> dict:
+    """Gói kết quả OTP thất bại thành `detail` có cấu trúc.
+
+    Trả chuỗi thuần thì client phải đoán tình huống qua nội dung câu chữ — đổi
+    một dấu chấm là hỏng. Các cờ dưới đây quyết định giao diện làm gì tiếp:
+    `expired` → bật nút gửi lại; `reset` → đóng popup và làm lại từ đầu;
+    `deleted` → tài khoản vừa bị xoá, phải dọn cả phiên đăng nhập.
+    """
+    return {
+        "message": result.get("message", "Xác thực thất bại."),
+        "expired": bool(result.get("expired")),
+        "reset": bool(result.get("reset")),
+        "deleted": bool(result.get("deleted")),
+        "attemptsLeft": result.get("attemptsLeft"),
+    }
 auth_service = AuthService()
 
 
 from app.models.auth_models import (
+    ChangeEmailRequest,
     ChangePasswordRequest,
     GoogleSignInRequest,
     LoginRequest,
@@ -20,6 +38,7 @@ from app.models.auth_models import (
     OtpVerifyRequest,
     RegisterRequest,
     ResendVerifyRequest,
+    VerifyRegistrationRequest,
 )
 
 # ==================== Endpoints ====================
@@ -41,6 +60,7 @@ async def register(body: RegisterRequest):
         email=body.email,
         password=body.password,
         phone=body.phone,
+        gender=body.gender,
     )
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=result["status"])
@@ -130,13 +150,56 @@ async def change_password(
     return result
 
 
+@router.post("/change-email")
+async def change_email(body: ChangeEmailRequest, authorization: str = Header(...)):
+    """Đổi email đăng nhập — **bắt buộc** xác minh OTP gửi tới địa chỉ mới.
+
+    Luồng đúng phía client:
+    1. `POST /api/v1/auth/otp/send` với email mới → người dùng nhận mã 6 số
+    2. `POST /api/v1/auth/change-email` kèm `newEmail` + `otp`
+
+    Không có bước OTP thì người dùng có thể gán email của người khác cho tài khoản
+    mình, hoặc gõ nhầm địa chỉ rồi mất luôn đường đăng nhập.
+    """
+    token = authorization.replace("Bearer ", "")
+    decoded = await auth_service.verify_token(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
+
+    result = await auth_service.change_email(
+        uid=decoded["uid"], new_email=body.newEmail, otp=body.otp
+    )
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
+@router.post("/registration/verify", summary="Xác minh email sau khi đăng ký")
+async def verify_registration(body: VerifyRegistrationRequest):
+    """Nhập mã 6 số gửi tới email đăng ký. **Không cần đăng nhập** — mã OTP đã là
+    bằng chứng người nhập đọc được hộp thư đó.
+
+    - Đúng → `emailVerified = true`, mở khoá đăng bài và bình luận
+    - Sai đủ 3 lần → **xoá luôn tài khoản** (Firebase + MongoDB), trả `deleted: true`
+      để client dọn form và bắt đăng ký lại từ đầu
+    - Hết 90 giây → trả `expired: true`, client bật nút gửi lại mã
+
+    Đóng popup giữa chừng vẫn đăng nhập và dùng ứng dụng được, chỉ không đăng bài
+    hay bình luận cho tới khi xác minh.
+    """
+    result = await auth_service.verify_registration(email=body.email, otp=body.otp)
+    if result["status"] != "success":
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
+    return result
+
+
 @router.post("/otp/send")
 async def send_otp(body: OtpSendRequest):
     """
     Sinh và gửi OTP 6 số về email người dùng.
     Migrate từ: OTP_service.dart — sendOtp().
     """
-    result = await auth_service.send_otp(email=body.email)
+    result = await auth_service.send_otp(target=body.email, channel="email")
     if result["status"] != "success":
         raise HTTPException(status_code=500, detail=result.get("message"))
     return result
@@ -148,7 +211,7 @@ async def verify_otp(body: OtpVerifyRequest):
     Xác minh mã OTP người dùng nhập vào.
     Migrate từ: OTP_service.dart — verifyOtp().
     """
-    result = await auth_service.verify_otp(email=body.email, input_otp=body.otp)
+    result = await auth_service.verify_otp(target=body.email, input_otp=body.otp)
     if result["status"] != "success":
-        raise HTTPException(status_code=400, detail=result.get("message"))
+        raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
     return result

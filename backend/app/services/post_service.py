@@ -5,7 +5,7 @@ Xử lý CRUD bài viết, comment, like, report và notification.
 """
 
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import cloudinary
 import cloudinary.uploader
@@ -53,9 +53,12 @@ class PostService:
     async def get_posts(self, limit: int = 20) -> list[dict]:
         """Lấy danh sách bài viết chưa bị pending (không bị báo cáo nhiều)."""
         try:
+            # `status` = luồng duyệt bài (pending/approved/rejected).
+            # `isPending` = bị ẩn do bị báo cáo nhiều — hai chuyện khác nhau,
+            # phải thoả CẢ HAI thì bài mới hiện ra cho cộng đồng.
             cursor = (
                 self.db["posts"]
-                .find({"isPending": False})
+                .find({"status": "approved", "isPending": False})
                 .sort("createdAt", -1)
                 .limit(limit)
             )
@@ -76,6 +79,8 @@ class PostService:
     async def create_post(self, post_data: dict) -> str:
         """Tạo bài viết mới, trả về ID của bài viết."""
         post_data["createdAt"] = datetime.now(timezone.utc)
+        # Bài mới KHÔNG hiện ngay: phải qua admin duyệt.
+        post_data["status"] = "pending"
         post_data["isPending"] = False
         post_data["reportCount"] = 0
         post_data["reportedBy"] = []
@@ -84,13 +89,27 @@ class PostService:
         post_data["commentCount"] = 0
 
         result = await self.db["posts"].insert_one(post_data)
-        return str(result.inserted_id)
+        post_id = str(result.inserted_id)
+
+        await self.db["admin_notifications"].insert_one(
+            {
+                "type": "post_pending",
+                "postId": post_id,
+                "createdAt": datetime.now(timezone.utc),
+                "status": "unread",
+                "message": f"Bài viết mới chờ duyệt: {post_data.get('content', '')[:80]}",
+            }
+        )
+        return post_id
 
     # ============================================================
     # SỬA BÀI VIẾT
     # ============================================================
-    async def edit_post(self, post_id: str, new_content: str, author_id: str) -> dict:
-        """Cập nhật nội dung bài viết (chỉ tác giả mới được sửa)."""
+    async def edit_post(
+        self, post_id: str, author_id: str, new_content: str
+    ) -> dict:
+        """Sửa bài viết. Chỉ tác giả, và chỉ khi bài ĐÃ được duyệt —
+        bài đang chờ duyệt thì xoá đi đăng lại, khỏi rối trạng thái."""
         try:
             post_doc = await self.db["posts"].find_one({"_id": ObjectId(post_id)})
             if not post_doc:
@@ -100,9 +119,121 @@ class PostService:
                     "status": "error",
                     "message": "Không có quyền sửa bài viết này.",
                 }
+            if post_doc.get("status") != "approved":
+                return {
+                    "status": "error",
+                    "message": "Bài đang chờ duyệt nên chưa sửa được. "
+                    "Bạn có thể xoá rồi đăng lại.",
+                }
 
             await self.db["posts"].update_one(
-                {"_id": ObjectId(post_id)}, {"$set": {"content": new_content}}
+                {"_id": ObjectId(post_id)},
+                {
+                    "$set": {
+                        "content": new_content,
+                        "editedAt": datetime.now(timezone.utc),
+                    }
+                },
+            )
+
+            # Bài vẫn hiển thị sau khi sửa, nhưng báo admin biết để rà lại —
+            # nếu bắt duyệt lại thì sửa một lỗi chính tả cũng làm bài biến mất.
+            await self.db["admin_notifications"].insert_one(
+                {
+                    "type": "post_edited",
+                    "postId": post_id,
+                    "createdAt": datetime.now(timezone.utc),
+                    "status": "unread",
+                    "message": "Một bài viết đã duyệt vừa được tác giả chỉnh sửa.",
+                }
+            )
+            return {"status": "success"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # BÀI VIẾT CỦA CHÍNH NGƯỜI DÙNG (mọi trạng thái)
+    # ============================================================
+    async def get_my_posts(self, uid: str) -> list[dict]:
+        """Gồm cả bài đang chờ duyệt và bài bị từ chối — chỉ tác giả thấy."""
+        try:
+            cursor = self.db["posts"].find({"authorId": uid}).sort("createdAt", -1)
+            ds = []
+            async for doc in cursor:
+                doc["id"] = str(doc.pop("_id"))
+                for k in ("createdAt", "editedAt", "reviewedAt", "remindedAt"):
+                    if isinstance(doc.get(k), datetime):
+                        doc[k] = doc[k].isoformat()
+                ds.append(doc)
+            return ds
+        except Exception as e:  # noqa: BLE001
+            print(f"Lỗi get_my_posts: {e}")
+            return []
+
+    # ============================================================
+    # NHẮC ADMIN DUYỆT
+    # ============================================================
+    async def remind_admin(self, post_id: str, uid: str) -> dict:
+        """Tác giả nhắc admin duyệt bài. Giới hạn 1 lần / 12 giờ để tránh spam."""
+        try:
+            post_doc = await self.db["posts"].find_one({"_id": ObjectId(post_id)})
+            if not post_doc:
+                return {"status": "error", "message": "Bài viết không tồn tại."}
+            if post_doc.get("authorId") != uid:
+                return {"status": "error", "message": "Đây không phải bài của bạn."}
+            if post_doc.get("status") != "pending":
+                return {"status": "error", "message": "Bài này không còn chờ duyệt."}
+
+            lan_truoc = post_doc.get("remindedAt")
+            now = datetime.now(timezone.utc)
+            if lan_truoc:
+                if lan_truoc.tzinfo is None:
+                    lan_truoc = lan_truoc.replace(tzinfo=timezone.utc)
+                con_lai = timedelta(hours=12) - (now - lan_truoc)
+                if con_lai.total_seconds() > 0:
+                    gio = int(con_lai.total_seconds() // 3600) + 1
+                    return {
+                        "status": "error",
+                        "message": f"Bạn vừa nhắc rồi, thử lại sau khoảng {gio} giờ.",
+                    }
+
+            await self.db["posts"].update_one(
+                {"_id": ObjectId(post_id)}, {"$set": {"remindedAt": now}}
+            )
+            await self.db["admin_notifications"].insert_one(
+                {
+                    "type": "post_remind",
+                    "postId": post_id,
+                    "createdAt": now,
+                    "status": "unread",
+                    "message": f"Tác giả nhắc duyệt bài: {post_doc.get('content', '')[:80]}",
+                }
+            )
+            return {"status": "success"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # ADMIN DUYỆT / TỪ CHỐI
+    # ============================================================
+    async def review_post(
+        self, post_id: str, duyet: bool, reason: str = ""
+    ) -> dict:
+        try:
+            r = await self.db["posts"].update_one(
+                {"_id": ObjectId(post_id)},
+                {
+                    "$set": {
+                        "status": "approved" if duyet else "rejected",
+                        "rejectReason": "" if duyet else reason,
+                        "reviewedAt": datetime.now(timezone.utc),
+                    }
+                },
+            )
+            if r.matched_count == 0:
+                return {"status": "error", "message": "Bài viết không tồn tại."}
+            await self.db["admin_notifications"].update_many(
+                {"postId": post_id, "status": "unread"}, {"$set": {"status": "read"}}
             )
             return {"status": "success"}
         except Exception as e:  # noqa: BLE001
@@ -144,6 +275,9 @@ class PostService:
             post_doc = await self.db["posts"].find_one({"_id": ObjectId(post_id)})
             if not post_doc:
                 return "not_found"
+
+            if post_doc.get("authorId") == uid:
+                return "own_content"
 
             reported_by = post_doc.get("reportedBy", [])
             if uid in reported_by:
@@ -231,6 +365,10 @@ class PostService:
             comment_data["postId"] = post_id
             comment_data["createdAt"] = datetime.now(timezone.utc)
             comment_data["authorId"] = author_id
+            # Tên người bình luận lấy từ hồ sơ ở server, không nhận từ client —
+            # trước đây không lưu gì nên mọi bình luận hiện ra đều khuyết tên.
+            nguoi = await self.db["users"].find_one({"_id": author_id})
+            comment_data["authorName"] = (nguoi or {}).get("name") or "Người dùng"
             comment_data["upvotedBy"] = []
             comment_data["interactionCount"] = 0
 
@@ -283,17 +421,139 @@ class PostService:
     async def get_comments(self, post_id: str) -> list[dict]:
         """Lấy danh sách bình luận của một bài viết."""
         try:
-            cursor = self.db["comments"].find({"postId": post_id}).sort("createdAt", -1)
+            # Bình luận bị báo cáo từ 5 lần trở lên (`isHidden`) thì ẩn khỏi mọi
+            # người, giống cách bài viết bị ẩn qua `isPending`.
+            # Sắp xếp cũ → mới để chuỗi trả lời đọc theo đúng mạch hội thoại.
+            cursor = (
+                self.db["comments"]
+                .find({"postId": post_id, "isHidden": {"$ne": True}})
+                .sort("createdAt", 1)
+            )
             comments = []
             async for doc in cursor:
                 doc["id"] = str(doc.pop("_id"))
-                if "createdAt" in doc and isinstance(doc["createdAt"], datetime):
-                    doc["createdAt"] = doc["createdAt"].isoformat()
+                for k in ("createdAt", "editedAt"):
+                    if isinstance(doc.get(k), datetime):
+                        doc[k] = doc[k].isoformat()
                 comments.append(doc)
             return comments
         except Exception as e:  # noqa: BLE001
             print(f"Lỗi get_comments: {e}")
             return []
+
+    # ============================================================
+    # SỬA BÌNH LUẬN
+    # ============================================================
+    async def edit_comment(
+        self, comment_id: str, author_id: str, new_text: str
+    ) -> dict:
+        """Chỉ tác giả bình luận mới sửa được."""
+        try:
+            doc = await self.db["comments"].find_one({"_id": ObjectId(comment_id)})
+            if not doc:
+                return {"status": "error", "message": "Bình luận không tồn tại."}
+            if doc.get("authorId") != author_id:
+                return {"status": "error", "message": "Không có quyền sửa bình luận này."}
+
+            await self.db["comments"].update_one(
+                {"_id": ObjectId(comment_id)},
+                {"$set": {"text": new_text, "editedAt": datetime.now(timezone.utc)}},
+            )
+            return {"status": "success"}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # XÓA BÌNH LUẬN
+    # ============================================================
+    async def delete_comment(self, comment_id: str, uid: str) -> dict:
+        """Tác giả bình luận hoặc admin xóa được.
+
+        Xóa kèm mọi trả lời của bình luận đó — nếu chỉ xóa bình luận cha thì các
+        trả lời sẽ mồ côi, không hiển thị ở đâu nhưng vẫn đếm vào `commentCount`.
+        """
+        try:
+            doc = await self.db["comments"].find_one({"_id": ObjectId(comment_id)})
+            if not doc:
+                return {"status": "error", "message": "Bình luận không tồn tại."}
+
+            nguoi = await self.db["users"].find_one({"_id": uid})
+            la_admin = (nguoi or {}).get("role") == "admin"
+            if doc.get("authorId") != uid and not la_admin:
+                return {"status": "error", "message": "Không có quyền xóa bình luận này."}
+
+            so_tra_loi = await self.db["comments"].count_documents(
+                {"parentId": comment_id}
+            )
+            await self.db["comments"].delete_many({"parentId": comment_id})
+            await self.db["comments"].delete_one({"_id": ObjectId(comment_id)})
+
+            post_id = doc.get("postId")
+            if post_id:
+                await self.db["posts"].update_one(
+                    {"_id": ObjectId(post_id)},
+                    {"$inc": {"commentCount": -(1 + so_tra_loi)}},
+                )
+            return {"status": "success", "deleted": 1 + so_tra_loi}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # THÍCH / BỎ THÍCH BÌNH LUẬN
+    # ============================================================
+    async def upvote_comment(self, comment_id: str, uid: str) -> dict:
+        try:
+            doc = await self.db["comments"].find_one({"_id": ObjectId(comment_id)})
+            if not doc:
+                return {"status": "error", "message": "Bình luận không tồn tại."}
+
+            da_thich = uid in doc.get("upvotedBy", [])
+            await self.db["comments"].update_one(
+                {"_id": ObjectId(comment_id)},
+                {"$pull" if da_thich else "$addToSet": {"upvotedBy": uid}},
+            )
+            return {"status": "success", "liked": not da_thich}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "message": str(e)}
+
+    # ============================================================
+    # BÁO CÁO BÌNH LUẬN
+    # ============================================================
+    async def report_comment(self, comment_id: str, uid: str, reason: str = "") -> str:
+        """Không cho tự báo cáo bình luận của chính mình, và mỗi người chỉ báo 1 lần."""
+        try:
+            doc = await self.db["comments"].find_one({"_id": ObjectId(comment_id)})
+            if not doc:
+                return "not_found"
+            if doc.get("authorId") == uid:
+                return "own_content"
+            if uid in doc.get("reportedBy", []):
+                return "already_reported"
+
+            so_lan = doc.get("reportCount", 0) + 1
+            await self.db["comments"].update_one(
+                {"_id": ObjectId(comment_id)},
+                {
+                    "$addToSet": {"reportedBy": uid},
+                    "$set": {"reportCount": so_lan, "isHidden": so_lan >= 5},
+                },
+            )
+            await self.db["admin_notifications"].insert_one(
+                {
+                    "type": "comment_report",
+                    "commentId": comment_id,
+                    "postId": doc.get("postId"),
+                    "reportCount": so_lan,
+                    "reason": reason,
+                    "createdAt": datetime.now(timezone.utc),
+                    "status": "unread",
+                    "message": f"Bình luận bị báo cáo: {(doc.get('text') or '')[:80]}",
+                }
+            )
+            return "success"
+        except Exception as e:  # noqa: BLE001
+            print(f"Error report_comment: {e}")
+            return "error"
 
     # ============================================================
     # HELPER: Gửi thông báo

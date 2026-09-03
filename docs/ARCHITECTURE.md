@@ -31,7 +31,7 @@
 **EduTalk** là một hệ thống tư vấn hướng nghiệp & tuyển sinh thông minh dành cho học sinh THPT, sử dụng:
 
 - **AI Chatbot (Gemini)**: Trả lời câu hỏi về ngành học, trường đại học, điểm chuẩn.
-- **Dự đoán ngành phù hợp (XGBoost + Cosine Similarity)**: Nhập điểm thi → Gợi ý ngành học phù hợp nhất tại HUIT.
+- **Dự đoán ngành phù hợp (XGBoost 2 tầng)**: Nhập điểm 3 môn + 10 câu khảo sát sở thích → gợi ý Top 3 ngành phù hợp tại HUIT. Tầng 1 dự đoán nhóm ngành (7 lớp), tầng 2 dự đoán ngành (39 lớp), kết hợp bằng `P(ngành) ∝ P₂(ngành) × P₁(nhóm)^β`.
 - **Cộng đồng (Community)**: Diễn đàn thảo luận kiểu mạng xã hội (bài viết, thích, bình luận).
 - **Tin tức tuyển sinh (Crawler)**: Tự động cào và tóm tắt tin tuyển sinh bằng AI.
 - **Admin Dashboard**: Quản lý người dùng, bài viết, doanh thu Premium, duyệt tin.
@@ -197,7 +197,7 @@ Request HTTP
 |-------------------|---------------------|----------------------------------------------------|
 | `auth.py`         | `/api/v1/auth`      | Đăng ký, đăng nhập (email + Google), đổi mật khẩu  |
 | `users.py`        | `/api/v1/users`     | CRUD thông tin người dùng, cập nhật avatar           |
-| `predict.py`      | `/api/v1/predict`   | Dự đoán ngành học (XGBoost + Cosine Similarity)      |
+| `predict.py`      | `/api/v1/predict`   | `POST /recommend` gợi ý ngành (XGBoost 2 tầng), `GET /catalog` danh mục 7 nhóm + 39 ngành |
 | `majors.py`       | `/api/v1/majors`    | Lấy danh sách ngành HUIT                             |
 | `survey.py`       | `/api/v1/survey`    | Khảo sát trắc nghiệm hướng nghiệp                   |
 | `chat.py`         | `/api/v1/chat`      | Chat AI với Gemini, lịch sử chat                     |
@@ -207,13 +207,25 @@ Request HTTP
 | `admin.py`        | `/api/v1/admin`     | Dashboard admin: quản lý user, posts, doanh thu      |
 | `admin_news.py`   | `/api/v1/admin/news`| Duyệt / từ chối tin tức                             |
 
+> ⚠️ **Hai đường gọi mô hình — chọn đúng cái cần dùng**
+>
+> | Endpoint | Chạy mô hình | Ghi `prediction_history` | Tăng `usageCount` | Cần đăng nhập |
+> |---|---|---|---|---|
+> | `POST /api/v1/predict/recommend` | ✅ | ❌ | ❌ | Không |
+> | `POST /api/v1/survey/submit` | ✅ | ✅ | ✅ | Có |
+>
+> Cả hai cho **kết quả giống hệt nhau**. Client nào cần lưu lịch sử cho người dùng thì
+> phải gọi `/survey/submit`; gọi `/recommend` sẽ không để lại dấu vết nào và trang
+> `/history` sẽ luôn rỗng.
+
 ### 4.3. Danh sách Services (`services/`)
 
 | File                 | Chức năng                                                    |
 |----------------------|--------------------------------------------------------------|
 | `auth_service.py`    | Đăng ký, đăng nhập, Google Sign-in, OTP, đổi mật khẩu       |
 | `gemini_service.py`  | Giao tiếp với Google Gemini AI, phân tích xu hướng ngành     |
-| `predict_service.py` | Thuật toán dự đoán ngành (39 ngành HUIT, 15 tổ hợp)         |
+| `major_predictor.py` | **Mô hình chính** — nạp 2 model XGBoost từ `research/`, dựng 43 đặc trưng, lọc mềm theo tổ hợp, trả Top-K ngành |
+| `predict_service.py` | ⚠️ **Đã ngưng dùng** — bảng tra cũ gõ tay, không có mô hình học máy nào. Giữ lại cho endpoint `POST /api/v1/predict/` đã đánh dấu deprecated |
 | `post_service.py`    | CRUD bài viết, like, comment, báo cáo bài viết               |
 | `news_service.py`    | Quản lý tin tức (lấy danh sách, duyệt, từ chối)             |
 | `crawler_service.py` | Tự động cào tin tuyển sinh + tóm tắt bằng Gemini AI          |
@@ -225,12 +237,13 @@ Mỗi file tương ứng với một nhóm API và định nghĩa cấu trúc d�
 | File                 | Ví dụ                                          |
 |----------------------|------------------------------------------------|
 | `auth_models.py`     | `LoginRequest(email, password)`                |
-| `user_models.py`     | `UpdateProfileRequest(name, phone, avatar)`    |
+| `user_models.py`     | `UpdateProfileRequest(name, dob, school, avatar, gender, isNotificationEnabled, fcmToken)` |
 | `post_models.py`     | `CreatePostRequest(content, imageUrl, ...)`    |
-| `predict_models.py`  | `PredictRequest(scores: dict)`                 |
+| `predict_models.py`  | `RecommendRequest(interests, subjectGroup, scores, goal, fieldId, limit)` |
 | `chat_models.py`     | `ChatRequest(message, history)`                |
 | `survey_models.py`   | `SurveySubmitRequest(answers: list)`           |
 | `support_models.py`  | `SupportTicket(subject, message)`              |
+| `survey_models.py`   | `SurveySubmitRequest(...)` — dùng cho `POST /survey/submit`, endpoint **có ghi lịch sử** |
 | `admin_models.py`    | `UpdateUserRoleRequest(userId, role)`           |
 
 ---
@@ -277,7 +290,7 @@ app/
 │   ├── result/page.tsx     ← "/result" — Kết quả dự đoán
 │   ├── majors/page.tsx     ← "/majors" — Danh sách ngành HUIT
 │   ├── profile/page.tsx    ← "/profile" — Trang cá nhân
-│   ├── history/page.tsx    ← "/history" — Lịch sử chat
+│   ├── history/page.tsx    ← "/history" — Lịch sử tư vấn ngành (đọc `prediction_history`)
 │   └── settings/page.tsx   ← "/settings" — Cài đặt
 │
 └── dashboard/              ← Route Group cho ADMIN (layout Sidebar riêng)
@@ -297,7 +310,7 @@ components/
 ├── layout/                ← Navbar, BottomNav (cấu trúc giao diện chung)
 ├── features/              ← Các module tính năng lớn
 │   └── chat/              ← ChatWidget.tsx (widget chat popup)
-├── ui/                    ← Component UI cơ bản (Button, Input, Modal) ← Tạo sẵn
+└── (chưa có `ui/` — component cơ bản hiện viết thẳng trong từng trang)
 └── shared/                ← Component dùng lại nhiều nơi (Avatar, Badge) ← Tạo sẵn
 ```
 
@@ -478,11 +491,11 @@ Kết nối qua biến `MONGO_URI` trong file `.env`. Driver: `motor` (async).
 | `posts`             | Bài viết cộng đồng                  |
 | `comments`          | Bình luận                           |
 | `chat_history`      | Lịch sử chat AI                    |
-| `predictions`       | Lịch sử dự đoán ngành              |
-| `surveys`           | Kết quả khảo sát hướng nghiệp      |
+| `prediction_history`| Lịch sử tư vấn ngành (đầu vào + kết quả mỗi lần khảo sát) |
 | `news`              | Tin tức tuyển sinh (crawler)        |
 | `transactions`      | Giao dịch thanh toán Premium        |
-| `support_tickets`   | Yêu cầu hỗ trợ                     |
+| `support_requests`  | Yêu cầu hỗ trợ                     |
+| `notifications`     | Thông báo gửi tới người dùng        |
 | `admin_notifications`| Thông báo cho admin                |
 
 ### 8.2. Firebase (Xác thực & Thông báo)
@@ -491,7 +504,7 @@ Kết nối qua biến `MONGO_URI` trong file `.env`. Driver: `motor` (async).
 |------------------------|--------------------------------------------|
 | Firebase Authentication| Quản lý tài khoản (Email + Google Sign-in) |
 | Firebase Cloud Messaging| Gửi push notification đến Mobile          |
-| Firebase App Check     | Bảo vệ API khỏi request giả mạo           |
+
 
 ### 8.3. Dịch vụ bên ngoài khác
 
@@ -499,7 +512,7 @@ Kết nối qua biến `MONGO_URI` trong file `.env`. Driver: `motor` (async).
 |----------------|----------------------------------|-----------------------------------|
 | Google Gemini  | `GEMINI_API_KEY`                 | AI Chatbot + Tóm tắt tin tức     |
 | Cloudinary     | `CLOUDINARY_CLOUD_NAME/KEY/SECRET`| Upload ảnh bài viết              |
-| MoMo           | `MOMO_PARTNER_CODE/ACCESS/SECRET` | Thanh toán Premium               |
+| MoMo           | `MOMO_PARTNER_CODE/ACCESS/SECRET` | Thanh toán Premium — **hiện chỉ có ở Mobile** (`mobile/lib/services/payment_service.dart`), backend chưa triển khai |
 | EmailJS        | `EMAILJS_SERVICE_ID/...`         | Gửi OTP xác thực email           |
 
 ---

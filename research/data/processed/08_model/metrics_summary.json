@@ -1,0 +1,157 @@
+{
+  "ngay_chay": "2026-09-02 01:23",
+  "seed": 42,
+  "du_lieu": {
+    "train_that": 574,
+    "train_tong_hop": 13796,
+    "test_that": 102,
+    "n_dac_trung": 43,
+    "n_lop_nganh": 39,
+    "n_lop_khoi": 7
+  },
+  "cv": {
+    "n_splits": 5,
+    "n_repeats": 3,
+    "ghi_chu": "VAL chỉ gồm dòng thật; dòng tổng hợp chỉ vào TRAIN và sinh riêng theo fold"
+  },
+  "sieu_tham_so": {
+    "tang1": {
+      "max_depth": 6,
+      "learning_rate": 0.08,
+      "n_estimators": 68,
+      "subsample": 0.8,
+      "colsample_bytree": 1.0,
+      "min_child_weight": 6,
+      "reg_alpha": 0.1,
+      "reg_lambda": 3.0,
+      "gamma": 0.0
+    },
+    "tang2": {
+      "max_depth": 4,
+      "learning_rate": 0.03,
+      "n_estimators": 174,
+      "subsample": 0.7,
+      "colsample_bytree": 0.6,
+      "min_child_weight": 10,
+      "reg_alpha": 0.5,
+      "reg_lambda": 10.0,
+      "gamma": 0.1
+    },
+    "beta": 0.6000000000000001
+  },
+  "cv_macro_f1": {
+    "Đoán lớp đông nhất": 0.003340885867875072,
+    "Model phẳng 39 lớp": 0.12498676200827509,
+    "2 tầng — nhân xác suất (β=0.6)": 0.13728050855938445,
+    "2 tầng — tư vấn (có điều kiện)": 0.2662081351975771
+  },
+  "cv_overfit": {
+    "train_top1": 0.9462814562217804,
+    "val_top1": 0.16902618866005595
+  },
+  "test": {
+    "tang1_khoi": {
+      "top1": 0.5490196078431373,
+      "top2": 0.7647058823529411,
+      "top3": 0.8627450980392157,
+      "macro_f1": 0.4558081227070773,
+      "balanced_acc": 0.45486087276368614
+    },
+    "auto_CHI_SO_CHINH": {
+      "top1": 0.17647058823529413,
+      "top3": 0.39215686274509803,
+      "top5": 0.5294117647058824,
+      "macro_f1": 0.14523994523994527,
+      "balanced_acc": 0.14987789987789987
+    },
+    "phang_39_doi_chung": {
+      "top1": 0.19607843137254902,
+      "top3": 0.38235294117647056,
+      "top5": 0.5588235294117647,
+      "macro_f1": 0.14764096302557841,
+      "balanced_acc": 0.15445665445665446
+    },
+    "tu_van_CO_DIEU_KIEN": {
+      "top1": 0.35294117647058826,
+      "top3": 0.696078431372549,
+      "top5": 0.8235294117647058,
+      "macro_f1": 0.2854793354793355,
+      "balanced_acc": 0.3021978021978021
+    }
+  },
+  "baseline": {
+    "khoi_top1": 0.25435545385202135,
+    "nganh_top1": 0.06968726163234175,
+    "nganh_top3": 0.1742181540808543,
+    "nganh_top5": 0.25784897025171616
+  },
+  "ablation_tong_hop_co_ich": true,
+  "auc_roc": {
+    "tang1_macro": 0.8324272195194046,
+    "tang1_weighted": 0.8403194087380853,
+    "auto_macro": 0.8439686008820476,
+    "auto_weighted": 0.835060214978765,
+    "phang_macro": 0.8205242838310658,
+    "tu_van_macro": 0.9500777645860649,
+    "tang1_tung_khoi": {
+      "CNTT & Máy tính": 0.7813310285220397,
+      "Kinh doanh & Quản lý": 0.8390123456790123,
+      "Du lịch, Khách sạn & Ẩm thực": 0.8441558441558442,
+      "Kỹ thuật & Công nghệ": 0.8497523390203633,
+      "Thực phẩm, Sinh học & Môi trường": 0.8858131487889273,
+      "Luật": 0.7484536082474227,
+      "Ngoại ngữ": 0.8784722222222222
+    }
+  },
+  "dong_gop_nhom_dac_trung": {
+    "Chỉ 10 câu sở thích": {
+      "top1": 0.09763539282990083,
+      "top3": 0.2682532418001526,
+      "top5": 0.3989168573607933,
+      "macro_f1": 0.08368772978878558,
+      "balanced_acc": 0.09521367521367521
+    },
+    "Chỉ điểm thi": {
+      "top1": 0.12715484363081617,
+      "top3": 0.24216628527841344,
+      "top5": 0.3344469870327994,
+      "macro_f1": 0.0747675585831496,
+      "balanced_acc": 0.08867521367521367
+    },
+    "Chỉ tổ hợp thi": {
+      "top1": 0.1115026697177727,
+      "top3": 0.2648512585812357,
+      "top5": 0.35016018306636154,
+      "macro_f1": 0.03495875798026789,
+      "balanced_acc": 0.06807692307692306
+    },
+    "Sở thích + điểm thi": {
+      "top1": 0.15157894736842104,
+      "top3": 0.33443173150266975,
+      "top5": 0.4425324180015256,
+      "macro_f1": 0.1129592411945353,
+      "balanced_acc": 0.13286324786324782
+    },
+    "Bỏ 10 câu sở thích": {
+      "top1": 0.142883295194508,
+      "top3": 0.256094584286804,
+      "top5": 0.3605797101449275,
+      "macro_f1": 0.0789494232933147,
+      "balanced_acc": 0.09606837606837607
+    },
+    "TẤT CẢ 43 (bản chạy thật)": {
+      "top1": 0.1777116704805492,
+      "top3": 0.3605644546147978,
+      "top5": 0.477299771167048,
+      "macro_f1": 0.13449731599052867,
+      "balanced_acc": 0.1558974358974359
+    }
+  },
+  "dong_gop_rieng_cua_likert": {
+    "top1": 0.03482837528604121,
+    "top3": 0.10446987032799382,
+    "top5": 0.11672006102212051,
+    "macro_f1": 0.05554789269721397
+  },
+  "canh_bao": "Chỉ số hệ thống là 'auto'. 'tu_van' giả định người dùng chọn ĐÚNG khối ngành nên không phải năng lực tự động của mô hình."
+}
