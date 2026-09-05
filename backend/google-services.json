@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "912812536868",
+    "project_id": "thesis-edutalk",
+    "storage_bucket": "thesis-edutalk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912812536868:android:3927862449c23055bf94b1",
+        "android_client_info": {
+          "package_name": "com.edutalk.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912812536868-vcp5tecgh0ou6af72t25dqbsnlfvubu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByAcOx46TZchEHMq8bKIp17b6nOHEyIkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912812536868-vcp5tecgh0ou6af72t25dqbsnlfvubu6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912812536868-9e6hvpaea178s8t87igj2tq5n8m3q4j7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.edutalk.vn"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
