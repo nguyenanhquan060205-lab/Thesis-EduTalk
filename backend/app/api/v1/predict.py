@@ -9,6 +9,8 @@ from app.models.predict_models import (
 )
 from app.services.auth_service import AuthService
 from app.services.predict_service import predict_major
+from bson import ObjectId
+from pydantic import BaseModel
 from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
@@ -162,3 +164,101 @@ def predict_user_majors(survey: SurveySubmit):
     Giữ lại để không phá client cũ. Hãy chuyển sang `POST /api/v1/predict/recommend`.
     """
     return {"results": predict_major({"scores": survey.scores, "block": "D01"})}
+
+@router.get(
+    "/explain/{prediction_id}",
+    summary="Đọc lại giải thích SHAP của một lượt tư vấn đã lưu",
+)
+async def get_explain(prediction_id: str, authorization: str = Header(...)):
+    """Trả về phần giải thích XAI đã lưu kèm lượt tư vấn.
+
+    Chỉ **chính chủ** hoặc **admin** đọc được: bản ghi tư vấn gắn với hồ sơ cá
+    nhân, để lộ là lộ luôn điểm thi và sở thích của người khác.
+
+    Thí sinh nhận bản đã lọc bỏ các đặc trưng gắn cờ `anVoiThiSinh` (hiện là giới
+    tính). Admin nhận đầy đủ — trang quản trị cần thấy đúng mô hình đã dựa vào gì.
+    """
+    from bson.errors import InvalidId
+
+    from app.core.mongodb import get_db
+    from app.services.auth_service import AuthService
+
+    token = authorization.replace("Bearer ", "")
+    decoded = await AuthService().verify_token(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
+    uid = decoded["uid"]
+
+    db = get_db()
+    try:
+        doc = await db["prediction_history"].find_one({"_id": ObjectId(prediction_id)})
+    except (InvalidId, TypeError) as e:
+        raise HTTPException(status_code=400, detail="Mã lượt tư vấn không hợp lệ.") from e
+    if not doc:
+        raise HTTPException(status_code=404, detail="Không tìm thấy lượt tư vấn.")
+
+    la_chu = doc.get("user_id") == uid
+    if not la_chu:
+        nguoi_goi = await db["users"].find_one({"_id": uid})
+        if (nguoi_goi or {}).get("role") != "admin":
+            raise HTTPException(
+                status_code=403, detail="Không có quyền xem lượt tư vấn này."
+            )
+    la_admin = not la_chu
+
+    majors = []
+    for m in doc.get("majors", []):
+        gt = m.get("explain")
+        if gt and not la_admin:
+            gt = {
+                **gt,
+                "features": [f for f in gt["features"] if not f.get("anVoiThiSinh")],
+            }
+        majors.append({"rank": m.get("rank"), "name": m.get("name"),
+                       "field": m.get("field"), "explain": gt})
+
+    return {
+        "id": str(doc["_id"]),
+        "mode": doc.get("mode"),
+        "thoiGian": doc.get("createdAt").isoformat() if doc.get("createdAt") else None,
+        "dayDu": la_admin,
+        "majors": majors,
+    }
+
+class DienGiaiRequest(BaseModel):
+    """Bảng SHAP đã tính sẵn ở `/recommend`, gửi lại để diễn giải thành lời."""
+
+    nganh: str
+    features: list[dict]
+
+
+@router.post(
+    "/explain-text",
+    summary="Diễn giải bảng SHAP thành 2–3 câu tiếng Việt",
+)
+async def explain_text(body: DienGiaiRequest, authorization: str = Header(...)):
+    """Chuyển bảng số thành lời cho học sinh dễ đọc.
+
+    LLM **chỉ được** diễn đạt lại những con số trong `features` — prompt cấm thêm
+    lý do, cấm nói về việc làm / lương / điểm chuẩn. Không bao giờ hỏi LLM kiểu
+    "đoán xem vì sao mô hình chọn ngành này": cách đó sinh ra lời giải thích nghe
+    thuyết phục nhưng không dính gì tới mô hình, tệ hơn là không giải thích.
+
+    Gọi theo yêu cầu (bấm nút) chứ không tự chạy mỗi lần dự đoán — mỗi lượt là một
+    lần gọi Gemini, bật sẵn cho cả 5 ngành thì vừa chậm vừa tốn.
+    """
+    token = authorization.replace("Bearer ", "")
+    if not await AuthService().verify_token(token):
+        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
+
+    from app.services.xai_service import XAIService
+
+    try:
+        loi = await XAIService().dien_giai(body.nganh, body.features)
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(
+            status_code=503, detail=f"Không tạo được lời giải thích: {e!s}"
+        ) from e
+    if not loi:
+        raise HTTPException(status_code=503, detail="Mô hình ngôn ngữ không trả lời.")
+    return {"text": loi}

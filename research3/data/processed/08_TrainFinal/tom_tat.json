@@ -1,0 +1,18 @@
+{
+  "n_dong": 5254,
+  "n_cot": 70,
+  "n_dac_trung": 63,
+  "n_cot_quan_ly": 7,
+  "n_that": 574,
+  "n_tang_cuong": 4680,
+  "theo_nguon": {
+    "ttth": 4080,
+    "bootstrap_khaosat": 600,
+    "khaosat": 574
+  },
+  "ban_ga": "Bản 2 — toán tử trên phiếu thật",
+  "khoa_npz": "likert_full",
+  "n_nganh": 39,
+  "n_nhom": 9,
+  "mb": 2.5
+}

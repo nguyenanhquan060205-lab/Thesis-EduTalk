@@ -1,0 +1,9 @@
+nhom_dac_trung,so_cot,o_trong_%,trong_khaosat_%,trong_tangcuong_%
+Likert thô,10,0.0,0.0,0.0
+Likert chuẩn hoá theo người,10,0.0,0.0,0.0
+Thống kê Likert,2,0.0,0.0,0.0
+Điểm thi thô,10,70.0,70.0,70.0
+Điểm z-score từng môn,10,70.0,70.0,70.0
+Phái sinh từ điểm,4,0.0,0.0,0.0
+Tổ hợp xét tuyển (one-hot),15,0.0,0.0,0.0
+Nhân khẩu học & mục tiêu,2,0.0,0.0,0.0

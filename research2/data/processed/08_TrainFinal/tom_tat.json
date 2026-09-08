@@ -1,0 +1,18 @@
+{
+  "n_dong": 3187,
+  "n_cot": 70,
+  "n_dac_trung": 63,
+  "n_cot_quan_ly": 7,
+  "n_that": 574,
+  "n_tang_cuong": 2613,
+  "theo_nguon": {
+    "ttth": 2278,
+    "khaosat": 574,
+    "bootstrap_khaosat": 335
+  },
+  "ban_ga": "Bản 1 — lấy mẫu Gauss",
+  "khoa_npz": "likert_gauss_full",
+  "n_nganh": 39,
+  "n_nhom": 7,
+  "mb": 1.5
+}
