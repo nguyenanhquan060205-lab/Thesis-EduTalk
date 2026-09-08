@@ -176,8 +176,8 @@ class AuthService:
         sau đó gửi ID Token lên server để server xác nhận và lấy thêm data.
         """
         try:
-            # Xác minh ID Token từ Google
-            decoded_token = self.auth.verify_id_token(id_token)
+            # Xác minh ID Token từ Google (cho phép lệch giờ tối đa 60s)
+            decoded_token = self.auth.verify_id_token(id_token, clock_skew_seconds=60)
             uid = decoded_token["uid"]
             name = decoded_token.get("name", "")
             email = decoded_token.get("email", "")
@@ -217,9 +217,14 @@ class AuthService:
                     "needsProfile": user_doc.get("gender") not in ("Nam", "Nu"),
                 }
 
-        except self.auth.InvalidIdTokenError:
-            return {"status": "Token Google không hợp lệ."}
+        except self.auth.InvalidIdTokenError as e:
+            print(f"❌ [Google Sign In] InvalidIdTokenError: {e}")
+            return {"status": f"Token Google không hợp lệ: {e}"}
         except Exception as e:  # noqa: BLE001
+            import traceback
+
+            traceback.print_exc()
+            print(f"❌ [Google Sign In] Error: {e}")
             return {"status": f"Lỗi hệ thống: {e!s}"}
 
     # ============================================================

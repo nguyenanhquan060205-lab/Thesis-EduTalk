@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Target, 
-  MessageSquare, 
-  BookOpen, 
-  Users, 
-  User, 
-  Settings, 
-  History, 
-  LogOut, 
-  ChevronDown, 
-  Newspaper, 
+import {
+  Target,
+  MessageSquare,
+  BookOpen,
+  Users,
+  User,
+  Settings,
+  History,
+  LogOut,
+  ChevronDown,
+  Newspaper,
   LogIn,
   Menu,
   X,
@@ -57,7 +57,7 @@ export default function Navbar() {
     <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 text-slate-900 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
+
           {/* LOGO THƯƠNG HIỆU HUIT */}
           <Link href="/" className="flex items-center gap-3 group shrink-0">
             <div className="w-10 h-10 rounded-xl bg-[#0054A6] flex items-center justify-center text-white shadow-md shadow-[#0054A6]/20 group-hover:scale-105 transition-transform">
@@ -82,16 +82,15 @@ export default function Navbar() {
           <nav className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
-              
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative py-2 text-[13px] font-bold transition-colors flex items-center gap-1.5 ${
-                    isActive 
-                      ? "text-[#0054A6] font-black" 
+                  className={`relative py-2 text-[13px] font-bold transition-colors flex items-center gap-1.5 ${isActive
+                      ? "text-[#0054A6] font-black"
                       : "text-slate-600 hover:text-[#0054A6]"
-                  }`}
+                    }`}
                 >
                   <span>{item.name}</span>
                   {item.isHot && (
@@ -113,10 +112,10 @@ export default function Navbar() {
 
           {/* KHU VỰC TÀI KHOẢN (RIGHT ACTIONS) */}
           <div className="flex items-center gap-3">
-            
+
             {user ? (
               <div className="relative" ref={dropdownRef}>
-                <button 
+                <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2.5 py-1.5 px-3 rounded-full bg-[#F5F8FA] hover:bg-slate-100 transition border border-slate-200 shadow-xs cursor-pointer"
                 >
@@ -135,7 +134,7 @@ export default function Navbar() {
 
                 <AnimatePresence>
                   {isDropdownOpen && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 8, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
@@ -149,34 +148,34 @@ export default function Navbar() {
                           {user.role === "admin" ? "Quản trị viên" : "Thí sinh xét tuyển"}
                         </span>
                       </div>
-                      
+
                       <div className="py-1">
-                        <Link 
-                          href="/profile" 
-                          onClick={() => setIsDropdownOpen(false)} 
+                        <Link
+                          href="/profile"
+                          onClick={() => setIsDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0054A6] transition"
                         >
                           <User className="w-4 h-4 text-slate-400" /> Hồ sơ cá nhân
                         </Link>
-                        <Link 
-                          href="/history" 
-                          onClick={() => setIsDropdownOpen(false)} 
+                        <Link
+                          href="/history"
+                          onClick={() => setIsDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0054A6] transition"
                         >
                           <History className="w-4 h-4 text-slate-400" /> Lịch sử tư vấn
                         </Link>
-                        <Link 
-                          href="/settings" 
-                          onClick={() => setIsDropdownOpen(false)} 
+                        <Link
+                          href="/settings"
+                          onClick={() => setIsDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-[#0054A6] transition"
                         >
                           <Settings className="w-4 h-4 text-slate-400" /> Cài đặt tài khoản
                         </Link>
                       </div>
-                      
+
                       <div className="border-t border-slate-100 pt-1 mt-1">
-                        <button 
-                          onClick={() => { setIsDropdownOpen(false); logout(); }} 
+                        <button
+                          onClick={() => { setIsDropdownOpen(false); logout(); }}
                           className="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                         >
                           <LogOut className="w-4 h-4 text-rose-600" /> Đăng xuất
@@ -188,7 +187,7 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link 
+                <Link
                   href="/auth/login"
                   className="px-4 py-2 rounded-xl text-xs font-black bg-[#0054A6] hover:bg-[#0072CE] text-white transition shadow-sm shadow-[#0054A6]/20 cursor-pointer flex items-center gap-1.5"
                 >
@@ -227,11 +226,10 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition ${
-                    isActive 
-                      ? "bg-[#0054A6]/10 text-[#0054A6] font-black" 
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition ${isActive
+                      ? "bg-[#0054A6]/10 text-[#0054A6] font-black"
                       : "text-slate-700 hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   <span>{item.name}</span>
                   {item.isHot && (
