@@ -54,21 +54,21 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 text-slate-900 transition-all">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/70 text-slate-900 transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
           {/* LOGO THƯƠNG HIỆU HUIT */}
           <Link href="/" className="flex items-center gap-3 group shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-[#0054A6] flex items-center justify-center text-white shadow-md shadow-[#0054A6]/20 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0054A6] to-[#003B73] flex items-center justify-center text-white shadow-md shadow-[#0054A6]/25 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#0054A6]/35 transition-all">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="font-black text-lg tracking-tight text-slate-900 leading-none">
-                  HUIT <span className="text-[#0054A6]">EduTalk</span>
+                  HUIT <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] to-[#0084FF]">EduTalk</span>
                 </span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-red-50 text-[#D71920] border border-red-200 leading-none">
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-red-50 text-[#D71920] border border-red-200 leading-none shadow-xs">
                   2026
                 </span>
               </div>
@@ -79,7 +79,7 @@ export default function Navbar() {
           </Link>
 
           {/* MENU ĐIỀU HƯỚNG CHÍNH (DESKTOP) */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               
@@ -87,23 +87,23 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative py-2 text-[13px] font-bold transition-colors flex items-center gap-1.5 ${
+                  className={`relative px-3.5 py-2 text-[13px] font-bold rounded-full transition-all flex items-center gap-1.5 hover:bg-slate-100/60 active:scale-95 ${
                     isActive 
-                      ? "text-[#0054A6] font-black" 
+                      ? "text-[#0054A6] font-black bg-blue-50/80 shadow-xs" 
                       : "text-slate-600 hover:text-[#0054A6]"
                   }`}
                 >
                   <span>{item.name}</span>
                   {item.isHot && (
-                    <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-red-50 text-[#D71920] border border-red-200">
+                    <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-red-500 text-white shadow-xs shadow-red-500/30 animate-pulse">
                       HOT
                     </span>
                   )}
                   {isActive && (
                     <motion.div
                       layoutId="activeNavbarIndicatorClean"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0054A6] rounded-full"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      className="absolute inset-0 rounded-full border border-blue-200 pointer-events-none"
+                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
                     />
                   )}
                 </Link>
@@ -113,6 +113,7 @@ export default function Navbar() {
 
           {/* KHU VỰC TÀI KHOẢN (RIGHT ACTIONS) */}
           <div className="flex items-center gap-3">
+
             
             {user ? (
               <div className="relative" ref={dropdownRef}>
@@ -127,7 +128,7 @@ export default function Navbar() {
                       <span>{(user.name || "U").charAt(0).toUpperCase()}</span>
                     )}
                   </div>
-                  <span className="text-xs font-black text-slate-900 hidden sm:block max-w-[110px] truncate">
+                  <span className="text-xs font-black text-slate-900 hidden sm:block max-w-[180px] lg:max-w-[240px] truncate">
                     {user.name || "Tài khoản"}
                   </span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400" />

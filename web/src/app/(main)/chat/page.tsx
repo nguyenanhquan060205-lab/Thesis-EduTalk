@@ -149,12 +149,12 @@ export default function ChatPage() {
                 Gợi ý câu hỏi phổ biến
                 <span className="h-px bg-slate-200 flex-1"></span>
               </p>
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="flex flex-wrap justify-center gap-2.5">
                 {SUGGESTIONS.map((sug, i) => (
                   <button
                     key={i}
                     onClick={() => sendMessageText(sug)}
-                    className="text-[13px] font-semibold text-slate-600 bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 rounded-2xl px-4 py-2.5 transition-all shadow-xs hover:shadow-sm"
+                    className="text-xs font-semibold text-slate-700 bg-white hover:bg-blue-50/80 hover:text-[#0054A6] hover:border-[#0054A6]/40 border border-slate-200/90 rounded-2xl px-4 py-2.5 transition-all shadow-xs hover:shadow-md hover:scale-[1.02] active:scale-[0.97] cursor-pointer"
                   >
                     💡 {sug}
                   </button>
@@ -185,7 +185,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 bg-white/80 backdrop-blur-md border-t border-slate-100 z-10">
+        <div className="p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 z-10">
           <div className="flex gap-3 max-w-4xl mx-auto items-end">
             <textarea 
               value={input}
@@ -196,18 +196,19 @@ export default function ChatPage() {
                   handleSend();
                 }
               }}
-              placeholder="Nhập câu hỏi của bạn vào đây..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 font-medium placeholder-slate-400 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition shadow-inner resize-none min-h-[52px] max-h-[120px]"
+              placeholder="Nhập câu hỏi của bạn về ngành học, điểm chuẩn HUIT..."
+              className="flex-1 bg-slate-50/80 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 font-medium placeholder-slate-400 outline-none focus:border-[#0054A6] focus:ring-4 focus:ring-[#0054A6]/10 transition shadow-inner resize-none min-h-[52px] max-h-[120px]"
               rows={1}
             />
             <button 
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
-              className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-500/20 shrink-0"
+              className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#0072CE] hover:from-[#00478F] hover:to-[#005FA3] flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-[#0054A6]/25 hover:shadow-lg hover:shadow-[#0054A6]/35 active:scale-95 shrink-0 cursor-pointer"
             >
               <Send className="w-5 h-5 ml-0.5" />
             </button>
           </div>
+
           <p className="text-center text-[11px] text-slate-400 mt-3 font-medium">
             Thông tin từ Trợ lý EduTalk mang tính chất tham khảo. Quyết định lựa chọn là ở bạn nhé!
           </p>

@@ -11,6 +11,12 @@ import api from "@/lib/api";
 
 type Message = { id: number; text: string; sender: "bot" | "user" };
 
+const SUGGESTIONS = [
+  "Điểm chuẩn ngành CNTT 2026?",
+  "Các ngành thuộc nhóm Kinh tế?",
+  "Tổ hợp môn xét tuyển tại HUIT?",
+];
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -180,7 +186,22 @@ export default function ChatWidget() {
             </div>
 
             {/* Input Area */}
-            <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)]">
+            <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
+              {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
+              {messages.length <= 2 && (
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  {SUGGESTIONS.map((s) => (
+                    <motion.button
+                      key={s}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => sendMessageText(s)}
+                      className="px-2.5 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0054A6] border border-blue-200/60 text-[11px] font-bold whitespace-nowrap transition shrink-0 cursor-pointer"
+                    >
+                      {s}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
 
               <div className="flex gap-2 items-end">
                 <textarea 
@@ -196,16 +217,17 @@ export default function ChatWidget() {
                   className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
                   rows={1}
                 />
-                <button 
+                <motion.button 
+                  whileTap={{ scale: 0.92 }}
                   onClick={handleSend}
                   disabled={!input.trim() || isTyping}
-                  className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0"
+                  className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0 cursor-pointer"
                 >
                   <Send className="w-4.5 h-4.5 ml-0.5" />
-                </button>
+                </motion.button>
               </div>
-              <p className="text-center text-[10px] text-slate-400 mt-2">
-                Thông tin từ Trợ lý EduTalk mang tính chất tham khảo. Quyết định lựa chọn là ở bạn nhé!
+              <p className="text-center text-[10px] text-slate-400">
+                Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
               </p>
             </div>
           </motion.div>
@@ -230,27 +252,29 @@ export default function ChatWidget() {
             initial={{ opacity: 0, x: 20, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
-            className="hidden sm:flex items-center bg-white rounded-xl py-2 px-3.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] border border-slate-100 cursor-pointer mb-6"
+            className="hidden sm:flex items-center bg-white rounded-2xl py-2 px-3.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] border border-slate-100 cursor-pointer mb-6"
             onClick={() => !isDragging && setIsOpen(true)}
           >
             <div>
-              <p className="text-[13px] font-extrabold text-slate-800 leading-tight">Trợ lý EduTalk</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Bạn cần tư vấn gì không?</p>
+              <p className="text-[13px] font-black text-slate-800 leading-tight">Trợ lý EduTalk</p>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Bạn cần tư vấn tuyển sinh gì không?</p>
             </div>
             {/* Triangle pointing right */}
             <div className="absolute -right-2 top-1/2 -translate-y-1/2 border-t-[6px] border-b-[6px] border-l-[8px] border-transparent border-l-white drop-shadow-sm"></div>
           </motion.div>
 
-          {/* Icon Button (No frame, natural Lottie) */}
+          {/* Icon Button (With Ambient pulse glow) */}
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             onClick={() => !isDragging && setIsOpen(true)}
-            className="w-24 h-24 flex items-center justify-center group relative shrink-0 cursor-pointer drop-shadow-[0_15px_15px_rgba(37,99,235,0.25)]"
+            className="w-24 h-24 flex items-center justify-center group relative shrink-0 cursor-pointer drop-shadow-[0_15px_25px_rgba(37,99,235,0.3)]"
           >
+            {/* Ambient pulse effect */}
+            <div className="absolute inset-3 rounded-full bg-blue-500/25 blur-xl animate-pulse pointer-events-none" />
             <div className="w-full h-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <Lottie animationData={animationData} loop={true} className="w-[120%] h-[120%] scale-125" />
             </div>

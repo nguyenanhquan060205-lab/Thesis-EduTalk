@@ -1,0 +1,10 @@
+{
+  "K_co_ngot": 8,
+  "n_fold": 15,
+  "n_nganh": 39,
+  "n_likert": 10,
+  "n_muc_tieu": 4,
+  "w_min": 0.33333333333333326,
+  "w_max": 0.8000000000000002,
+  "sigma_suy_bien": 0
+}

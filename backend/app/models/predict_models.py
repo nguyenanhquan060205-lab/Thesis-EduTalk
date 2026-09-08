@@ -88,6 +88,52 @@ class AdmissionInfo(BaseModel):
     gap: float | None = Field(None, description="Điểm thí sinh − điểm chuẩn năm mới nhất")
 
 
+class ExplainFeature(BaseModel):
+    """Một dòng trong bảng giải thích SHAP."""
+
+    ten: str
+    giaTri: str = Field(..., description="Giá trị đã định dạng để hiển thị")
+    dongGop: float = Field(
+        ..., description="φ₂ + β·φ₁ — dương là đẩy lên, âm là kéo xuống"
+    )
+    phanTram: float = Field(..., description="|φ| trên tổng |φ|, để diễn đạt bằng %")
+    mucDo: str = Field(
+        "",
+        description="'rất mạnh' | 'mạnh' | 'vừa' | 'không đáng kể'. Giao diện và "
+        "trợ lý AI đều dùng chuỗi này, không tự đặt ngưỡng riêng.",
+    )
+    tang2: float = Field(..., description="Phần do tầng 2 (chọn ngành)")
+    tang1: float = Field(..., description="Phần do tầng 1 (chọn khối); guided = 0")
+    anVoiThiSinh: bool = Field(
+        False,
+        description="True thì KHÔNG hiển thị cho thí sinh — hiện giới tính, vì nêu "
+        "một đặc điểm không thể thay đổi vừa vô ích vừa củng cố định kiến. Vẫn "
+        "tham gia dự đoán và vẫn trả về để trang quản trị thấy đầy đủ.",
+    )
+
+
+class MajorExplain(BaseModel):
+    """Giải thích của một ngành, tính bằng TreeSHAP trên cả hai tầng."""
+
+    mode: str
+    base: float = Field(..., description="Điểm nền khi chưa biết gì về thí sinh")
+    features: list[ExplainFeature] = Field(default_factory=list)
+    soConLai: int = Field(0, description="Số đặc trưng không lọt vào danh sách hiển thị")
+    dongGopConLai: float = Field(
+        0.0, description="Tổng đóng góp của các đặc trưng không hiển thị"
+    )
+    phanTramConLai: float = Field(
+        0.0,
+        description="Tỷ trọng của cụm 'yếu tố khác'. Cộng với phanTram các dòng "
+        "hiển thị ra đúng 100%.",
+    )
+    tongDongGop: float = Field(
+        0.0,
+        description="Tổng đóng góp cả 43 đặc trưng. Điểm xếp hạng = base + tongDongGop. "
+        "So sánh giữa các ngành phải dùng con số này, KHÔNG dùng riêng các thanh hiển thị.",
+    )
+
+
 class MajorSuggestion(BaseModel):
     rank: int
     code: str
@@ -98,6 +144,9 @@ class MajorSuggestion(BaseModel):
         default_factory=list, description="Tổ hợp ngành này xét tuyển"
     )
     admission: AdmissionInfo | None = None
+    explain: MajorExplain | None = Field(
+        None, description="Vì sao mô hình xếp ngành này ở vị trí đó"
+    )
 
 
 class RecommendResponse(BaseModel):

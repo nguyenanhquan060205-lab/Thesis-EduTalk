@@ -10,7 +10,9 @@ import {
   AlertCircle,
   Compass,
   Target,
+  Award,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -119,13 +121,17 @@ export default function HistoryPage() {
       )}
 
       <div className="space-y-4">
-        {list.map((e) => {
+        {list.map((e, idx) => {
           const diem = totalScoreOf(e);
           const top = e.majors?.[0];
           return (
-            <div
+            <motion.div
               key={e.id}
-              className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs hover:border-[#0054A6]/50 transition space-y-4"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.06, duration: 0.25 }}
+              whileHover={{ y: -3 }}
+              className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs hover:border-[#0054A6]/60 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 space-y-4"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
@@ -133,7 +139,7 @@ export default function HistoryPage() {
                   {formatDateTime(e.createdAt)}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black border ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black border ${
                     e.mode === "guided"
                       ? "bg-violet-50 text-violet-700 border-violet-200"
                       : "bg-cyan-50 text-cyan-700 border-cyan-200"
@@ -152,18 +158,18 @@ export default function HistoryPage() {
               </div>
 
               {top && (
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#0054A6]/10 text-[#0054A6] flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5" />
+                <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100/80">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20">
+                    <GraduationCap className="w-6 h-6" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">
-                      Ngành được gợi ý đầu tiên
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] font-extrabold uppercase tracking-wide text-blue-700">
+                      Ngành đề xuất số 1
                     </div>
                     <div className="text-base font-black text-[#0F172A] leading-snug">
                       {top.name}
                     </div>
-                    <div className="text-[11px] font-bold text-slate-500">
+                    <div className="text-[11px] font-bold text-slate-500 mt-0.5">
                       Mã {top.code} · Nhóm {top.field}
                     </div>
                   </div>
@@ -172,27 +178,27 @@ export default function HistoryPage() {
 
               {/* Chỉ hiện những gì thật sự được lưu trong prediction_history */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                <div className="p-3 rounded-2xl bg-[#F5F8FA] border border-slate-100">
-                  <span className="text-[10px] text-slate-400 font-bold block uppercase">
+                <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-100">
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">
                     Tổ hợp
                   </span>
-                  <strong className="text-slate-800 font-black">
+                  <strong className="text-slate-800 font-black text-sm">
                     {e.input?.subjectGroup ?? "—"}
                   </strong>
                 </div>
-                <div className="p-3 rounded-2xl bg-[#F5F8FA] border border-slate-100">
-                  <span className="text-[10px] text-slate-400 font-bold block uppercase">
+                <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-100">
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">
                     Tổng điểm
                   </span>
-                  <strong className="text-slate-800 font-black">
+                  <strong className="text-blue-600 font-black text-sm">
                     {diem != null ? `${diem} đ` : "Chưa nhập"}
                   </strong>
                 </div>
-                <div className="p-3 rounded-2xl bg-[#F5F8FA] border border-slate-100 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] text-slate-400 font-bold block uppercase">
+                <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-100 col-span-2 sm:col-span-1">
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">
                     Mục tiêu
                   </span>
-                  <strong className="text-slate-800 font-black">
+                  <strong className="text-slate-800 font-black text-sm truncate block">
                     {e.input?.goal ?? "—"}
                   </strong>
                 </div>
@@ -201,13 +207,13 @@ export default function HistoryPage() {
               {e.majors?.length > 1 && (
                 <div className="pt-3 border-t border-slate-100">
                   <span className="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">
-                    Các ngành khác được gợi ý
+                    Các ngành khác cùng được gợi ý
                   </span>
-                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  <div className="flex flex-wrap gap-1.5 mt-2">
                     {e.majors.slice(1).map((m) => (
                       <span
                         key={m.code}
-                        className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200"
+                        className="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300 transition-colors"
                       >
                         #{m.rank} {m.name}
                       </span>
@@ -215,7 +221,7 @@ export default function HistoryPage() {
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

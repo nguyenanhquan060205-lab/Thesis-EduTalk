@@ -11,7 +11,9 @@ import {
   ExternalLink,
   Loader2,
   AlertCircle,
+  Check,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
@@ -79,16 +81,32 @@ export default function NewsDetailPage() {
     );
   }
 
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    if (typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto mt-2 pb-24 animate-fade-in-up space-y-6">
       <Link
         href="/news"
-        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-blue-600 transition"
+        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-blue-600 transition group"
       >
-        <ArrowLeft className="w-4 h-4" /> Quay lại bản tin tuyển sinh
+        <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" /> 
+        Quay lại bản tin tuyển sinh
       </Link>
 
-      <article className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-7">
+      <motion.article
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-7"
+      >
         <div className="space-y-4 border-b border-slate-100 pb-6">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-extrabold">
@@ -108,10 +126,10 @@ export default function NewsDetailPage() {
             {article.title}
           </h1>
 
-          {/* Nguồn thật, không gán tên tác giả tự nghĩ */}
+          {/* Nguồn thật */}
           <div className="flex items-center gap-3 pt-1">
-            <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
-              <Building2 className="w-4 h-4 text-blue-600" />
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <p className="text-xs font-extrabold text-slate-900">
@@ -133,31 +151,33 @@ export default function NewsDetailPage() {
         </div>
 
         {article.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={article.image}
-            alt=""
-            className="w-full rounded-2xl object-cover bg-slate-100"
-          />
+          <div className="w-full rounded-2xl overflow-hidden shadow-sm bg-slate-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={article.image}
+              alt=""
+              className="w-full object-cover max-h-[480px]"
+            />
+          </div>
         )}
 
         {article.ai_summary && (
-          <div className="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-white rounded-2xl p-5 sm:p-6 border border-blue-100/80 space-y-2">
+          <div className="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-white rounded-3xl p-6 border border-blue-200/80 shadow-xs space-y-2 relative overflow-hidden">
             <div className="flex items-center gap-2 text-xs font-extrabold text-blue-700 uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-blue-600" />
+              <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
               <span>Tóm tắt nhanh bằng AI</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
               {article.ai_summary}
             </p>
             <p className="text-[10px] text-slate-400 font-medium pt-1">
-              Tóm tắt do AI sinh tự động — hãy đối chiếu bài gốc trước khi dùng làm căn cứ.
+              Tóm tắt do AI sinh tự động — hãy đối chiếu bài gốc trên cổng tuyển sinh trước khi dùng làm căn cứ.
             </p>
           </div>
         )}
 
         <div
-          className="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed text-slate-700"
+          className="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed text-slate-700 font-medium"
           dangerouslySetInnerHTML={{
             __html: article.content_html || article.excerpt || "",
           }}
@@ -166,18 +186,28 @@ export default function NewsDetailPage() {
         <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
             <span>Chia sẻ bài viết:</span>
-            <button
-              onClick={() => {
-                if (typeof navigator !== "undefined") {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert("Đã sao chép liên kết bài viết!");
-                }
-              }}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleShare}
+              className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                copied
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+              }`}
               title="Sao chép liên kết"
             >
-              <Share2 className="w-4 h-4" />
-            </button>
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Đã sao chép</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Sao chép link</span>
+                </>
+              )}
+            </motion.button>
           </div>
 
           <Link
@@ -188,7 +218,7 @@ export default function NewsDetailPage() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </article>
+      </motion.article>
     </div>
   );
 }

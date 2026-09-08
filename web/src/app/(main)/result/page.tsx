@@ -16,6 +16,8 @@ import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 import { GOAL_BY_ID } from "@/services/predict";
+import GiaiThichSHAP from "@/components/features/predict/GiaiThichSHAP";
+import { BorderBeam } from "@/components/motion/BorderBeam";
 
 // ============================================================================
 // DỮ LIỆU 39 NGÀNH HUIT
@@ -186,6 +188,7 @@ export default function ResultPage() {
           // giá trị thật chỉ quanh 10–15%, hiện ra sẽ tưởng hệ thống hỏng.
           matchScore: null,
           admission: ad,
+          explain: m.explain ?? null,
           cutoffs: ad?.cutoffs ?? null,
           score2024: ad?.cutoffs?.["2024"] ?? null,
           score2025: ad?.cutoffs?.["2025"] ?? null,
@@ -457,13 +460,16 @@ export default function ResultPage() {
             return (
               <div 
                 key={major.code}
-                className={`p-6 sm:p-8 rounded-3xl border transition-all bg-white relative ${
+                className={`p-6 sm:p-8 rounded-3xl border transition-all bg-white relative overflow-hidden ${
                   isTop1 
-                    ? "border-[#0054A6] shadow-md ring-2 ring-[#0054A6]/10" 
+                    ? "border-[#0054A6] shadow-xl ring-2 ring-[#0054A6]/20 shadow-[#0054A6]/5" 
                     : "border-slate-200 shadow-xs hover:border-slate-300"
                 }`}
               >
-                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                {isTop1 && (
+                  <BorderBeam size={120} duration={8} colorFrom="#00B4D8" colorTo="#0054A6" borderWidth={2} />
+                )}
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 relative z-10">
                   
                   {/* Left info */}
                   <div className="flex items-start gap-4">
@@ -565,6 +571,9 @@ export default function ResultPage() {
                     </span>
                   ))}
                 </div>
+
+                {/* Giải thích SHAP — vì sao mô hình xếp ngành này ở vị trí đó */}
+                <GiaiThichSHAP explain={major.explain} tenNganh={major.name} />
 
               </div>
             );

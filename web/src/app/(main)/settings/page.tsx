@@ -8,6 +8,7 @@ import {
   Check, 
   ShieldAlert,  
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
@@ -97,38 +98,41 @@ export default function SettingsPage() {
         
         {/* Sidebar Nav */}
         <div className="md:col-span-4 space-y-2">
-          <button 
+          <motion.button 
+            whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab("security")}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-extrabold flex items-center gap-3 transition cursor-pointer ${
+            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-extrabold flex items-center gap-3 transition cursor-pointer shadow-xs ${
               activeTab === 'security' 
-                ? 'bg-blue-600 text-white shadow-xs' 
+                ? 'bg-blue-600 text-white shadow-blue-500/20' 
                 : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90'
             }`}
           >
             <Lock className="w-4 h-4" />
             <span>Bảo Mật & Mật Khẩu</span>
-          </button>
+          </motion.button>
 
-          <button 
+          <motion.button 
+            whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab("notifications")}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-extrabold flex items-center gap-3 transition cursor-pointer ${
+            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-extrabold flex items-center gap-3 transition cursor-pointer shadow-xs ${
               activeTab === 'notifications' 
-                ? 'bg-blue-600 text-white shadow-xs' 
+                ? 'bg-blue-600 text-white shadow-blue-500/20' 
                 : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90'
             }`}
           >
             <Bell className="w-4 h-4" />
             <span>Thông báo</span>
-          </button>
+          </motion.button>
 
           <div className="pt-3 border-t border-slate-100">
-            <button 
+            <motion.button 
+              whileTap={{ scale: 0.96 }}
               onClick={handleLogout}
-              className="w-full text-left px-4 py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition flex items-center gap-3 border border-rose-100"
+              className="w-full text-left px-4 py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition flex items-center gap-3 border border-rose-100 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Đăng Xuất Khỏi Hệ Thống</span>
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -218,45 +222,63 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "notifications" && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6"
+            >
               <div className="border-b border-slate-100 pb-4">
                 <h2 className="text-base font-black text-slate-900">Thông Báo Tuyển Sinh</h2>
                 <p className="text-xs text-slate-400 font-medium">Nhận thông báo qua email khi có điểm chuẩn hoặc học bổng mới.</p>
               </div>
 
-              {/* Backend chỉ có MỘT trường `isNotificationEnabled`. Bản cũ bày 4 công
-                  tắc riêng biệt, không cái nào lưu đi đâu cả. */}
-              <label className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 cursor-pointer text-xs">
-                <span className="font-bold text-slate-700">
-                  Nhận thông báo từ EduTalk
-                  <span className="block text-[11px] font-medium text-slate-400 mt-0.5">
+              {/* Toggle switch kiểu iOS */}
+              <div 
+                onClick={async () => {
+                  if (notifOn === null || notifSaving) return;
+                  const val = !notifOn;
+                  setNotifOn(val);
+                  setNotifSaving(true);
+                  try {
+                    if (user?.id)
+                      await api.put(`/api/v1/users/${user.id}`, {
+                        isNotificationEnabled: val,
+                      });
+                  } catch {
+                    setNotifOn(!val);
+                    alert("Không lưu được thiết lập. Vui lòng thử lại.");
+                  } finally {
+                    setNotifSaving(false);
+                  }
+                }}
+                className="flex items-center justify-between p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 cursor-pointer text-xs group hover:bg-slate-100/60 transition"
+              >
+                <div className="pr-4">
+                  <span className="font-extrabold text-slate-800 text-sm block">
+                    Nhận thông báo từ EduTalk
+                  </span>
+                  <span className="block text-xs font-medium text-slate-500 mt-1 leading-relaxed">
                     Kết quả tư vấn, tin tuyển sinh mới và nhắc nhở mốc thời gian quan trọng.
                   </span>
-                </span>
-                <input
-                  type="checkbox"
-                  checked={!!notifOn}
-                  disabled={notifOn === null || notifSaving}
-                  onChange={async (e) => {
-                    const val = e.target.checked;
-                    setNotifOn(val);
-                    setNotifSaving(true);
-                    try {
-                      if (user?.id)
-                        await api.put(`/api/v1/users/${user.id}`, {
-                          isNotificationEnabled: val,
-                        });
-                    } catch {
-                      setNotifOn(!val); // ghi hỏng thì trả công tắc về trạng thái cũ
-                      alert("Không lưu được thiết lập. Vui lòng thử lại.");
-                    } finally {
-                      setNotifSaving(false);
-                    }
-                  }}
-                  className="w-4 h-4 text-blue-600 rounded shrink-0"
-                />
-              </label>
-            </div>
+                </div>
+                
+                {/* iOS Switch Toggle */}
+                <div 
+                  className={`w-12 h-7 rounded-full p-1 transition-colors duration-200 ease-in-out shrink-0 ${
+                    notifOn ? "bg-blue-600" : "bg-slate-300"
+                  }`}
+                >
+                  <motion.div 
+                    layout
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    className={`w-5 h-5 rounded-full bg-white shadow-md transform ${
+                      notifOn ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </div>
+              </div>
+            </motion.div>
           )}
 
         </div>

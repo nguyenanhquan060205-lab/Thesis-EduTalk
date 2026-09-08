@@ -39,6 +39,43 @@ export interface AdmissionInfo {
   gap: number | null;
 }
 
+/** Một dòng trong bảng giải thích SHAP. */
+export interface ExplainFeature {
+  ten: string;
+  giaTri: string;
+  /** φ₂ + β·φ₁ — dương là đẩy lên, âm là kéo xuống */
+  dongGop: number;
+  phanTram: number;
+  /** "rất mạnh" | "mạnh" | "vừa" | "không đáng kể" — do backend chấm, đừng tự tính lại */
+  mucDo: string;
+  tang2: number;
+  /** Phần do tầng 1; chế độ guided luôn bằng 0 */
+  tang1: number;
+  /**
+   * Không hiển thị cho thí sinh — hiện chỉ có giới tính. Nêu một đặc điểm không
+   * thể thay đổi vừa không giúp được gì, vừa củng cố định kiến. Vẫn tham gia dự
+   * đoán và vẫn trả về để trang quản trị thấy đầy đủ.
+   */
+  anVoiThiSinh: boolean;
+}
+
+export interface MajorExplain {
+  mode: string;
+  base: number;
+  features: ExplainFeature[];
+  /** Số đặc trưng không lọt vào danh sách hiển thị */
+  soConLai: number;
+  dongGopConLai: number;
+  /** Tỷ trọng cụm "yếu tố khác"; cộng với phanTram các dòng hiển thị ra 100% */
+  phanTramConLai: number;
+  /**
+   * Tổng đóng góp cả 43 đặc trưng. Điểm xếp hạng = base + tongDongGop.
+   * So sánh giữa các ngành phải dùng con số này — KHÔNG so riêng các thanh
+   * hiển thị, vì mỗi ngành có `base` riêng và mỗi ngành hiện một bộ 6 khác nhau.
+   */
+  tongDongGop: number;
+}
+
 export interface MajorSuggestion {
   rank: number;
   code: string;
@@ -46,6 +83,7 @@ export interface MajorSuggestion {
   field: string;
   score: number;
   admission: AdmissionInfo | null;
+  explain?: MajorExplain | null;
 }
 
 export interface RecommendResponse {
@@ -143,3 +181,22 @@ export const PredictService = {
     return data;
   },
 };
+
+/**
+ * Nhờ LLM diễn giải bảng SHAP thành 2–3 câu tiếng Việt.
+ *
+ * Gọi theo yêu cầu (người dùng bấm nút) chứ không tự chạy mỗi lần dự đoán —
+ * mỗi lượt là một lần gọi Gemini, bật sẵn cho cả 5 ngành thì vừa chậm vừa tốn.
+ *
+ * Backend chỉ đưa CHÍNH bảng số này vào prompt và cấm LLM thêm lý do ngoài bảng.
+ */
+export async function giaiThichBangLoi(
+  nganh: string,
+  features: ExplainFeature[]
+): Promise<string> {
+  const { data } = await api.post("/api/v1/predict/explain-text", {
+    nganh,
+    features,
+  });
+  return data.text as string;
+}

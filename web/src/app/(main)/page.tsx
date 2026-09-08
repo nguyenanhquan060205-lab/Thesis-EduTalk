@@ -9,12 +9,7 @@ import {
   Layers, 
   BarChart3, 
   Cpu, 
-  BookOpen, 
-  FileText, 
-  Users, 
-  History, 
   MessageSquare, 
-  BadgeCheck, 
   ChevronDown, 
   ChevronLeft,
   ChevronRight,
@@ -22,17 +17,19 @@ import {
   Utensils, 
   Scale, 
   Globe2, 
-  Award,
-  Phone,
-  CheckCircle2,
-  Calendar,
   ShieldCheck,
-  Zap
+  Building2,
+  CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import type { LucideIcon } from "lucide-react";
 import { PredictService } from "@/services/predict";
+import { SpotlightCard } from "@/components/motion/SpotlightCard";
+import { Marquee } from "@/components/motion/Marquee";
+import { ShimmerButton } from "@/components/motion/ShimmerButton";
+import { KineticHeading } from "@/components/motion/KineticHeading";
+import { AiPipelineSection } from "@/components/features/home/AiPipelineSection";
 
 // ============================================================================
 // 1. DỮ LIỆU CÁC SLIDE HERO BANNER VỚI ẢNH THẬT TRƯỜNG HUIT (FULL BLEED)
@@ -47,7 +44,7 @@ const HERO_SLIDES = [
     primaryBtn: { text: "Làm Khảo Sát Ngay", href: "/predict" },
     secondaryBtn: { text: "Khám Phá 39 Ngành", href: "/majors" },
     gradient: "from-cyan-300 via-blue-200 to-white",
-    image: "/images/huit_official_2.jpg"
+    image: "/images/huit_banner_1_gate.jpg"
   },
   {
     id: 1,
@@ -58,18 +55,18 @@ const HERO_SLIDES = [
     primaryBtn: { text: "Xem Danh Mục Ngành", href: "/majors" },
     secondaryBtn: { text: "Tra Cứu Điểm Chuẩn", href: "/majors" },
     gradient: "from-teal-300 via-emerald-200 to-white",
-    image: "/images/huit_official_3.jpg"
+    image: "/images/huit_banner_3_building.png"
   },
   {
     id: 2,
     tag: "🏛️ 44 NĂM PHÁT TRIỂN & ĐỔI MỚI SÁNG TẠO",
-    titleLine1: "Hỗ Trợ Tuyển Sinh 24/7 &",
+    titleLine1: "Môi Trường Năng Động &",
     titleLine2: "Học Bổng Toàn Phần HUIT",
-    desc: "Tin tuyển sinh lấy trực tiếp từ cổng ts.huit.edu.vn, kèm trợ lý AI giải đáp thắc mắc cho học sinh và phụ huynh.",
+    desc: "Không gian học tập hiện đại, khuôn viên hồ cá Koi và hệ sinh thái đào tạo ứng dụng hàng đầu tại Trường Đại học Công Thương TP.HCM.",
     primaryBtn: { text: "Trò Chuyện Với AI", href: "/chat" },
     secondaryBtn: { text: "Tin Tức Tuyển Sinh", href: "/news" },
     gradient: "from-indigo-300 via-purple-200 to-white",
-    image: "/images/huit_official_1.jpg"
+    image: "/images/huit_banner_2_koi.png"
   }
 ];
 
@@ -106,13 +103,6 @@ const HIGHLIGHT_STRIPS = [
   }
 ];
 
-// ============================================================================
-// 3. 7 KHỐI NGÀNH ĐÀO TẠO HUIT
-// ============================================================================
-// Chỉ giữ icon cho từng nhóm ngành. Số ngành, khoảng điểm chuẩn và danh sách ngành
-// tiêu biểu đều lấy từ /api/v1/predict/catalog — cùng nguồn với mô hình dự đoán.
-// Bản gõ tay trước đây sai khoảng điểm chuẩn của CẢ 7 nhóm (CNTT ghi 22.5-24.5đ
-// trong khi điểm chuẩn 2026 thật chỉ 19.0-20.5đ) và kể tên 3 ngành trường không đào tạo.
 const FACULTY_ICONS: Record<number, LucideIcon> = {
   0: Cpu, 1: BarChart3, 2: Utensils, 3: Layers, 4: FlaskConical, 5: Scale, 6: Globe2,
 };
@@ -126,13 +116,21 @@ interface FacultyCard {
   scoreAvg: string | null;
 }
 
-
-// 4 Phương thức tuyển sinh HUIT
 const ADMISSION_METHODS = [
   { code: "PT 1", name: "Xét điểm thi tốt nghiệp THPT 2026", desc: "Sử dụng kết quả kỳ thi tốt nghiệp THPT 2026 theo các tổ hợp môn quy định của từng ngành." },
   { code: "PT 2", name: "Xét học bạ THPT", desc: "Xét tổng điểm trung bình cả năm lớp 10, 11 và HK1 lớp 12 theo tổ hợp 3 môn từ 20.0 điểm trở lên." },
   { code: "PT 3", name: "Xét điểm thi ĐGNL ĐHQG TP.HCM", desc: "Dành cho thí sinh tham gia kỳ thi Đánh giá năng lực do ĐHQG TP.HCM tổ chức năm 2026." },
   { code: "PT 4", name: "Xét tuyển thẳng & Ưu tiên xét tuyển", desc: "Thực hiện theo quy chế tuyển sinh của Bộ GD&ĐT và đề án tuyển sinh riêng của nhà trường." },
+];
+
+const MARQUEE_ITEMS = [
+  "🏛️ 44 Năm Truyền Thống Phát Triển & Khởi Nghiệp Đổi Mới",
+  "🎓 39 Chuyên Ngành Đào Tạo Chuẩn Kiểm Định Quốc Tế (AUN-QA, MOET)",
+  "📊 15 Tổ Hợp Môn Xét Tuyển Đa Dạng & Linh Hoạt",
+  "💼 Hơn 500+ Doanh Nghiệp Ký Kết Hợp Tác Tuyển Dụng",
+  "🤖 Mô Hình Trí Tuệ Nhân Tạo XGBoost 2 Tầng Phân Tích Khả Năng Trúng Tuyển",
+  "💡 Giải Thích Minh Bạch XAI SHAP Hỗ Trợ Ra Quyết Định Đúng Đắn",
+  "💬 Trợ Lý Tư Vấn Tuyển Sinh AI EduTalk Trực Tuyến 24/7",
 ];
 
 const FAQS = [
@@ -153,7 +151,6 @@ const FAQS = [
 export default function Home() {
   const [faculties, setFaculties] = useState<FacultyCard[]>([]);
 
-  // Số ngành + khoảng điểm chuẩn 2026 tính thẳng từ dữ liệu tuyển sinh thật
   useEffect(() => {
     PredictService.catalog()
       .then((d) =>
@@ -181,11 +178,10 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
-  // Auto slide mỗi 6 giây
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
+    }, 6500);
     return () => clearInterval(timer);
   }, []);
 
@@ -200,36 +196,38 @@ export default function Home() {
   const slide = HERO_SLIDES[currentSlide];
 
   return (
-    <div className="flex flex-col w-full space-y-16 pb-20">
+    <div className="flex flex-col w-full space-y-20 pb-20">
       
       {/* ==================================================================== */}
-      {/* 1. SECTION 1: FULL-WIDTH FULL-BLEED HERO SLIDER BANNER (TRÀN VIỀN 100%) */}
+      {/* 1. HERO SLIDER BANNER WITH CINEMATIC LIGHTING & KINETIC TEXT */}
       {/* ==================================================================== */}
-      <section className="relative w-full min-h-[520px] sm:min-h-[620px] bg-[#0A192F] overflow-hidden flex items-center">
+      <section className="relative w-full min-h-[560px] sm:min-h-[640px] bg-[#0A192F] overflow-hidden flex items-center">
         
-        {/* Real Background Image with Cinematic Overlay */}
+        {/* Background Image with Cinematic Overlay */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, scale: 1.04 }}
+              initial={{ opacity: 0, scale: 1.05 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${slide.image})` }}
             />
           </AnimatePresence>
           
           {/* Multi-layered cinematic gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#002244] via-[#002244]/80 to-[#002244]/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#002244]/90 via-transparent to-[#002244]/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001D3D]/92 via-[#002855]/75 to-[#001D3D]/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001D3D] via-transparent to-transparent opacity-90" />
+          {/* Subtle Ambient Radial Light */}
+          <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* Navigation Arrows Left / Right */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer backdrop-blur-md hover:scale-105"
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer backdrop-blur-md hover:scale-110 active:scale-95 shadow-lg"
           aria-label="Previous Slide"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -237,55 +235,57 @@ export default function Home() {
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer backdrop-blur-md hover:scale-105"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer backdrop-blur-md hover:scale-110 active:scale-95 shadow-lg"
           aria-label="Next Slide"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
         {/* Inner Content Centered to max-w-7xl Container */}
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 z-10 py-16 text-left">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 z-10 py-20 text-left">
           <div className="max-w-3xl space-y-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="space-y-6"
               >
                 {/* Tag Badge */}
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-xs font-black tracking-widest text-cyan-300 uppercase shadow-lg">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-cyan-400/30 text-xs font-black tracking-widest text-cyan-300 uppercase shadow-lg shadow-cyan-500/10">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                   <span>{slide.tag}</span>
                 </div>
 
-                {/* Big Bold Headline */}
-                <div className="space-y-2">
-                  <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08] drop-shadow-md">
-                    {slide.titleLine1} <br />
-                    <span className={`text-transparent bg-clip-text bg-gradient-to-r ${slide.gradient}`}>
-                      {slide.titleLine2}
-                    </span>
-                  </h1>
+                {/* Big Bold Headline with Kinetic Text */}
+                <div className="space-y-3">
+                  <KineticHeading
+                    text={`${slide.titleLine1} ${slide.titleLine2}`}
+                    highlightWords={[slide.titleLine2]}
+                    highlightGradient={slide.gradient}
+                  />
                   <p className="text-slate-200 text-sm sm:text-base font-medium max-w-2xl leading-relaxed pt-2 drop-shadow-sm">
                     {slide.desc}
                   </p>
                 </div>
 
                 {/* 2 Buttons */}
-                <div className="flex flex-wrap items-center gap-4 pt-2">
-                  <Link
-                    href={slide.primaryBtn.href}
-                    className="px-8 py-4 rounded-full bg-[#0054A6] hover:bg-[#0072CE] text-white text-xs sm:text-sm font-black transition-all shadow-xl shadow-[#0054A6]/50 flex items-center gap-2 cursor-pointer group"
-                  >
-                    <span>{slide.primaryBtn.text}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="flex flex-wrap items-center gap-4 pt-4">
+                  <Link href={slide.primaryBtn.href}>
+                    <ShimmerButton
+                      shimmerColor="#38bdf8"
+                      className="text-xs sm:text-sm"
+                    >
+                      <span>{slide.primaryBtn.text}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </ShimmerButton>
                   </Link>
 
                   <Link
                     href={slide.secondaryBtn.href}
-                    className="px-8 py-4 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-bold transition border border-white/30 backdrop-blur-md flex items-center gap-2 cursor-pointer"
+                    className="px-8 py-4 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-bold transition-all border border-white/30 backdrop-blur-md flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.97]"
                   >
                     <span>{slide.secondaryBtn.text}</span>
                   </Link>
@@ -295,15 +295,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Slide Indicators / Pagination Dots */}
+        {/* Slide Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
           {HERO_SLIDES.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
+              className={`h-2.5 rounded-full transition-all cursor-pointer ${
                 currentSlide === idx 
-                  ? "w-9 bg-cyan-400 shadow-[0_0_12px_#22d3ee]" 
+                  ? "w-10 bg-cyan-400 shadow-[0_0_12px_#22d3ee]" 
                   : "w-2.5 bg-white/40 hover:bg-white/70"
               }`}
               aria-label={`Go to slide ${idx + 1}`}
@@ -314,42 +314,56 @@ export default function Home() {
       </section>
 
       {/* ==================================================================== */}
-      {/* 2. SECTION 2: 3 THẺ TÍNH NĂNG NỔI BẬT (HIGHLIGHT STRIP) */}
+      {/* 2. INFINITE MARQUEE STRIP (CAMPUS & TECH HIGHLIGHTS) */}
+      {/* ==================================================================== */}
+      <div className="w-full bg-slate-100/70 border-y border-slate-200/80 py-3 overflow-hidden">
+        <Marquee repeat={5} duration="40s">
+          {MARQUEE_ITEMS.map((item, idx) => (
+            <span 
+              key={idx} 
+              className="inline-flex items-center text-xs font-black text-slate-700 px-6 tracking-wide"
+            >
+              {item}
+            </span>
+          ))}
+        </Marquee>
+      </div>
+
+      {/* ==================================================================== */}
+      {/* 3. 3 THẺ TÍNH NĂNG NỔI BẬT VỚI SPOTLIGHT MOUSE TRACKING */}
       {/* ==================================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {HIGHLIGHT_STRIPS.map((strip) => {
             const Icon = strip.icon;
             return (
-              <Link
-                key={strip.id}
-                href={strip.href}
-                className="p-6 rounded-3xl bg-white hover:bg-slate-50/80 border border-slate-200/90 hover:border-[#0054A6] transition-all duration-300 flex flex-col justify-between group cursor-pointer shadow-sm hover:shadow-md"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${strip.color} transition-transform group-hover:scale-105 shadow-xs`}>
-                      <Icon className="w-6 h-6" />
+              <Link key={strip.id} href={strip.href} className="group block">
+                <SpotlightCard className="h-full flex flex-col justify-between p-7 hover:border-[#0054A6]">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${strip.color} shadow-sm group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                        {strip.tag}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                      {strip.tag}
-                    </span>
+
+                    <div>
+                      <h3 className="text-lg font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
+                        {strip.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed mt-2">
+                        {strip.desc}
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-base font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
-                      {strip.title}
-                    </h3>
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed mt-1.5">
-                      {strip.desc}
-                    </p>
+                  <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-[#0054A6]">
+                    <span>Khám phá ngay</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                   </div>
-                </div>
-
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-[#0054A6]">
-                  <span>Khám phá ngay</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
+                </SpotlightCard>
               </Link>
             );
           })}
@@ -357,10 +371,15 @@ export default function Home() {
       </div>
 
       {/* ==================================================================== */}
-      {/* 3. SECTION 3: 7 NHÓM NGÀNH TRỌNG ĐIỂM TẠI HUIT */}
+      {/* 4. [NEW] INTERACTIVE AI PIPELINE & XAI ARCHITECTURE (ANIMATED BEAMS) */}
       {/* ==================================================================== */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-6 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+      <AiPipelineSection />
+
+      {/* ==================================================================== */}
+      {/* 5. 7 NHÓM NGÀNH TRỌNG ĐIỂM TẠI HUIT VỚI SPOTLIGHT CARDS */}
+      {/* ==================================================================== */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8 text-left">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
             <span className="text-xs font-black text-[#0054A6] uppercase tracking-wider">
               Danh Mục Đào Tạo Chính Quy
@@ -368,54 +387,56 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
               7 Nhóm Ngành Trọng Điểm Tại HUIT
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-              Chương trình đào tạo gắn liền thực tiễn với nhu cầu tuyển dụng của doanh nghiệp:
+            <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
+              Chương trình đào tạo thực tiễn, cam kết đầu ra theo nhu cầu thị trường doanh nghiệp:
             </p>
           </div>
 
           <Link
             href="/majors"
-            className="inline-flex items-center gap-1 text-xs font-black text-[#0054A6] hover:underline shrink-0"
+            className="inline-flex items-center gap-1.5 text-xs font-black text-[#0054A6] hover:underline shrink-0 group"
           >
-            <span>Xem đầy đủ 39 ngành</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Xem chi tiết 39 ngành học</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {faculties.map((fac) => {
             const Icon = fac.icon;
             return (
               <Link
                 key={fac.id}
                 href={`/majors?faculty=${encodeURIComponent(fac.name)}`}
-                className="p-5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-[#0054A6] transition-all flex flex-col justify-between group cursor-pointer shadow-sm hover:shadow-md"
+                className="group block"
               >
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-[#F5F8FA] group-hover:bg-[#0054A6] text-[#0054A6] group-hover:text-white flex items-center justify-center font-black transition-colors">
-                      <Icon className="w-5 h-5" />
+                <SpotlightCard className="h-full flex flex-col justify-between p-6 hover:border-[#0054A6]/60">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-11 h-11 rounded-2xl bg-blue-50 group-hover:bg-[#0054A6] text-[#0054A6] group-hover:text-white flex items-center justify-center font-black transition-all shadow-xs group-hover:scale-105">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-black px-2.5 py-1 rounded-md bg-blue-50 text-[#0054A6] border border-blue-200">
+                        {fac.count} ngành
+                      </span>
                     </div>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-blue-50 text-[#0054A6] border border-blue-200">
-                      {fac.count} ngành
-                    </span>
+
+                    <h3 className="text-sm font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
+                      {fac.name}
+                    </h3>
+
+                    <p className="text-[11px] text-slate-600 font-medium leading-relaxed line-clamp-2">
+                      {fac.highlight}
+                    </p>
                   </div>
 
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
-                    {fac.name}
-                  </h3>
-
-                  <p className="text-[11px] text-slate-600 font-medium leading-relaxed line-clamp-2">
-                    {fac.highlight}
-                  </p>
-                </div>
-
-                <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                  <span className="text-slate-400 font-bold">Điểm chuẩn 2026:</span>
-                  <span className="font-black text-[#0054A6]">
-                    {fac.scoreAvg ?? "Chưa có"}
-                  </span>
-                </div>
+                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-400 font-bold">Điểm chuẩn 2026:</span>
+                    <span className="font-black text-[#0054A6] bg-blue-50/70 px-2 py-0.5 rounded">
+                      {fac.scoreAvg ?? "Đang cập nhật"}
+                    </span>
+                  </div>
+                </SpotlightCard>
               </Link>
             );
           })}
@@ -423,49 +444,49 @@ export default function Home() {
       </div>
 
       {/* ==================================================================== */}
-      {/* 4. SECTION 4: 4 PHƯƠNG THỨC XÉT TUYỂN CHÍNH THỨC 2026 */}
+      {/* 6. 4 PHƯƠNG THỨC XÉT TUYỂN CHÍNH THỨC 2026 */}
       {/* ==================================================================== */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-6 text-left">
-        <div className="border-b border-slate-200 pb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8 text-left">
+        <div className="border-b border-slate-200 pb-5">
           <span className="text-xs font-black text-[#0054A6] uppercase tracking-wider">
             Đề Án Tuyển Sinh 2026
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
             4 Phương Thức Xét Tuyển Chính Thức
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-            Thí sinh có thể đăng ký đồng thời nhiều phương thức để tăng cơ hội trúng tuyển vào HUIT:
+          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
+            Đăng ký song song nhiều phương thức để nhân đôi cơ hội trúng tuyển vào HUIT:
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {ADMISSION_METHODS.map((m) => (
-            <div
+            <SpotlightCard
               key={m.code}
-              className="p-5 rounded-2xl bg-white border border-slate-200 space-y-2.5 flex flex-col justify-between shadow-xs"
+              spotlightColor="rgba(0, 180, 216, 0.1)"
+              className="p-6 space-y-3 flex flex-col justify-between"
             >
-              <div className="space-y-2">
-                <span className="px-2.5 py-0.5 rounded-md bg-[#0054A6] text-white text-[10px] font-black">
+              <div className="space-y-2.5">
+                <span className="px-3 py-1 rounded-md bg-gradient-to-r from-[#0054A6] to-[#0072CE] text-white text-[10px] font-black shadow-xs">
                   {m.code}
                 </span>
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                <h3 className="text-sm font-black text-slate-900 leading-snug">
                   {m.name}
                 </h3>
-                <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+                <p className="text-xs text-slate-600 font-medium leading-relaxed">
                   {m.desc}
                 </p>
               </div>
-
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </div>
 
       {/* ==================================================================== */}
-      {/* 5. SECTION 5: CÂU HỎI THƯỜNG GẶP FAQ */}
+      {/* 7. CÂU HỎI THƯỜNG GẶP FAQ WITH ANIMATED PRESENCE */}
       {/* ==================================================================== */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-6 text-left">
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-2">
           <span className="text-xs font-black text-[#0054A6] uppercase tracking-wider">
             Hỗ Trợ Tuyển Sinh
           </span>
@@ -474,28 +495,38 @@ export default function Home() {
           </h2>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {FAQS.map((faq, idx) => {
             const isOpen = activeFaq === idx;
             return (
               <div 
                 key={idx}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs"
+                className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs transition-shadow hover:shadow-md"
               >
                 <button
                   type="button"
                   onClick={() => setActiveFaq(isOpen ? null : idx)}
-                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-black text-xs sm:text-sm text-slate-900 hover:text-[#0054A6] transition cursor-pointer"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-black text-xs sm:text-sm text-slate-900 hover:text-[#0054A6] transition cursor-pointer"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isOpen ? "rotate-180 text-[#0054A6]" : ""}`} />
+                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#0054A6]" : ""}`} />
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 text-xs text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-3">
-                    {faq.a}
-                  </div>
-                )}
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 text-xs text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-3">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
@@ -503,26 +534,36 @@ export default function Home() {
       </div>
 
       {/* ==================================================================== */}
-      {/* 6. SECTION 6: BANNER KÊU GỌI HÀNH ĐỘNG (CTA BANNER) */}
+      {/* 8. LUXURY CTA BANNER WITH SHIMMER BUTTON */}
       {/* ==================================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="bg-gradient-to-r from-[#003B73] via-[#0054A6] to-[#0072CE] text-white rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-[#0054A6]/30">
-          <div className="space-y-2 text-center md:text-left max-w-xl">
-            <h3 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-              Sẵn Sàng Trở Thành Tân Sinh Viên HUIT 2026?
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#002855] via-[#0054A6] to-[#0072CE] p-8 sm:p-12 text-white shadow-2xl shadow-[#0054A6]/30 flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Ambient Glow */}
+          <div className="absolute -top-16 -right-16 w-80 h-80 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="space-y-2 text-center md:text-left max-w-xl relative z-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-cyan-300 text-[10px] font-black uppercase tracking-wider border border-white/20 mb-1">
+              <Sparkles className="w-3 h-3" />
+              <span>Tuyển Sinh Khóa 2026 - 2030</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+              Sẵn Sàng Trở Thành Tân Sinh Viên HUIT?
             </h3>
             <p className="text-xs sm:text-sm text-blue-100 font-medium leading-relaxed">
-              Bắt đầu bài khảo sát năng lực 3 phút ngay bây giờ để nhận bản phân tích định hướng chuyên ngành và cơ hội trúng tuyển thực tế tại HUIT.
+              Thực hiện bài khảo sát định hướng 3 phút để nhận bảng phân tích cơ hội trúng tuyển 39 chuyên ngành chính quy tại Trường Đại học Công Thương TP.HCM.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/predict"
-              className="px-8 py-4 rounded-full bg-white hover:bg-slate-100 text-[#0054A6] text-xs font-black transition shadow-md cursor-pointer flex items-center gap-2"
-            >
-              <span>Làm Khảo Sát Chọn Ngành</span>
-              <ArrowRight className="w-4 h-4" />
+          <div className="relative z-10 shrink-0">
+            <Link href="/predict">
+              <ShimmerButton
+                shimmerColor="#38bdf8"
+                background="rgba(255, 255, 255, 0.95)"
+                className="text-[#0054A6] hover:text-[#003B73] font-black text-xs sm:text-sm px-8 py-4 shadow-xl"
+              >
+                <span>Làm Khảo Sát Chọn Ngành</span>
+                <ArrowRight className="w-4 h-4 text-[#0054A6]" />
+              </ShimmerButton>
             </Link>
           </div>
         </div>

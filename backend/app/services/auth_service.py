@@ -229,11 +229,27 @@ class AuthService:
         """
         Xác minh Firebase ID Token và trả về thông tin user.
         Dùng làm middleware bảo vệ các API cần đăng nhập.
+
+        Token HẾT HẠN được tách riêng thành lỗi 401 kèm `expired: True`. Trước đây
+        mọi lỗi đều gộp thành "Token không hợp lệ", nên hết hạn (chuyện thường,
+        ID token Firebase chỉ sống 1 giờ) trông y hệt token giả mạo — client không
+        biết chỉ cần xin token mới là xong. Ném thẳng HTTPException ở đây để cả 11
+        chỗ gọi cùng được lợi mà không phải sửa từng nơi.
         """
+        from fastapi import HTTPException
+        from firebase_admin import auth as fb_auth
+
         try:
-            decoded = self.auth.verify_id_token(id_token)
-            return decoded
-        except Exception:  # noqa: BLE001
+            return self.auth.verify_id_token(id_token)
+        except fb_auth.ExpiredIdTokenError:
+            raise HTTPException(
+                status_code=401,
+                detail={
+                    "message": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
+                    "expired": True,
+                },
+            ) from None
+        except Exception:  # noqa: BLE001 — chữ ký sai, sai project, token rác…
             return None
 
     # ============================================================
