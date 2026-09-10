@@ -53,3 +53,8 @@ Sau khi thay đổi Backend API, để cập nhật client cho Web và Mobile:
 ./scripts/generate-clients.sh
 ```
 *(Yêu cầu cài đặt npm và npx)*
+
+
+====
+Chạy backend: .\venv\Scripts\activate
+>> uvicorn app.main:app --reload --port 8000
