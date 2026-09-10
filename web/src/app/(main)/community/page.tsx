@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageSquare,
   Heart,
@@ -19,6 +20,7 @@ import {
   Loader2,
   AlertCircle,
   Users,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -732,22 +734,23 @@ export default function CommunityPage() {
               ["mine", `Bài của tôi · ${myPosts.length}`],
             ] as const
           ).map(([k, l]) => (
-            <button
+            <motion.button
               key={k}
+              whileTap={{ scale: 0.96 }}
               onClick={() => setTab(k)}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition shadow-xs ${
                 tab === k
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-slate-900/20"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
               {l}
               {k === "mine" && soChoDuyet > 0 && (
-                <span className="ml-1.5 px-1.5 py-0.5 rounded bg-amber-400 text-amber-950 text-[10px]">
+                <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-amber-400 text-amber-950 text-[10px] font-black">
                   {soChoDuyet} chờ
                 </span>
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
       )}
@@ -755,28 +758,30 @@ export default function CommunityPage() {
       {/* LỌC CHỦ ĐỀ — chỉ ở tab cộng đồng */}
       {tab === "all" && activeTopics.length > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={() => setSelectedTopic("")}
-            className={`px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition ${
+            className={`px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition shadow-xs ${
               !activeTopic
-                ? "bg-blue-600 text-white shadow-xs"
+                ? "bg-blue-600 text-white shadow-blue-500/20"
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/90"
             }`}
           >
             Tất cả
-          </button>
+          </motion.button>
           {activeTopics.map((t) => (
-            <button
+            <motion.button
               key={t}
+              whileTap={{ scale: 0.96 }}
               onClick={() => setSelectedTopic(t)}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition shadow-xs ${
                 activeTopic === t
-                  ? "bg-blue-600 text-white shadow-xs"
+                  ? "bg-blue-600 text-white shadow-blue-500/20"
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/90"
               }`}
             >
               {t}
-            </button>
+            </motion.button>
           ))}
         </div>
       )}
@@ -801,7 +806,7 @@ export default function CommunityPage() {
 
       {/* DANH SÁCH BÀI */}
       <div className="space-y-4">
-        {dangHien.map((p) => {
+        {dangHien.map((p, idx) => {
           const laCuaToi = p.authorId === user?.id;
           const tt = p.status ?? "approved";
           const nhan = NHAN_TRANG_THAI[tt];
@@ -809,14 +814,18 @@ export default function CommunityPage() {
           const daBaoCao = !!user?.id && (p.reportedBy ?? []).includes(user.id);
 
           return (
-            <div
+            <motion.div
               key={p.id}
               id={`post-${p.id}`}
-              className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-3.5 scroll-mt-24 target:ring-2 target:ring-[#0054A6]/40"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: Math.min(idx * 0.02, 0.15), duration: 0.2 }}
+              whileHover={{ y: -2 }}
+              className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs hover:border-[#0054A6]/50 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300 space-y-3.5 scroll-mt-24 target:ring-2 target:ring-[#0054A6]/40"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-sm shadow-blue-500/20">
                     {(p.authorName ?? "?").charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -910,45 +919,48 @@ export default function CommunityPage() {
                 </div>
               )}
 
-              {/* Hàng hành động chính — cùng một hàng như Facebook */}
+              {/* Hàng hành động chính */}
               {tt === "approved" && (
                 <div className="pt-2 border-t border-slate-100 grid grid-cols-3 gap-1">
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
                     onClick={() => thich(p)}
                     disabled={!user?.id}
-                    className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition disabled:opacity-50 ${
+                    className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition disabled:opacity-50 cursor-pointer ${
                       daThich
-                        ? "text-rose-600 hover:bg-rose-50"
+                        ? "text-rose-600 bg-rose-50/70 border border-rose-100"
                         : "text-slate-500 hover:bg-slate-50"
                     }`}
                   >
-                    <Heart className={`w-4 h-4 ${daThich ? "fill-rose-600" : ""}`} />
-                    Thích
-                    {(p.upvotedBy ?? []).length > 0 && ` · ${(p.upvotedBy ?? []).length}`}
-                  </button>
+                    <Heart className={`w-4 h-4 transition-transform ${daThich ? "fill-rose-600 scale-110" : ""}`} />
+                    <span>Thích</span>
+                    {(p.upvotedBy ?? []).length > 0 && <span>· {(p.upvotedBy ?? []).length}</span>}
+                  </motion.button>
 
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
                     onClick={() =>
                       setMoBinhLuan((m) => ({ ...m, [p.id]: !m[p.id] }))
                     }
-                    className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                    className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
                       moBinhLuan[p.id]
-                        ? "text-blue-600 bg-blue-50"
+                        ? "text-blue-600 bg-blue-50 border border-blue-100"
                         : "text-slate-500 hover:bg-slate-50"
                     }`}
                   >
                     <MessageSquare className="w-4 h-4" />
-                    Bình luận
-                    {(p.commentCount ?? 0) > 0 && ` · ${p.commentCount}`}
-                  </button>
+                    <span>Bình luận</span>
+                    {(p.commentCount ?? 0) > 0 && <span>· {p.commentCount}</span>}
+                  </motion.button>
 
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
                     onClick={() => chiaSe(p)}
-                    className="py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:bg-slate-50 transition"
+                    className="py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:bg-slate-50 transition cursor-pointer"
                   >
                     <Share2 className="w-4 h-4" />
-                    Chia sẻ
-                  </button>
+                    <span>Chia sẻ</span>
+                  </motion.button>
                 </div>
               )}
 
@@ -962,7 +974,7 @@ export default function CommunityPage() {
                   onCountChanged={load}
                 />
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

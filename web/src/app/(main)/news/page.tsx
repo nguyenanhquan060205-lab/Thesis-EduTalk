@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   Newspaper,
   Calendar,
@@ -10,6 +11,8 @@ import {
   Loader2,
   AlertCircle,
   X,
+  Sparkles,
+  Flame,
 } from "lucide-react";
 import Link from "next/link";
 import { NewsService, type NewsArticle } from "@/services/news";
@@ -127,28 +130,32 @@ export default function NewsPage() {
         </div>
         {categories.length > 1 && (
           <div className="flex flex-wrap gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => setCategory("")}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold border transition ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold border transition shadow-xs ${
                 !activeCategory
-                  ? "bg-[#0054A6] text-white border-[#0054A6]"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                  ? "bg-[#0054A6] text-white border-[#0054A6] shadow-blue-500/20"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
               Tất cả
-            </button>
+            </motion.button>
             {categories.map((c) => (
-              <button
+              <motion.button
                 key={c}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setCategory(c)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold border transition ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold border transition shadow-xs ${
                   activeCategory === c
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                    ? "bg-slate-900 text-white border-slate-900 shadow-slate-900/20"
+                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
                 {c}
-              </button>
+              </motion.button>
             ))}
           </div>
         )}
@@ -167,79 +174,102 @@ export default function NewsPage() {
 
       {/* BÀI NỔI BẬT */}
       {featured && (
-        <Link
-          href={`/news/${featured.id}`}
-          className="block bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:border-[#0054A6]/60 hover:shadow-md transition overflow-hidden group"
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="flex flex-col lg:flex-row">
-            {featured.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={featured.image}
-                alt=""
-                className="w-full lg:w-2/5 h-52 lg:h-auto object-cover bg-slate-100"
-              />
-            )}
-            <div className="p-6 sm:p-8 space-y-3 flex-1">
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-extrabold">
-                <span className="px-2.5 py-1 rounded-md bg-[#0054A6]/10 text-[#0054A6]">
-                  {featured.category}
-                </span>
-                <span className="flex items-center gap-1 text-slate-400">
-                  <Calendar className="w-3.5 h-3.5" /> {featured.date}
-                </span>
+          <Link
+            href={`/news/${featured.id}`}
+            className="block bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:border-[#0054A6]/60 hover:shadow-xl hover:shadow-blue-500/5 transition overflow-hidden group"
+          >
+            <div className="flex flex-col lg:flex-row">
+              {featured.image && (
+                <div className="w-full lg:w-2/5 h-56 lg:h-auto overflow-hidden bg-slate-100 relative shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={featured.image}
+                    alt=""
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-md shadow-rose-600/30">
+                    <Flame className="w-3 h-3" /> Mới nhất
+                  </div>
+                </div>
+              )}
+              <div className="p-6 sm:p-8 space-y-3.5 flex-1 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-extrabold">
+                    <span className="px-2.5 py-1 rounded-md bg-[#0054A6]/10 text-[#0054A6]">
+                      {featured.category}
+                    </span>
+                    <span className="flex items-center gap-1 text-slate-400">
+                      <Calendar className="w-3.5 h-3.5" /> {featured.date}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] group-hover:text-[#0054A6] transition leading-snug">
+                    {featured.title}
+                  </h2>
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed line-clamp-3">
+                    {featured.excerpt}
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 text-xs font-black text-[#0054A6] group-hover:gap-2.5 transition-all">
+                  <span>Đọc bài viết chi tiết</span>
+                  <ArrowRight className="w-4 h-4" />
+                </div>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] group-hover:text-[#0054A6] transition leading-snug">
-                {featured.title}
-              </h2>
-              <p className="text-sm text-slate-600 font-medium leading-relaxed line-clamp-3">
-                {featured.excerpt}
-              </p>
-              <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#0054A6]">
-                Đọc bài <ArrowRight className="w-4 h-4" />
-              </span>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </motion.div>
       )}
 
       {/* DANH SÁCH CÒN LẠI */}
       {rest.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {rest.map((a) => (
-            <Link
+            <motion.div
               key={a.id}
-              href={`/news/${a.id}`}
-              className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:border-[#0054A6]/60 hover:shadow-md transition overflow-hidden flex flex-col group"
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.2 }}
             >
-              {a.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={a.image}
-                  alt=""
-                  className="w-full h-40 object-cover bg-slate-100"
-                />
-              )}
-              <div className="p-5 space-y-2.5 flex-1 flex flex-col">
-                <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold">
-                  <span className="px-2 py-0.5 rounded-md bg-[#0054A6]/10 text-[#0054A6]">
-                    {a.category}
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-400">
-                    <Calendar className="w-3 h-3" /> {a.date}
-                  </span>
+              <Link
+                href={`/news/${a.id}`}
+                className="h-full bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:border-[#0054A6]/60 hover:shadow-xl hover:shadow-blue-500/5 transition overflow-hidden flex flex-col group"
+              >
+                {a.image && (
+                  <div className="w-full h-44 overflow-hidden bg-slate-100 relative shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={a.image}
+                      alt=""
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  </div>
+                )}
+                <div className="p-5 space-y-2.5 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold">
+                      <span className="px-2 py-0.5 rounded-md bg-[#0054A6]/10 text-[#0054A6]">
+                        {a.category}
+                      </span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Calendar className="w-3 h-3" /> {a.date}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-black text-[#0F172A] group-hover:text-[#0054A6] transition leading-snug line-clamp-2">
+                      {a.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-3">
+                      {a.excerpt}
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#0054A6] pt-3 border-t border-slate-100/80 group-hover:gap-2 transition-all">
+                    <span>Đọc tiếp</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
                 </div>
-                <h3 className="text-sm font-black text-[#0F172A] group-hover:text-[#0054A6] transition leading-snug line-clamp-3">
-                  {a.title}
-                </h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-3 flex-1">
-                  {a.excerpt}
-                </p>
-                <span className="inline-flex items-center gap-1 text-[11px] font-black text-[#0054A6] pt-1">
-                  Đọc bài <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </div>
       )}
@@ -248,8 +278,8 @@ export default function NewsPage() {
         <ExternalLink className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
         <p>
           Nội dung thuộc bản quyền Trường Đại học Công Thương TP.HCM, được tổng hợp lại
-          để tra cứu. Mọi thông tin chính thức xin đối chiếu tại bài gốc trên
-          ts.huit.edu.vn.
+          để tra cứu. Mọi thông tin chính thức xin đối chiếu tại bài gốc trên{" "}
+          <strong className="text-slate-700">ts.huit.edu.vn</strong>.
         </p>
       </div>
     </div>

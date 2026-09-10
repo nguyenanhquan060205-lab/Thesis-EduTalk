@@ -1,0 +1,115 @@
+{
+  "dung_tang_cuong": true,
+  "loi_ich_tang_cuong": {
+    "1": 0.03135888501742157,
+    "2": 0.010452961672473893,
+    "3": 0.015679442508710784,
+    "5": 0.022648083623693416
+  },
+  "hp": {
+    "max_depth": 3,
+    "n_estimators": 400,
+    "learning_rate": 0.03,
+    "min_child_weight": 12,
+    "subsample": 0.7,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 100,
+    "gamma": 0.5
+  },
+  "w_that": 2.0,
+  "rieng_nhom": true,
+  "phan_tang": {},
+  "loi_ich_phan_tang": -0.005226480836236891,
+  "gap_toi_da": 0.35,
+  "train_toi_da": 0.95,
+  "ket_qua_cv": {
+    "auto_top1": 0.1835075493612079,
+    "auto_top2": 0.28397212543554007,
+    "auto_top3": 0.36527293844367015,
+    "auto_top5": 0.4843205574912892,
+    "guided_top1": 0.3623693379790941,
+    "guided_top2": 0.5691056910569106,
+    "guided_top3": 0.6922183507549361,
+    "guided_top5": 0.8536585365853658,
+    "train_guided_top3": 0.9278455284552846,
+    "train_auto_top3": 0.7182055749128919,
+    "gap_top3": 0.23562717770034847
+  },
+  "bua_pho_bien": {
+    "1": 0.3153310104529617,
+    "2": 0.5121951219512195,
+    "3": 0.6289198606271778,
+    "5": 0.818815331010453
+  },
+  "hon_pho_bien": {
+    "1": 0.047038327526132406,
+    "2": 0.05691056910569103,
+    "3": 0.06329849012775834,
+    "5": 0.03484320557491283
+  },
+  "theo_khoi": [
+    {
+      "ma_khoi": 1,
+      "khoi": "Kinh doanh & Quản lý",
+      "n_nganh": 10,
+      "top3": 0.4269406392694064,
+      "bua3": 0.3,
+      "phan_tang": false,
+      "hon": 0.1269406392694064
+    },
+    {
+      "ma_khoi": 3,
+      "khoi": "Kỹ thuật & Công nghệ",
+      "n_nganh": 8,
+      "top3": 0.6974358974358974,
+      "bua3": 0.375,
+      "phan_tang": false,
+      "hon": 0.3224358974358974
+    },
+    {
+      "ma_khoi": 4,
+      "khoi": "Thực phẩm, Sinh học & Môi trường",
+      "n_nganh": 7,
+      "top3": 0.7037037037037037,
+      "bua3": 0.42857142857142855,
+      "phan_tang": false,
+      "hon": 0.2751322751322752
+    },
+    {
+      "ma_khoi": 2,
+      "khoi": "Du lịch, Khách sạn & Ẩm thực",
+      "n_nganh": 6,
+      "top3": 0.7860696517412935,
+      "bua3": 0.5,
+      "phan_tang": false,
+      "hon": 0.2860696517412935
+    },
+    {
+      "ma_khoi": 0,
+      "khoi": "CNTT & Máy tính",
+      "n_nganh": 4,
+      "top3": 0.8611111111111112,
+      "bua3": 0.75,
+      "phan_tang": false,
+      "hon": 0.11111111111111116
+    },
+    {
+      "ma_khoi": 5,
+      "khoi": "Luật",
+      "n_nganh": 2,
+      "top3": 1.0,
+      "bua3": 1.0,
+      "phan_tang": false,
+      "hon": 0.0
+    },
+    {
+      "ma_khoi": 6,
+      "khoi": "Ngoại ngữ",
+      "n_nganh": 2,
+      "top3": 1.0,
+      "bua3": 1.0,
+      "phan_tang": false,
+      "hon": 0.0
+    }
+  ]
+}

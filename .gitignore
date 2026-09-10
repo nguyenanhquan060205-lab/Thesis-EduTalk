@@ -4,6 +4,10 @@ __pycache__/
 .pytest_cache/
 .coverage
 .env
+# Bắt cả .env.bak, .env.local, .env.prod... — chỉ mỗi `.env` thì một bản
+# sao lưu như `.env.bak.123` vẫn lọt vào commit kèm mật khẩu MongoDB.
+.env.*
+!.env.example
 backend/venv/
 backend/env/
 
@@ -28,3 +32,10 @@ build/
 .idea/
 *.swp
 temp_repos/
+
+# Temporary & backup documents
+~$*
+.~*
+.*.docx
+.backup_*
+.truoc_khi_va_*

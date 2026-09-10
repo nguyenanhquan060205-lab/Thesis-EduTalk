@@ -87,7 +87,9 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
     if user_doc and not user_doc.get("isPremium", False):
         await db["users"].update_one({"_id": uid}, {"$inc": {"usageCount": 1}})
 
-    # 4. Lưu lịch sử — giữ cả đầu vào để sau này dùng cho vòng lặp phản hồi
+    # 4. Lưu lịch sử — giữ cả đầu vào để sau này dùng cho vòng lặp phản hồi.
+    #    `majors` lưu nguyên khối nên đã bao gồm `explain` (giá trị SHAP) — đây
+    #    chính là "XAI_Logs" trong đề cương, đọc lại qua GET /predict/explain/{id}.
     await db["prediction_history"].insert_one(
         {
             "user_id": uid,

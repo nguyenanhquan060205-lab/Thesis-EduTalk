@@ -119,6 +119,15 @@ class MajorPredictor:
         )
         self.M = np.load(mr / "M_nganh_khoi.npy")  # (39, 7) one-hot ngành → khối
 
+        # Booster thô dùng cho TreeSHAP. Lấy sẵn một lần vì get_booster() không rẻ.
+        #
+        # Dùng pred_contribs của XGBoost chứ KHÔNG dùng thư viện `shap`: shap 0.49
+        # đọc base_score của mô hình đa lớp XGBoost 3.x sai kiểu (nó mong một số vô
+        # hướng, XGBoost lưu vector mỗi lớp một phần tử) nên vỡ ở mọi cách gọi.
+        # pred_contribs chạy đúng cùng thuật toán TreeSHAP, ngay trong xgboost.
+        self._b1 = self.m1.get_booster()
+        self._b2 = self.m2.get_booster()
+
         # Tổ hợp xét tuyển + điểm chuẩn 3 năm (Đề án tuyển sinh HUIT).
         # Thiếu tệp này thì vẫn chạy được, chỉ mất phần lọc tổ hợp và nhãn rủi ro.
         self.to_hop_xet_tuyen: dict[int, set[str]] = {}
@@ -252,6 +261,236 @@ class MajorPredictor:
         }
 
     # ── Suy diễn ────────────────────────────────────────────────────────────
+    # ── Giải thích bằng SHAP ────────────────────────────────────────────────
+    #
+    # Điểm xếp hạng là tích hai xác suất: P(ngành) ∝ P₂(ngành) × P₁(khối)^β.
+    # Nhân trong không gian xác suất là CỘNG trong không gian log, nên với một
+    # thí sinh cố định:
+    #
+    #     s(ngành) = margin₂(ngành) + β·margin₁(khối) + C
+    #              = [base] + Σᵢ [ φ₂ᵢ(ngành) + β·φ₁ᵢ(khối) ]
+    #
+    # C là hằng số chuẩn hoá softmax, giống nhau cho cả 39 ngành của thí sinh đó
+    # nên không đổi thứ hạng. Vậy đóng góp hợp nhất của đặc trưng i là CHÍNH XÁC
+    # φ₂ᵢ + β·φ₁ᵢ — Giai đoạn 10 đã kiểm chứng công thức này tái tạo đúng 100%
+    # thứ hạng 39 ngành trên cả 102 mẫu kiểm tra.
+
+    TEN_DEP = {
+        "likert_nang_dong": "Năng động",
+        "likert_huong_noi": "Hướng nội",
+        "likert_sang_tao": "Sáng tạo",
+        "likert_logic": "Tư duy logic",
+        "likert_to_mo": "Tò mò",
+        "likert_thi_nghiem": "Thích thí nghiệm",
+        "likert_moi_truong": "Quan tâm môi trường",
+        "likert_dinh_duong": "Quan tâm dinh dưỡng",
+        "likert_tranh_luan": "Thích tranh luận",
+        "likert_thiet_ke": "Thích thiết kế",
+        # z-score: KHÔNG phải "điểm trung bình" mà là mặt bằng so với chung.
+        # Dịch nhầm thì thí sinh thấy "Điểm trung bình: -0,34" sẽ hiểu sai hẳn.
+        "diem_tb_z": "Mặt bằng điểm",
+        "diem_max_z": "Môn mạnh nhất",
+        "diem_min_z": "Môn yếu nhất",
+        "gioi_tinh_ma": "Giới tính",
+        # Giữ nhãn ngắn cho vừa cột bên trái — giá trị ("Nghiên cứu"/"Đi làm")
+        # ngay bên dưới đã nói rõ đây là mục tiêu gì.
+        "muc_tieu_ma": "Mục tiêu",
+        "nhom_to_hop_TN": "Nhóm Tự nhiên",
+        "nhom_to_hop_XH": "Nhóm Xã hội",
+        "nhom_to_hop_HH": "Nhóm Hỗn hợp",
+    }
+
+    def _hien_voi_thi_sinh(self, cot: str, gia_tri: float) -> bool:
+        """Đặc trưng này có được nêu trong phần giải thích cho THÍ SINH không?
+
+        Dùng danh sách CHO PHÉP thay vì danh sách chặn: chỉ nêu những thứ thí
+        sinh trực tiếp khai và hiểu được ý nghĩa.
+
+        - 10 câu sở thích          → hiện
+        - điểm các môn ĐÃ THI      → hiện
+        - mục tiêu sau tốt nghiệp  → hiện
+        - còn lại                  → gộp vào "yếu tố khác"
+
+        Bốn nhóm bị gộp và lý do:
+
+        * **Tổ hợp** (15 cột one-hot + 3 cột nhóm) — thí sinh chỉ chọn MỘT tổ hợp,
+          bung ra 18 cột thì mỗi cột một mẩu nhỏ, hiện lên vừa rối vừa trùng
+          thông tin với danh sách tổ hợp đã in ngay phía trên thẻ ngành.
+        * **Môn KHÔNG thi** — vẫn có đóng góp hợp lệ vì XGBoost học một hướng rẽ
+          riêng cho nhánh khuyết, nhưng dòng "Điểm Lý · không thi · +0,26" đọc như
+          vô nghĩa, và cũng trùng thông tin với tổ hợp.
+        * **z-score điểm** (mặt bằng / mạnh nhất / yếu nhất) — suy ra từ chính 3
+          môn đã hiện ở trên, nêu thêm là đếm hai lần cùng một thứ.
+        * **Giới tính** — lọt top 6 ở 41/102 thí sinh, đứng đầu ở 15 em. Nêu một
+          đặc điểm không thể thay đổi vừa không giúp được gì, vừa củng cố định
+          kiến. Vẫn tham gia dự đoán; trang quản trị và báo cáo thấy đầy đủ.
+        """
+        if cot.startswith("likert_"):
+            return True
+        if cot == "muc_tieu_ma":
+            return True
+        if cot.startswith("diem_") and not cot.endswith("_z"):
+            return not np.isnan(gia_tri)  # chỉ môn thí sinh thật sự thi
+        return False
+
+    # Cột điểm lưu không dấu (diem_Toan) vì tên cột phải khớp lúc train.
+    # Hiện ra cho người đọc thì phải có dấu.
+    TEN_MON = {
+        "Toan": "Toán", "Ly": "Lý", "Hoa": "Hóa", "Anh": "Tiếng Anh",
+        "Van": "Ngữ văn", "Su": "Lịch sử", "Sinh": "Sinh học",
+        "Dia": "Địa lý", "Gdktpl": "GD Kinh tế & Pháp luật", "Tin": "Tin học",
+    }
+
+    def _ten_dep(self, cot: str) -> str:
+        if cot in self.TEN_DEP:
+            return self.TEN_DEP[cot]
+        if cot.startswith("diem_"):
+            return "Điểm " + self.TEN_MON.get(cot[5:], cot[5:])
+        if cot.startswith("to_hop_"):
+            return "Tổ hợp " + cot[7:]
+        return cot
+
+    @staticmethod
+    def muc_do(phan_tram: float) -> str:
+        """Tỷ trọng → chữ mô tả mức độ.
+
+        NƠI DUY NHẤT định nghĩa các mức này. Giao diện và prompt của trợ lý đều
+        dùng lại chuỗi trả về từ đây — trước kia mỗi bên tự đặt ngưỡng riêng nên
+        bảng ghi "mạnh" mà câu văn bên dưới lại nói "ảnh hưởng nhẹ thôi".
+        """
+        if phan_tram >= 25:
+            return "rất mạnh"
+        if phan_tram >= 10:
+            return "mạnh"
+        if phan_tram >= 3:
+            return "vừa"
+        return "không đáng kể"
+
+    def _mo_ta_gia_tri(self, cot: str, v: float) -> str:
+        """Chuỗi hiển thị của giá trị đặc trưng — xử lý riêng ô khuyết.
+
+        Ô điểm khuyết vẫn có đóng góp SHAP hợp lệ vì XGBoost học một hướng rẽ
+        riêng cho nhánh khuyết: "không thi môn này" tự nó đã là thông tin. Nhưng
+        hiện ra "Điểm Hóa: nan" thì vô nghĩa với người đọc.
+        """
+        if v is None or (isinstance(v, float) and np.isnan(v)):
+            return "không thi" if cot.startswith("diem_") else "chưa có"
+        if cot.startswith("likert_"):
+            return f"{v:.0f}/5"
+        if cot == "muc_tieu_ma":
+            # Trả lại tên mục tiêu thay vì mã số — "2" không nói lên điều gì
+            nguoc = {ma: ten for ten, ma in MUC_TIEU_MA.items()}
+            return nguoc.get(int(v), str(int(v)))
+        if cot == "gioi_tinh_ma":
+            return "Nam" if int(v) == 1 else "Nữ"
+        if cot.endswith("_z"):
+            return f"{v:+.2f}"
+        if cot.startswith(("to_hop_", "nhom_to_hop_")):
+            return "có" if v else "không"
+        return f"{v:.4g}"
+
+    def _shap(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """Giá trị SHAP của MỘT thí sinh cho mọi lớp, cả hai tầng.
+
+        Tính một lần rồi dùng lại cho mọi ngành: SHAP của một thí sinh là như
+        nhau, giải thích từng ngành chỉ khác ở chỉ số truy xuất. Gọi lại theo
+        từng ngành là nhân đôi, nhân ba công việc mà không được gì.
+        """
+        from xgboost import DMatrix
+
+        d = DMatrix(X, feature_names=self.columns)
+        return (
+            self._b1.predict(d, pred_contribs=True)[0],  # (7, n+1)
+            self._b2.predict(d, pred_contribs=True)[0],  # (39, n+1)
+        )
+
+    def giai_thich(
+        self,
+        j_nganh: int,
+        mode: str,
+        c1: np.ndarray,
+        c2: np.ndarray,
+        X: np.ndarray,
+        top_an: int = 8,
+    ) -> dict:
+        """Vì sao mô hình xếp `j_nganh` ở vị trí đó, cho một thí sinh.
+
+        Trả **đủ** những gì thí sinh đã tự khai — 3 điểm môn đã thi, 10 câu sở
+        thích, mục tiêu — chứ không cắt lấy vài mục mạnh nhất. Người dùng nhập
+        14 thứ thì muốn thấy cả 14 thứ đó ảnh hưởng ra sao, kể cả những mục gần
+        như bằng không.
+
+        `top_an` giới hạn số mục BỊ ẨN gửi kèm (tổ hợp, z-score, giới tính, môn
+        không thi) — chỉ trang quản trị dùng tới, nên lấy vài cái mạnh nhất là đủ.
+
+        `c1`, `c2` lấy từ `_shap()` — truyền vào để không tính lại theo từng ngành.
+
+        `mode` = "guided" thì P₁ bị ép bằng 1 nên tầng 1 KHÔNG tham gia xếp hạng,
+        do đó cũng không được góp mặt trong phần giải thích.
+        """
+        k_khoi = self.field_of_major[int(j_nganh)]
+
+        he_so_t1 = 0.0 if mode == "guided" else BETA
+        phi = c2[j_nganh, :-1] + he_so_t1 * c1[k_khoi, :-1]
+
+        tong_abs = float(np.abs(phi).sum()) or 1.0
+        thu_tu = [int(k) for k in np.argsort(-np.abs(phi))]
+
+        muc, chi_so_hien = [], []
+        for k in thu_tu:
+            cot = self.columns[k]
+            gia_tri = float(X[0, k])
+            an = not self._hien_voi_thi_sinh(cot, gia_tri)
+            muc.append(
+                {
+                    "ten": self._ten_dep(cot),
+                    "giaTri": self._mo_ta_gia_tri(cot, gia_tri),
+                    "dongGop": round(float(phi[k]), 4),
+                    "phanTram": round(abs(float(phi[k])) / tong_abs * 100, 1),
+                    "mucDo": self.muc_do(abs(float(phi[k])) / tong_abs * 100),
+                    "tang2": round(float(c2[j_nganh, k]), 4),
+                    "tang1": round(float(he_so_t1 * c1[k_khoi, k]), 4),
+                    "anVoiThiSinh": an,
+                }
+            )
+            if not an:
+                chi_so_hien.append(k)
+
+        # Giữ đủ mục hiện, nhưng chỉ giữ vài mục ẩn mạnh nhất — gửi cả 29 mục ẩn
+        # cho mỗi ngành chỉ làm phình payload mà không ai đọc.
+        da_du_an = 0
+        loc = []
+        for m in muc:
+            if m["anVoiThiSinh"]:
+                if da_du_an >= top_an:
+                    continue
+                da_du_an += 1
+            loc.append(m)
+        muc = loc
+
+        # Gộp MỌI thứ thí sinh không nhìn thấy: đặc trưng ngoài top, đặc trưng bị
+        # ẩn (giới tính), và môn không thi. Tính bằng hiệu để các thanh trên màn
+        # hình luôn cộng đúng bằng tổng — thiếu dòng này thì người xem tưởng 6
+        # thanh là toàn bộ câu chuyện rồi đem so giữa các ngành, mà phép so đó
+        # không hợp lệ vì mỗi ngành có điểm nền riêng.
+        tong = float(phi.sum())
+        con_lai = tong - float(sum(phi[k] for k in chi_so_hien))
+        # Phần trăm của cụm "yếu tố khác" tính theo |φ| để cộng với các dòng hiện
+        # ra đúng 100% — nếu lấy |tổng đã bù trừ| thì các phần trăm không khớp.
+        pt_con_lai = (
+            (tong_abs - float(sum(abs(phi[k]) for k in chi_so_hien))) / tong_abs * 100
+        )
+
+        return {
+            "mode": mode,
+            "base": round(float(c2[j_nganh, -1] + he_so_t1 * c1[k_khoi, -1]), 4),
+            "features": muc,
+            "soConLai": len(self.columns) - len(chi_so_hien),
+            "dongGopConLai": round(con_lai, 4),
+            "phanTramConLai": round(pt_con_lai, 1),
+            "tongDongGop": round(tong, 4),
+        }
+
     def recommend(
         self,
         interests: list[int],
@@ -339,6 +578,8 @@ class MajorPredictor:
         # ngành #1 bên dưới lại thuộc nhóm khác — 16/102 sinh viên thật bị vậy.
         p_field = self.M.T @ p
 
+        _c1, _c2 = self._shap(X)   # tính một lần, dùng lại cho mọi ngành
+
         return {
             "mode": mode,
             "fields": [
@@ -368,6 +609,9 @@ class MajorPredictor:
                     "score": round(float(p[j]), 4),
                     "subjectGroups": sorted(self.to_hop_xet_tuyen.get(int(j), [])),
                     "admission": self._tuyen_sinh(int(j), tong_diem),
+                    # Giải thích chỉ tính cho các ngành thật sự hiển thị. Toàn bộ
+                    # 39 ngành cũng chỉ tốn ~4ms, nhưng không có gì để dùng tới.
+                    "explain": self.giai_thich(int(j), mode, _c1, _c2, X),
                 }
                 for i, j in enumerate(order)
             ],

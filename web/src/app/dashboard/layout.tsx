@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Cpu, History, Users, LifeBuoy, BarChart3, MessageSquare, LayoutDashboard, Newspaper, Settings, LogOut, Loader2, ShieldAlert } from "lucide-react";
@@ -18,6 +18,13 @@ const NAV_ITEMS = [
   { href: "#", label: "Cài đặt", icon: Settings },
 ];
 
+// Khai báo ngoài component để tham chiếu giữ nguyên qua mỗi lần render — đặt bên
+// trong thì useSyncExternalStore sẽ huỷ và đăng ký lại liên tục.
+const dangKyNapPhien = (goiLai: () => void) =>
+  useAuthStore.persist.onFinishHydration(goiLai);
+const docTrangThaiNap = () => useAuthStore.persist.hasHydrated();
+const docTrangThaiNapTrenServer = () => false;
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -25,12 +32,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Phiên đăng nhập nằm trong localStorage nên lần render đầu chưa có. Nếu chặn
   // ngay lúc đó thì chính admin cũng bị đá ra, nên phải đợi persist nạp xong.
-  const [daNapPhien, setDaNapPhien] = useState(
-    () => typeof window !== "undefined" && useAuthStore.persist.hasHydrated()
-  );
-  useEffect(
-    () => useAuthStore.persist.onFinishHydration(() => setDaNapPhien(true)),
-    []
+  //
+  // Bắt buộc dùng useSyncExternalStore chứ không phải useState: giá trị này KHÁC
+  // NHAU giữa server (không có localStorage → luôn false) và client (zustand đã
+  // nạp xong ngay khi tải module → true). Khởi tạo bằng useState thì lần render
+  // đầu ở client không khớp HTML server dựng, React báo lỗi hydration.
+  // `getServerSnapshot` trả false để cả hai bên cùng vẽ màn hình chờ, xong React
+  // tự vẽ lại bằng giá trị thật của client.
+  const daNapPhien = useSyncExternalStore(
+    dangKyNapPhien,
+    docTrangThaiNap,
+    docTrangThaiNapTrenServer
   );
 
   const laAdmin = user?.role === "admin";

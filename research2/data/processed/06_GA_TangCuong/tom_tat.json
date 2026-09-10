@@ -1,0 +1,21 @@
+{
+  "n_moi_nganh": 67,
+  "n_tang_cuong": 2613,
+  "n_that": 574,
+  "n_tong": 3187,
+  "n_the_he": 40,
+  "p_lai": 0.75,
+  "p_dot_bien": 0.25,
+  "n_fold": 15,
+  "nguon": {
+    "ttth": 2278,
+    "bootstrap_khaosat": 335
+  },
+  "nganh_thieu_ttth": [
+    "Luật",
+    "Trí tuệ nhân tạo",
+    "Quản lý Công nghiệp",
+    "Logistics và quản lý chuỗi cung ứng",
+    "Du lịch"
+  ]
+}

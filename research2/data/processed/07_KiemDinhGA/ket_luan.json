@@ -1,0 +1,30 @@
+{
+  "n_fold_kiem_dinh": 5,
+  "ban1_gauss": {
+    "ban": "Bản 1 — lấy mẫu Gauss",
+    "ks_p_tb": 0.6138775296925152,
+    "ks_dat": 0.94,
+    "wasserstein": 0.15137592446148063,
+    "nang_luong": 0.06287036062501379,
+    "auc": 0.5496272641369809,
+    "auc_sd": 0.022184779111112232
+  },
+  "ban2_phieu_that": {
+    "ban": "Bản 2 — toán tử trên phiếu thật",
+    "ks_p_tb": 0.27714533687993725,
+    "ks_dat": 0.64,
+    "wasserstein": 0.21876682071073955,
+    "nang_luong": 0.16820157377141384,
+    "auc": 0.572694702863083,
+    "auc_sd": 0.07091252060105295
+  },
+  "auc_ban1": 0.5496272641369809,
+  "auc_ban2": 0.572694702863083,
+  "cai_thien_auc": -0.023067438726102063,
+  "sai_tuong_quan_ban1": 0.03065128605707434,
+  "sai_tuong_quan_ban2": 0.10486500305171338,
+  "dat": true,
+  "ban_thang": "Bản 1 — lấy mẫu Gauss",
+  "key_thang": "likert_gauss",
+  "ghi_chu": "Chấm trên phần VALIDATION của mỗi fold — dòng thật mà bộ sinh của fold đó chưa từng thấy."
+}
