@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 
 /**
- * Chỉ số đánh giá mô hình — đọc từ `research/data/processed/08_model/`.
+ * Chỉ số đánh giá mô hình — đọc từ `research3/data/processed/10_ChotModel/`.
  *
  * Khác hẳn `/admin/analytics`: bên đó là số liệu **sử dụng thực tế** của người
  * dùng, bên này là kết quả **huấn luyện và kiểm thử** mô hình.

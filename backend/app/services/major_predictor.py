@@ -621,6 +621,19 @@ class MajorPredictor:
 
 
 @lru_cache(maxsize=1)
-def get_predictor() -> MajorPredictor:
-    """Nạp mô hình một lần duy nhất cho cả tiến trình."""
-    return MajorPredictor()
+def get_predictor():
+    """Nạp mô hình một lần duy nhất cho cả tiến trình.
+
+    Mặc định dùng pipeline `research3/` (9 nhóm ngành chia lại, 63 đặc trưng).
+    Đặt EDUTALK_PIPELINE=legacy để quay về pipeline `research/` (2 tầng, 43 đặc trưng).
+
+    Hai lớp có cùng bề mặt công khai (`recommend`, `build_features`, `major_name`,
+    `field_name`, `to_hop_xet_tuyen`, `diem_chuan`…) nên router không cần biết đang
+    chạy bản nào.
+    """
+    if os.getenv("EDUTALK_PIPELINE", "r3").strip().lower() == "legacy":
+        return MajorPredictor()
+
+    from app.services.major_predictor_r3 import MajorPredictorR3
+
+    return MajorPredictorR3()

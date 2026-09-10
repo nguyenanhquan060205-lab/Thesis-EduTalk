@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Maximize2 } from "lucide-react";
+import { MessageSquare, Minus, Send, Maximize2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
@@ -31,6 +31,18 @@ export default function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
+
+  // Lắng nghe phím ESC để thu nhỏ khung chat về robot
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
@@ -104,6 +116,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            data-lenis-prevent
             className="fixed bottom-0 right-0 w-full h-[100dvh] sm:bottom-6 sm:right-6 sm:w-[400px] sm:h-[600px] sm:max-h-[85vh] z-50 flex flex-col bg-white sm:border border-slate-200/60 sm:rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden"
           >
             {/* Header */}
@@ -128,16 +141,20 @@ export default function ChatWidget() {
                 </button>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-xl transition"
-                  title="Đóng"
+                  className="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-xl transition active:scale-95 cursor-pointer"
+                  title="Thu nhỏ (Esc)"
                 >
-                  <X className="w-5 h-5" />
+                  <Minus className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
             {/* Chat Body */}
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-5 bg-slate-50/50 space-y-4">
+            <div
+              ref={scrollContainerRef}
+              data-lenis-prevent
+              className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5 bg-slate-50/50 space-y-4"
+            >
               {messages.map((msg) => (
                 <motion.div 
                   key={msg.id} 
@@ -189,7 +206,7 @@ export default function ChatWidget() {
             <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
               {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
               {messages.length <= 2 && (
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar overscroll-contain" data-lenis-prevent>
                   {SUGGESTIONS.map((s) => (
                     <motion.button
                       key={s}
@@ -213,6 +230,7 @@ export default function ChatWidget() {
                       handleSend();
                     }
                   }}
+                  data-lenis-prevent
                   placeholder="Hỏi AI bất kỳ điều gì..."
                   className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
                   rows={1}

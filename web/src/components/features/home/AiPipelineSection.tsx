@@ -32,10 +32,10 @@ export function AiPipelineSection() {
           <span>Kiến Trúc AI Độc Quyền</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Hệ Thống Tư Vấn Tuyển Sinh <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] to-[#0084FF]">2 Tầng & XAI SHAP</span>
+          Hệ Thống Tư Vấn Tuyển Sinh <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] to-[#0084FF]">Pipeline XGBoost & XAI SHAP</span>
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          Sự kết hợp giữa mô hình học máy phân tầng (Hierarchical XGBoost), giải thích minh bạch quyết định (SHAP), và cơ sở dữ liệu tri thức tuyển sinh HUIT 2026.
+          Sự kết hợp giữa pipeline học máy XGBoost (research3), giải thích minh bạch quyết định (TreeSHAP), và cơ sở dữ liệu tri thức tuyển sinh HUIT 2026.
         </p>
       </div>
 
@@ -63,14 +63,14 @@ export function AiPipelineSection() {
             </p>
           </div>
 
-          {/* Node 2: XGBoost 2 Tầng */}
+          {/* Node 2: Pipeline XGBoost */}
           <div ref={nodeXgboostRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-blue-400/40 transition-all group">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/10">
               <Cpu className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">2. XGBoost 2 Tầng</span>
+            <span className="text-xs font-black text-white">2. Pipeline XGBoost</span>
             <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-              Tầng 1: 7 Nhóm ngành<br />Tầng 2: 39 Chuyên ngành
+              Chọn nhóm → Model riêng (Top-3: 86,3%)<br />Không chọn → Model phẳng (Top-3: 35,3%)
             </p>
           </div>
 
@@ -81,7 +81,7 @@ export function AiPipelineSection() {
             </div>
             <span className="text-xs font-black text-white">3. Minh Bạch XAI SHAP</span>
             <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-              Trọng số hợp nhất φ₂ + β·φ₁ giải thích vì sao chọn ngành
+              TreeSHAP giải thích đóng góp 63 đặc trưng cho từng gợi ý ngành
             </p>
           </div>
 

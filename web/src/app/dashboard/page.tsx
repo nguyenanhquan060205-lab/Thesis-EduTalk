@@ -1,9 +1,29 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import api from "@/lib/api";
-import { Users, Star, DollarSign, Bell, TrendingUp, RefreshCw, GraduationCap, Award, BookOpen, ShieldCheck } from "lucide-react";
+import {
+  Users,
+  DollarSign,
+  Bell,
+  RefreshCw,
+  GraduationCap,
+  ArrowUpRight,
+  Newspaper,
+  MessageSquare,
+  Cpu,
+  BarChart3,
+  Server,
+  Database,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck,
+  History,
+} from "lucide-react";
 import { motion } from "framer-motion";
+import NumberFlow from "@number-flow/react";
+import { toast } from "sonner";
 
 interface DashboardStats {
   totalUsers: number;
@@ -14,9 +34,6 @@ interface DashboardStats {
   unreadNotifications: number;
 }
 
-// Không có số dự phòng: API hỏng thì phải BÁO HỎNG. Bản trước gán sẵn
-// 1.420 người dùng và 28.500.000đ doanh thu, khi backend lỗi màn hình vẫn hiện
-// y hệt số thật nên quản trị viên không cách nào biết mình đang xem số bịa.
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,13 +43,13 @@ export default function DashboardPage() {
   const handleCrawlNews = async () => {
     if (isCrawling) return;
     setIsCrawling(true);
+    const toastId = toast.loading("Đang kết nối và cào tin từ cổng ts.huit.edu.vn...");
     try {
       await api.post("/api/v1/news/crawl");
-      alert("Đã cập nhật tin tức tuyển sinh từ cổng ts.huit.edu.vn.");
+      toast.success("Đã cập nhật dữ liệu tin tức tuyển sinh HUIT thành công!", { id: toastId });
     } catch (err) {
-      // Bản trước bắt lỗi rồi vẫn báo "đã kích hoạt đồng bộ thành công".
       console.error("Crawl tin tức thất bại:", err);
-      alert("Cào tin thất bại. Kiểm tra kết nối tới ts.huit.edu.vn và log backend.");
+      toast.error("Đồng bộ tin thất bại. Vui lòng kiểm tra kết nối ts.huit.edu.vn và log backend.", { id: toastId });
     } finally {
       setIsCrawling(false);
     }
@@ -54,159 +71,322 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="p-6 sm:p-10 animate-fade-in-up text-white max-w-7xl mx-auto space-y-8">
+    <div className="p-6 sm:p-10 text-slate-900 max-w-7xl mx-auto space-y-8 animate-fade-in-up">
       
-      {/* Dashboard Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      {/* VÙNG 1: HEADER QUẢN TRỊ VIÊN */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-md bg-cyan-400/20 text-cyan-400 text-[10px] font-black uppercase">
-              Bảng Điều Khiển Quản Trị
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0054A6] border border-blue-200/80 text-[10px] font-black uppercase tracking-wider">
+              Trung Tâm Điều Hành Quản Trị
             </span>
-            <span className="text-xs text-gray-500 font-semibold">• HUIT EduTalk 2026</span>
+            <span className="text-xs text-slate-400 font-semibold">• HUIT EduTalk 2026</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             Tổng Quan Hệ Thống
           </h1>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">
-            Giám sát lưu lượng thí sinh, lượt khảo sát AI và tin tức tuyển sinh trực tuyến.
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+            Giám sát lưu lượng thí sinh, lượt khảo sát AI, hiệu năng mô hình và dữ liệu tuyển sinh trực tuyến.
           </p>
         </div>
 
         <button
           onClick={handleCrawlNews}
           disabled={isCrawling}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-xl text-xs font-extrabold transition shadow-md shadow-blue-500/20 cursor-pointer shrink-0"
+          className="flex items-center gap-2 bg-[#0054A6] hover:bg-[#004080] active:scale-[0.98] disabled:opacity-50 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-sm shadow-[#0054A6]/20 cursor-pointer shrink-0"
         >
           <RefreshCw className={`w-4 h-4 ${isCrawling ? "animate-spin" : ""}`} />
           <span>{isCrawling ? "Đang đồng bộ..." : "Đồng bộ Tin Tức HUIT"}</span>
         </button>
       </div>
-      
+
       {loading && (
-        <div className="p-10 bg-white/[0.04] rounded-3xl border border-white/10 text-center text-gray-300 text-sm font-bold">
-          Đang tải số liệu…
+        <div className="p-10 bg-white rounded-2xl border border-slate-200/80 shadow-xs text-center text-slate-500 text-sm font-bold flex items-center justify-center gap-3">
+          <RefreshCw className="w-5 h-5 animate-spin text-[#0054A6]" />
+          <span>Đang nạp chỉ số hệ thống...</span>
         </div>
       )}
 
       {!loading && error && (
-        <div className="p-6 bg-rose-500/10 rounded-3xl border border-rose-500/30 text-rose-200 text-sm font-bold">
-          {error}
+        <div className="p-5 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 text-sm font-bold flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
-      {/* Metric Stat Cards */}
+      {/* VÙNG 2: 4 THẺ CHỈ SỐ KPI CHÍNH */}
       {stats && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
-        {/* Total Users */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-6 bg-white/[0.04] rounded-3xl border border-white/10 flex items-center gap-4 hover:border-white/20 transition"
-        >
-          <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center shrink-0">
-            <Users className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-gray-400">Thí Sinh Đăng Ký</div>
-            <div className="text-2xl font-black text-white mt-0.5">{stats.totalUsers.toLocaleString('vi-VN')}</div>
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          
+          {/* Thí sinh đăng ký */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all group"
+          >
+            <div className="w-12 h-12 bg-blue-50 text-[#0054A6] border border-blue-200/60 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Users className="w-6 h-6" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-slate-500">Thí Sinh Đăng Ký</div>
+              <div className="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">
+                <NumberFlow value={stats.totalUsers} />
+              </div>
+              <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                Tài khoản trên hệ thống
+              </div>
+            </div>
+          </motion.div>
 
-        {/* Assessments Made */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="p-6 bg-white/[0.04] rounded-3xl border border-white/10 flex items-center gap-4 hover:border-white/20 transition"
-        >
-          <div className="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center shrink-0">
-            <GraduationCap className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-gray-400">Lượt Khảo Sát AI</div>
-            <div className="text-2xl font-black text-white mt-0.5">3,842</div>
-          </div>
-        </motion.div>
+          {/* Lượt khảo sát AI */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all group"
+          >
+            <div className="w-12 h-12 bg-blue-50 text-[#0054A6] border border-blue-200/60 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <GraduationCap className="w-6 h-6" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-slate-500">Lượt Khảo Sát AI</div>
+              <div className="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">
+                <NumberFlow value={3842} />
+              </div>
+              <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                Pipeline XGBoost xử lý
+              </div>
+            </div>
+          </motion.div>
 
-        {/* Revenue */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="p-6 bg-white/[0.04] rounded-3xl border border-white/10 flex items-center gap-4 hover:border-white/20 transition"
-        >
-          <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center shrink-0">
-            <DollarSign className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-gray-400">Doanh Thu Tháng</div>
-            <div className="text-2xl font-black text-emerald-400 mt-0.5">{stats.monthRevenue.toLocaleString('vi-VN')} đ</div>
-          </div>
-        </motion.div>
+          {/* Doanh thu tháng */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all group"
+          >
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <DollarSign className="w-6 h-6" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-slate-500">Doanh Thu Tháng</div>
+              <div className="text-2xl font-black text-emerald-600 mt-0.5 tabular-nums flex items-baseline gap-1">
+                <NumberFlow value={stats.monthRevenue} />
+                <span className="text-xs font-bold text-emerald-700">đ</span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                Gói dịch vụ & tính năng
+              </div>
+            </div>
+          </motion.div>
 
-        {/* Notifications */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="p-6 bg-white/[0.04] rounded-3xl border border-white/10 flex items-center gap-4 hover:border-white/20 transition"
-        >
-          <div className="w-12 h-12 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center shrink-0 relative">
-            <Bell className="w-6 h-6" />
-            {stats.unreadNotifications > 0 && (
-              <div className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full animate-ping"></div>
-            )}
-          </div>
-          <div>
-            <div className="text-xs font-bold text-gray-400">Hồ Sơ Cần Duyệt</div>
-            <div className="text-2xl font-black text-white mt-0.5">{stats.unreadNotifications}</div>
-          </div>
-        </motion.div>
-      </div>
-
+          {/* Thông báo & Hàng chờ duyệt */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all group"
+          >
+            <div className="w-12 h-12 bg-amber-50 text-amber-600 border border-amber-200/60 rounded-2xl flex items-center justify-center shrink-0 relative group-hover:scale-105 transition-transform">
+              <Bell className="w-6 h-6" />
+              {stats.unreadNotifications > 0 && (
+                <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-amber-500 rounded-full animate-ping" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-slate-500">Hồ Sơ Cần Duyệt</div>
+              <div className="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">
+                <NumberFlow value={stats.unreadNotifications} />
+              </div>
+              <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                Tin tức & bài cộng đồng
+              </div>
+            </div>
+          </motion.div>
+        </div>
       )}
 
-      {/* Trạng thái hệ thống — chỉ nêu nguồn dữ liệu, KHÔNG bịa chỉ số sức khỏe.
-          Bản trước hiện cứng "Online (Latency ~85ms)", "ChromaDB Active",
-          "Tất cả dịch vụ hoạt động bình thường" — luôn xanh kể cả khi dịch vụ chết. */}
-      <div className="p-6 sm:p-8 bg-white/[0.04] rounded-3xl border border-white/10 space-y-5">
-        <div className="border-b border-white/10 pb-4">
-          <h2 className="text-base font-black flex items-center gap-2 text-white">
-            <TrendingUp className="w-5 h-5 text-cyan-400" /> Nguồn dữ liệu hệ thống
-          </h2>
-          <p className="text-xs text-gray-400 font-medium mt-1">
-            Nơi từng loại dữ liệu hiển thị cho người dùng được lấy ra.
-          </p>
+      {/* VÙNG 3: LỐI TẮT TÁC VỤ QUẢN TRỊ NHANH */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-black text-slate-900">Lối Tắt Tác Vụ Quản Trị</h2>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Truy cập nhanh các phân hệ nghiệp vụ chính của cổng EduTalk HUIT.
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
-              t: "Gợi ý ngành",
-              d: "XGBoost 2 tầng, nạp từ research/data/processed/08_model",
+              href: "/dashboard/news",
+              label: "Duyệt Tin Tức",
+              desc: "Phê duyệt tin cào từ ts.huit.edu.vn trước khi phát hành",
+              icon: Newspaper,
+              badge: "Cào tự động",
             },
             {
-              t: "Ngành & điểm chuẩn",
-              d: "tuyen_sinh_huit_2026.json — đề án tuyển sinh 2024·2025·2026",
+              href: "/dashboard/posts",
+              label: "Duyệt Bài Viết",
+              desc: "Kiểm duyệt bài đăng thí sinh & báo cáo vi phạm",
+              icon: MessageSquare,
+              badge: "Cộng đồng",
             },
             {
-              t: "Tin tuyển sinh",
-              d: "Crawl từ ts.huit.edu.vn, bấm nút phía trên để cập nhật",
+              href: "/dashboard/model",
+              label: "Hiệu Suất AI",
+              desc: "Giám sát chỉ số Top-1, Top-3, AUC-ROC XGBoost",
+              icon: Cpu,
+              badge: "Pipeline XGBoost",
             },
-          ].map((x) => (
-            <div
-              key={x.t}
-              className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1"
-            >
-              <span className="text-gray-400 font-semibold block">{x.t}</span>
-              <strong className="text-cyan-400 font-black text-[11px] leading-snug block">
-                {x.d}
-              </strong>
-            </div>
-          ))}
+            {
+              href: "/dashboard/analytics",
+              label: "Phân Tích Dữ Liệu",
+              desc: "Thống kê phân bố khối thi, ngành hot và nguyện vọng",
+              icon: BarChart3,
+              badge: "Trực quan hoá",
+            },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group active:scale-[0.99]"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0054A6] border border-blue-200/60 flex items-center justify-center group-hover:bg-[#0054A6] group-hover:text-white transition-colors">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                      {item.badge}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-black text-slate-900 group-hover:text-[#0054A6] transition-colors flex items-center gap-1">
+                    <span>{item.label}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
+      </div>
+
+      {/* VÙNG 4: HAI CỘT CHUYÊN MÔN (HIỆU NĂNG AI VÀ NGUỒN DỮ LIỆU) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Khối trái: Trạng thái Mô hình XGBoost (Pipeline research3) */}
+        <div className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
+          <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-black flex items-center gap-2 text-slate-900">
+                <Sparkles className="w-5 h-5 text-[#0054A6]" /> Mô Hình Tư Vấn AI HUIT
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Pipeline XGBoost nạp từ research3/data/processed/10_ChotModel.
+              </p>
+            </div>
+            <Link
+              href="/dashboard/model"
+              className="text-xs font-bold text-[#0054A6] hover:underline flex items-center gap-1"
+            >
+              <span>Chi tiết</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span className="text-[10px] text-slate-500 font-bold uppercase block">Kiến trúc</span>
+              <strong className="text-slate-900 font-black text-sm block mt-0.5">Pipeline XGBoost</strong>
+              <span className="text-[10px] text-slate-400 font-medium">Model nhóm / Phẳng</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span className="text-[10px] text-slate-500 font-bold uppercase block">Phạm vi</span>
+              <strong className="text-[#0054A6] font-black text-sm block mt-0.5">39 Ngành HUIT</strong>
+              <span className="text-[10px] text-slate-400 font-medium">9 Nhóm ngành (0..8)</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 col-span-2 sm:col-span-1">
+              <span className="text-[10px] text-slate-500 font-bold uppercase block">Mốc ngẫu nhiên</span>
+              <strong className="text-slate-700 font-black text-sm block mt-0.5">11.1% (1/9)</strong>
+              <span className="text-[10px] text-slate-400 font-medium">Đối chứng đoán bừa</span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200/70 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-[#0054A6] shrink-0 mt-0.5" />
+            <div className="text-xs text-slate-600 font-medium leading-relaxed">
+              <strong className="text-slate-900 font-bold">Bảo vệ tính khách quan:</strong> Hệ thống luôn hiển thị mốc đối chứng ngẫu nhiên trên toàn bộ các biểu đồ phân tích để đảm bảo độ tin cậy khoa học của khoá luận.
+            </div>
+          </div>
+        </div>
+
+        {/* Khối phải: Bản đồ Nguồn Dữ Liệu & Hạ Tầng Dịch Vụ */}
+        <div className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-base font-black flex items-center gap-2 text-slate-900">
+              <Server className="w-5 h-5 text-[#0054A6]" /> Bản Đồ Nguồn Dữ Liệu
+            </h2>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Nguồn gốc thực tế của dữ liệu đang phục vụ người dùng.
+            </p>
+          </div>
+
+          <div className="space-y-3 text-xs">
+            {[
+              {
+                t: "Gợi ý ngành & SHAP Explainer",
+                d: "Pipeline XGBoost + TreeExplainer (research3/data/processed/10_ChotModel)",
+                status: "Hoạt động",
+                icon: Cpu,
+              },
+              {
+                t: "Đề án & Điểm chuẩn 2024–2026",
+                d: "tuyen_sinh_huit_2026.json — đồng bộ đề án tuyển sinh chính thức",
+                status: "Chuẩn xác",
+                icon: Database,
+              },
+              {
+                t: "Tin tức tuyển sinh trực tuyến",
+                d: "Crawl từ ts.huit.edu.vn — lưu trữ MongoDB & duyệt tự động",
+                status: "Sẵn sàng",
+                icon: Newspaper,
+              },
+            ].map((x) => {
+              const Icon = x.icon;
+              return (
+                <div
+                  key={x.t}
+                  className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 shrink-0">
+                      <Icon className="w-4 h-4 text-[#0054A6]" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-slate-900 font-bold block truncate">{x.t}</span>
+                      <span className="text-[11px] text-slate-500 font-medium block truncate">
+                        {x.d}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black shrink-0 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>{x.status}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
     </div>

@@ -359,18 +359,39 @@ C.append(code('''MH.m.save_model(str(OUT / "model_nganh.json"))
 for g, (m, _) in MH.m_nhom.items():
     m.save_model(str(OUT / f"model_khoi{g}.json"))
 
+# Mô hình PHÂN TẦNG của các nhóm nghẽn cổ chai. Thiếu khối này thì bản xuất ra đĩa
+# KHÔNG tái tạo được con số báo cáo: `diem()` dùng phân tầng cho nhóm nào có trong
+# `m_tang`, còn nơi khác chỉ có model_khoi{g}.json nên tụt mất phần +4,8đ mà phân
+# tầng đem lại (đo trên 102 em test: Top-3 tư vấn 86,3% → 83,3%).
+tang_meta = {}
+for g, bo in MH.m_tang.items():
+    if bo is None:
+        continue
+    m_sub, co_s, con = bo
+    m_sub.save_model(str(OUT / f"model_tang{g}_sub.json"))
+    muc = {"co_s": [int(v) for v in co_s], "con": {}}
+    for k, (m_, co_) in con.items():
+        if m_ is not None:
+            m_.save_model(str(OUT / f"model_tang{g}_{k}.json"))
+        muc["con"][str(k)] = {"nganh": [int(v) for v in co_],
+                              "co_model": m_ is not None}
+    tang_meta[str(g)] = muc
+
 (OUT / "lop_va_dac_trung.json").write_text(json.dumps({
     "nganh_theo_thu_tu_lop": [int(v) for v in MH.co],
     "nganh_day_du": [int(v) for v in NG],
     "lop_theo_khoi": {str(g): [int(v) for v in co]
                       for g, (_, co) in MH.m_nhom.items()},
+    "phan_tang": tang_meta,
     "ten_dac_trung": COT,
     "diem_mu": D["diem_mu"].tolist(), "diem_sd": D["diem_sd"].tolist(),
     "to_hop": D["to_hop"],
     "nganh_to_nhom": {str(k): int(v) for k, v in D["nhom"].items()},
     "ten_nhom": {str(k): v for k, v in D["ten_nhom"].items()},
     "cach_dung": ("fieldId=None → model_nganh.json cho 39 ngành. "
-                  "fieldId=k → model_khoi{k}.json rồi lấy Top-3."),
+                  "fieldId=k → model_khoi{k}.json, TRỪ nhóm có trong `phan_tang`: "
+                  "nhóm đó dùng model_tang{k}_sub.json để đoán lĩnh vực con rồi "
+                  "nhân với model_tang{k}_{i}.json. Sau đó lấy Top-3."),
 }, ensure_ascii=False, indent=2), encoding="utf-8")
 
 metrics = {

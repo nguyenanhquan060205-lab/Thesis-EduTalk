@@ -140,6 +140,57 @@
       7380107
     ]
   },
+  "phan_tang": {
+    "4": {
+      "co_s": [
+        0,
+        1
+      ],
+      "con": {
+        "0": {
+          "nganh": [
+            7810101,
+            7810103,
+            7810201
+          ],
+          "co_model": true
+        },
+        "1": {
+          "nganh": [
+            7810202,
+            7819009,
+            7819010
+          ],
+          "co_model": true
+        }
+      }
+    },
+    "7": {
+      "co_s": [
+        0,
+        1
+      ],
+      "con": {
+        "0": {
+          "nganh": [
+            7340129,
+            7540101,
+            7540105,
+            7540106
+          ],
+          "co_model": true
+        },
+        "1": {
+          "nganh": [
+            7420201,
+            7510406,
+            7850101
+          ],
+          "co_model": true
+        }
+      }
+    }
+  },
   "ten_dac_trung": [
     "likert_nang_dong",
     "likert_huong_noi",
@@ -298,5 +349,5 @@
     "7": "Thực phẩm, Sinh học & Môi trường",
     "8": "Luật & Ngôn ngữ"
   },
-  "cach_dung": "fieldId=None → model_nganh.json cho 39 ngành. fieldId=k → model_khoi{k}.json rồi lấy Top-3."
+  "cach_dung": "fieldId=None → model_nganh.json cho 39 ngành. fieldId=k → model_khoi{k}.json, TRỪ nhóm có trong `phan_tang`: nhóm đó dùng model_tang{k}_sub.json để đoán lĩnh vực con rồi nhân với model_tang{k}_{i}.json. Sau đó lấy Top-3."
 }

@@ -6,6 +6,7 @@ Sử dụng MongoDB thay cho Firestore.
 """
 
 import json
+import os
 from datetime import datetime, timedelta, timezone
 
 from app.core.mongodb import get_db
@@ -313,11 +314,18 @@ async def get_analytics(days: int = 30, authorization: str = Header(...)):
 
 @router.get("/model-metrics", summary="Chỉ số hiệu suất mô hình")
 async def get_model_metrics(authorization: str = Header(...)):
-    """Đọc kết quả huấn luyện từ `research/data/processed/08_model/`.
+    """Đọc kết quả huấn luyện của **đúng pipeline đang phục vụ dự đoán**.
 
     Đây là **số liệu đánh giá mô hình**, khác hẳn `/admin/analytics` (số liệu sử
-    dụng thực tế). Tất cả lấy nguyên từ file do notebook `08_train_xgboost.ipynb`
-    xuất ra — không tính lại, không làm tròn thêm.
+    dụng thực tế). Tất cả lấy nguyên từ file do notebook xuất ra — không tính lại,
+    không làm tròn thêm.
+
+    Hai bố cục file khác nhau tuỳ pipeline, nên phải chọn đúng nguồn: đọc nhầm thì
+    trang quản trị hiện chỉ số của mô hình KHÔNG chạy, mà số vẫn trông hợp lý nên
+    không ai phát hiện.
+
+        research3 (mặc định)  10_ChotModel/metrics.json
+        legacy                08_model/metrics_summary.json
 
     Hai phần trong đề cương chưa có dữ liệu, trả `null` chứ không bịa:
     - `baselineRandomForest`: chưa train Random Forest để so sánh
@@ -327,14 +335,23 @@ async def get_model_metrics(authorization: str = Header(...)):
 
     # pyrefly: ignore [missing-import]
     from app.services.major_predictor import _model_dir
+    from app.services.major_predictor_r3 import _model_dir_r3
 
-    thu_muc = _model_dir() / "08_model"
-    f_metrics = thu_muc / "metrics_summary.json"
+    legacy = os.getenv("EDUTALK_PIPELINE", "r3").strip().lower() == "legacy"
+
+    if legacy:
+        thu_muc = _model_dir() / "08_model"
+        f_metrics = thu_muc / "metrics_summary.json"
+    else:
+        thu_muc = _model_dir_r3()
+        f_metrics = thu_muc / "metrics.json"
+
     if not f_metrics.exists():
         raise HTTPException(
             status_code=503,
             detail=f"Chưa có file kết quả huấn luyện tại {f_metrics}. "
-            "Chạy notebook 08_train_xgboost.ipynb trước.",
+            + ("Chạy notebook 08_train_xgboost.ipynb trước." if legacy
+               else "Chạy research3/scripts/chay.py 10 trước."),
         )
 
     with open(f_metrics, encoding="utf-8") as fp:
@@ -347,19 +364,75 @@ async def get_model_metrics(authorization: str = Header(...)):
         with open(f, encoding="utf-8") as fp:
             return json.load(fp)
 
+    if legacy:
+        return {
+            "ngayChay": m.get("ngay_chay"),
+            "seed": m.get("seed"),
+            "duLieu": m.get("du_lieu"),
+            "cv": m.get("cv"),
+            "sieuThamSo": m.get("sieu_tham_so"),
+            "cvMacroF1": m.get("cv_macro_f1"),
+            "overfit": m.get("cv_overfit"),
+            "test": m.get("test"),
+            "baseline": m.get("baseline"),
+            "aucRoc": m.get("auc_roc"),
+            "canhBao": m.get("canh_bao"),
+            "baselineRandomForest": doc_neu_co("baseline_random_forest.json"),
+            "lichSuHuanLuyen": doc_neu_co("lich_su_huan_luyen.json"),
+        }
+
+    # ── research3 → cùng hình dạng phản hồi, giao diện không phải sửa ────────
+    dl, te = m.get("du_lieu", {}), m.get("test", {})
+
+    def bo(g: dict | None, **them) -> dict:
+        """{"1": .38, "3": .86} → {top1: .38, top3: .86} theo lược đồ BoChiSo."""
+        if not g:
+            return {}
+        return {f"top{k}": v for k, v in g.items()} | them
+
+    tr = m.get("tren_train", {})
     return {
         "ngayChay": m.get("ngay_chay"),
         "seed": m.get("seed"),
-        "duLieu": m.get("du_lieu"),
-        "cv": m.get("cv"),
-        "sieuThamSo": m.get("sieu_tham_so"),
-        "cvMacroF1": m.get("cv_macro_f1"),
-        "overfit": m.get("cv_overfit"),
-        "test": m.get("test"),
-        "baseline": m.get("baseline"),
-        "aucRoc": m.get("auc_roc"),
+        "duLieu": {
+            "train_that": dl.get("train_that"),
+            "train_tong_hop": dl.get("train_tang_cuong"),
+            "test_that": dl.get("test"),
+            "n_dac_trung": dl.get("n_dac_trung"),
+            "n_lop_nganh": dl.get("n_nganh"),
+            "n_lop_khoi": dl.get("n_nhom"),
+        },
+        "cv": None,  # research3 chốt bằng tập test khoá, không báo cáo lại CV ở đây
+        "sieuThamSo": m.get("sieu_tham_so", {}).get("hp"),
+        "cvMacroF1": None,
+        # Chênh train − test đo trên CÙNG chế độ tư vấn, đây là chỉ số nhớ vẹt
+        "overfit": {
+            "train_top1": (tr.get("tu_van") or {}).get("1"),
+            "val_top1": (te.get("tu_van", {}).get("top") or {}).get("1"),
+        },
+        "test": {
+            "tu_van": bo(te.get("tu_van", {}).get("top"),
+                         macro_f1=te.get("guided_macro_f1")),
+            "kham_pha": bo(te.get("kham_pha", {}).get("top"),
+                           macro_f1=te.get("auto_macro_f1"),
+                           balanced_acc=te.get("auto_balanced_acc")),
+            "tren_train_tu_van": bo(tr.get("tu_van")),
+            "tren_train_kham_pha": bo(tr.get("kham_pha")),
+        },
+        # Mốc đối chứng — bảng chỉ số nào cũng phải kèm, nếu không một con số 86%
+        # có thể chỉ hơn đoán bừa vài điểm.
+        "baseline": {
+            "doan_bua_tu_van_top3": (te.get("tu_van", {}).get("bua") or {}).get("3"),
+            "doan_bua_kham_pha_top3": (te.get("kham_pha", {}).get("bua") or {}).get("3"),
+            "ba_nganh_pho_bien_top3": (te.get("bua_pho_bien") or {}).get("3"),
+            "hon_pho_bien_top3": (te.get("hon_pho_bien") or {}).get("3"),
+            "model_phang_top3": (te.get("phang") or {}).get("3"),
+            "lop_dong_nhat_top3": (te.get("dong_nhat") or {}).get("3"),
+        },
+        "aucRoc": None,  # research3 không xuất ROC/AUC
         "canhBao": m.get("canh_bao"),
-        # Chưa có — giao diện phải hiện "chưa có dữ liệu", không được vẽ số giả
+        "theoKhoi": m.get("theo_khoi"),
+        "cachNhom": m.get("cach_nhom"),
         "baselineRandomForest": doc_neu_co("baseline_random_forest.json"),
         "lichSuHuanLuyen": doc_neu_co("lich_su_huan_luyen.json"),
     }

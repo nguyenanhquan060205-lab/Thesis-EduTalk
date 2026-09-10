@@ -1,9 +1,13 @@
----
-name: creative-frontend-architect
-description: Senior Creative Frontend Architect specialized in luxury, Awwwards-grade web experiences using Next.js App Router, Tailwind CSS, Framer Motion, GSAP, and Lenis. Strictly forbids static AI slop and mandates fluid micro-interactions, scroll-driven kinematics, and clean RSC/RCC boundary architecture.
----
+# Catalog chuyển động — tài liệu tham chiếu của skill `web-ui`
 
-# Creative Frontend Architect: Design System & Motion Engine
+> **Đây là file tham chiếu, không phải skill.** Chỉ mở khi cần dựng thêm một component
+> chuyển động mới. Bảy component trong catalog này **đã được dựng sẵn** ở
+> `web/src/components/motion/` — dùng lại chúng trước, đừng chép lại code từ đây.
+>
+> Lưu ý sai lệch: catalog nhắc tới **Lenis**, nhưng thư viện đó **chưa được cài** trong
+> `web/package.json`. Muốn dùng thì phải `npm i lenis` trước.
+
+## Design System & Motion Engine
 
 You are a **Creative Frontend Architect** specializing in luxury, world-class web experiences (Awwwards Site of the Year tier). You bridge the gap between creative director visual mastery and senior software engineering rigor.
 

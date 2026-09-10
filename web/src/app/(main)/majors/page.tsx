@@ -21,8 +21,12 @@ import {
   Check,
   Cpu,
   BarChart3,
+  Calculator,
+  Truck,
   Utensils,
+  Cog,
   FlaskConical,
+  Dna,
   Scale,
   Globe2,
   SlidersHorizontal,
@@ -36,7 +40,7 @@ import {
   type CatalogField,
   type CatalogMajor,
 } from "@/services/predict";
-import { ADMISSION_BLOCKS, FIELD_STYLE, ADMISSION_SOURCE } from "@/lib/admission";
+import { ADMISSION_BLOCKS, FIELD_STYLE, DEFAULT_FIELD_STYLE, ADMISSION_SOURCE } from "@/lib/admission";
 import Modal from "@/components/ui/Modal";
 
 /** Một ngành đã gắn kèm nhóm ngành của nó, để lọc và hiển thị phẳng. */
@@ -49,13 +53,15 @@ const YEARS = ["2024", "2025", "2026"];
 const ALL = -1;
 
 const FACULTY_ICONS: Record<number, any> = {
-  0: Cpu,
-  1: BarChart3,
-  2: Utensils,
-  3: Layers,
-  4: FlaskConical,
-  5: Scale,
-  6: Globe2,
+  0: Cpu, // CNTT & Máy tính
+  1: BarChart3, // Kinh doanh & Marketing
+  2: Calculator, // Tài chính & Kế toán
+  3: Truck, // Logistics & Quản lý sản xuất
+  4: Utensils, // Du lịch, Khách sạn & Ẩm thực
+  5: Cog, // Cơ khí - Điện - Tự động hoá
+  6: FlaskConical, // Hoá - Vật liệu - Dệt may
+  7: Dna, // Thực phẩm, Sinh học & Môi trường
+  8: Scale, // Luật & Ngôn ngữ
 };
 
 type SortOption = "default" | "cutoff_desc" | "cutoff_asc" | "trend_desc" | "name_asc";
@@ -159,7 +165,7 @@ export default function MajorsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Trải 7 nhóm ngành thành danh sách ngành phẳng
+  // Trải 9 nhóm ngành thành danh sách ngành phẳng
   const allMajors: MajorRow[] = useMemo(
     () =>
       fields.flatMap((f) =>
@@ -266,7 +272,7 @@ export default function MajorsPage() {
       {/* ==================================================================== */}
       {/* 1. HERO HEADER BANNER                                               */}
       {/* ==================================================================== */}
-      <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm relative overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 shadow-sm relative overflow-hidden">
         {/* Ambient subtle glow */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-50/50 via-sky-50/20 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
 
@@ -286,7 +292,7 @@ export default function MajorsPage() {
           </div>
 
           {/* Quick Stat Widgets */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3 shrink-0 w-full sm:w-auto">
             {[
               {
                 v: allMajors.length,
@@ -319,11 +325,11 @@ export default function MajorsPage() {
               <div
                 key={s.l}
                 onClick={s.onClick}
-                className={`${s.box} border rounded-2xl p-3.5 sm:p-4 text-center min-w-[100px] cursor-pointer hover:shadow-sm hover:scale-[1.02] transition-all`}
+                className={`${s.box} border rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[100px] flex-1 sm:flex-initial cursor-pointer hover:shadow-sm hover:scale-[1.02] transition-all`}
                 title="Nhấp để lọc nhanh"
               >
-                <div className={`text-2xl sm:text-3xl font-black ${s.num}`}>{s.v}</div>
-                <div className={`text-[10px] sm:text-[11px] font-black ${s.lab} uppercase tracking-tight mt-0.5`}>
+                <div className={`text-xl sm:text-3xl font-black ${s.num}`}>{s.v}</div>
+                <div className={`text-[9px] sm:text-[11px] font-black ${s.lab} uppercase tracking-tight mt-0.5`}>
                   {s.l}
                 </div>
               </div>
@@ -335,7 +341,7 @@ export default function MajorsPage() {
       {/* ==================================================================== */}
       {/* 2. THANH LỌC NHÓM NGÀNH (FACULTY FILTER STRIP)                       */}
       {/* ==================================================================== */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-600">
             <Layers className="w-4 h-4 text-[#0054A6]" />
@@ -351,12 +357,12 @@ export default function MajorsPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
           {/* Tất cả */}
           <button
             type="button"
             onClick={() => setSelectedField(ALL)}
-            className={`px-4 py-2.5 rounded-xl text-xs font-black border transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
+            className={`shrink-0 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black border transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
               selectedField === ALL
                 ? "bg-[#0054A6] text-white border-[#0054A6] shadow-sm"
                 : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
@@ -370,10 +376,10 @@ export default function MajorsPage() {
             </span>
           </button>
 
-          {/* 7 Khối ngành */}
+          {/* 9 Nhóm ngành đào tạo */}
           {fields.map((f) => {
             const active = selectedField === f.id;
-            const st = FIELD_STYLE[f.id];
+            const st = FIELD_STYLE[f.id] ?? DEFAULT_FIELD_STYLE;
             const Icon = FACULTY_ICONS[f.id] || GraduationCap;
 
             return (
@@ -381,7 +387,7 @@ export default function MajorsPage() {
                 key={f.id}
                 type="button"
                 onClick={() => setSelectedField(f.id)}
-                className={`px-3.5 py-2.5 rounded-xl text-xs font-black border transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
+                className={`shrink-0 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-black border transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
                   active
                     ? "bg-slate-900 text-white border-slate-900 shadow-sm"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
@@ -544,14 +550,14 @@ export default function MajorsPage() {
       {viewMode === "grid" && filtered.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((m) => {
-            const st = FIELD_STYLE[m.fieldId];
+            const st = FIELD_STYLE[m.fieldId] ?? DEFAULT_FIELD_STYLE;
             const Icon = FACULTY_ICONS[m.fieldId] || GraduationCap;
 
             return (
               <div
                 key={m.code}
                 onClick={() => setDetail(m)}
-                className="text-left bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xs hover:border-[#0054A6]/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4 group cursor-pointer relative overflow-hidden"
+                className="text-left bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:border-[#0054A6]/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4 group cursor-pointer relative overflow-hidden"
               >
                 <div className="space-y-3">
                   {/* Top info: Faculty chip + Code */}

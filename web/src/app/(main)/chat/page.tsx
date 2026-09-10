@@ -87,7 +87,10 @@ export default function ChatPage() {
   return (
     <div className="max-w-5xl mx-auto mt-4 pb-12 animate-fade-in-up">
       {/* Main Chat Box */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-[calc(100vh-160px)] overflow-hidden relative">
+      <div
+        data-lenis-prevent
+        className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-[calc(100vh-160px)] overflow-hidden relative"
+      >
         
         {/* Background Decor (Tùy chọn cho sinh động) */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 -z-10 pointer-events-none"></div>
@@ -108,7 +111,11 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Area */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-slate-50/50">
+        <div
+          ref={scrollContainerRef}
+          data-lenis-prevent
+          className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 bg-slate-50/50"
+        >
           {messages.map((msg) => (
             <motion.div 
               key={msg.id}

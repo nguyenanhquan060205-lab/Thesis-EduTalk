@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 
 /**
- * Gọi mô hình XGBoost 2 tầng ở backend.
+ * Gọi pipeline XGBoost (research3) ở backend.
  *
  * Giới tính KHÔNG gửi từ đây — backend tự lấy từ hồ sơ người dùng đã đăng ký.
  * Chỉ truyền `gender` khi test không có token đăng nhập.
@@ -69,7 +69,7 @@ export interface MajorExplain {
   /** Tỷ trọng cụm "yếu tố khác"; cộng với phanTram các dòng hiển thị ra 100% */
   phanTramConLai: number;
   /**
-   * Tổng đóng góp cả 43 đặc trưng. Điểm xếp hạng = base + tongDongGop.
+   * Tổng đóng góp cả 63 đặc trưng. Điểm xếp hạng = base + tongDongGop.
    * So sánh giữa các ngành phải dùng con số này — KHÔNG so riêng các thanh
    * hiển thị, vì mỗi ngành có `base` riêng và mỗi ngành hiện một bộ 6 khác nhau.
    */

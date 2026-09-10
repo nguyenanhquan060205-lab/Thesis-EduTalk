@@ -59,21 +59,25 @@ async def resolve_gender(
 @router.post(
     "/recommend",
     response_model=RecommendResponse,
-    summary="Gợi ý ngành học (XGBoost 2 tầng)",
+    summary="Gợi ý ngành học (XGBoost, pipeline research3)",
 )
 async def recommend_majors(
     body: RecommendRequest, authorization: str | None = Header(None)
 ):
-    """Mô hình XGBoost 2 tầng của Giai đoạn 8 (research/).
+    """Mô hình XGBoost của Giai đoạn 10 (research3/) — 9 nhóm ngành, 63 đặc trưng.
 
-    **Hai chế độ** — khác nhau ở chỗ người dùng có chọn khối ngành hay không:
+    Đặt `EDUTALK_PIPELINE=legacy` để quay về mô hình 2 tầng cũ của `research/`.
+
+    **Hai chế độ** — khác nhau ở chỗ người dùng có chọn nhóm ngành hay không:
 
     | Chế độ | Khi nào | Top-3 trên tập kiểm tra |
     |---|---|---|
-    | `explore` | `fieldId` bỏ trống | 39,2% |
-    | `guided` | `fieldId` = 0..6 | 69,6% |
+    | `explore` | `fieldId` bỏ trống | 35,3% |
+    | `guided` | `fieldId` = 0..8 | **86,3%** |
 
-    Chưa có điểm thi (`scores` bỏ trống) thì Top-3 chế độ explore còn ~28,4%.
+    Chênh lệch rất lớn giữa hai chế độ: chọn nhóm ngành trước rồi mới xếp hạng là
+    bài toán khác hẳn chọn trong cả 39 ngành. Giao diện nên khuyến khích người dùng
+    chọn nhóm.
 
     Đo trên 102 sinh viên thật chưa từng dùng để huấn luyện. Đây là hệ **gợi ý** —
     nên hiển thị 3–5 lựa chọn, và **không nên hiện `score`** cho người dùng cuối
@@ -111,7 +115,7 @@ async def recommend_majors(
 @router.get(
     "/catalog",
     response_model=CatalogResponse,
-    summary="Danh mục 7 khối ngành và 39 ngành",
+    summary="Danh mục 9 nhóm ngành và 39 ngành",
 )
 def get_catalog():
     """Bảng tra khối ngành / ngành lấy thẳng từ mô hình.

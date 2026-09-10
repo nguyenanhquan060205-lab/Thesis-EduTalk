@@ -35,13 +35,19 @@ class RecommendRequest(BaseModel):
         ),
     )
     goal: str = Field("Chưa xác định", description=f"Một trong {GOALS}")
+    # Chặn trên là 8 vì pipeline research3 chia 9 nhóm ngành; pipeline cũ chỉ có 7
+    # khối (0..6). Để `le=6` như trước thì hai nhóm cuối — trong đó có nhóm ĐÔNG
+    # NHẤT là "Thực phẩm, Sinh học & Môi trường" (7 ngành) — bị chặn ngay ở lớp
+    # kiểm tra dữ liệu, người dùng chọn xong nhận 422 mà không hiểu vì sao.
+    # Giá trị hợp lệ thật do mô hình đang nạp quyết định, `recommend()` kiểm lại.
     fieldId: int | None = Field(
         None,
         ge=0,
-        le=6,
+        le=8,
         description=(
-            "Bỏ trống = chế độ explore (mô hình tự đoán khối). "
-            "Điền 0..6 = chế độ guided (chỉ xếp hạng trong khối đã chọn)."
+            "Bỏ trống = chế độ explore (mô hình tự đoán nhóm ngành). "
+            "Điền chỉ số nhóm = chế độ guided (chỉ xếp hạng trong nhóm đã chọn). "
+            "Danh sách nhóm hợp lệ lấy từ GET /api/v1/predict/catalog."
         ),
     )
     limit: int = Field(5, ge=1, le=39, description="Số ngành muốn hiển thị")

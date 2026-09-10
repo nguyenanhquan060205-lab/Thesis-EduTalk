@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { SmoothScrollProvider } from "@/components/motion/SmoothScroll";
+import { Toaster } from "sonner";
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ["latin", "vietnamese"],
@@ -27,9 +29,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="scroll-smooth">
+    <html lang="vi">
       <body className={`${plusJakartaSans.variable} font-sans bg-[#f8fafc] text-slate-900 antialiased min-h-screen selection:bg-blue-500 selection:text-white`}>
-        {children}
+        <SmoothScrollProvider>
+          {children}
+        </SmoothScrollProvider>
+        <Toaster richColors position="top-right" closeButton />
       </body>
     </html>
   );

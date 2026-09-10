@@ -20,7 +20,7 @@ export const KineticHeading = ({
   const words = text.split(" ");
 
   return (
-    <h1 className={cn("flex flex-wrap items-center gap-x-3 overflow-hidden text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]", className)}>
+    <h1 className={cn("flex flex-wrap items-center gap-x-2 sm:gap-x-3 overflow-hidden text-2xl sm:text-5xl lg:text-7xl font-black tracking-tight text-white leading-[1.12]", className)}>
       {words.map((word, index) => {
         const isHighlighted = highlightWords.includes(word);
         return (

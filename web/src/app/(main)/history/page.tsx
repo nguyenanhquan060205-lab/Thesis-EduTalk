@@ -29,7 +29,7 @@ import {
  * Bản trước dựng cứng 3 phiên mẫu (CNTT 24.50đ · 89.4% phù hợp · "Cần cải thiện
  * điểm môn Toán" · "Khoa CNTT"). Không trường nào trong số đó có trong dữ liệu
  * được lưu: `prediction_history` không lưu điểm phần trăm phù hợp, không lưu lời
- * khuyên, và tên khoa cũng không nằm trong 7 nhóm ngành thật.
+ * khuyên, và tên khoa cũng không nằm trong 9 nhóm ngành thật.
  */
 export default function HistoryPage() {
   const { user } = useAuthStore();

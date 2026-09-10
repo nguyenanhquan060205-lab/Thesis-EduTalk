@@ -51,15 +51,28 @@ export const ADMISSION_BLOCKS: Record<string, BlockInfo> = {
   X26: { category: "CNTT & AI", name: "Toán - Tin học - Tiếng Anh", subjects: [S.Toan, S.Tin, S.Anh], desc: "Ưu tiên CNTT & trí tuệ nhân tạo" },
 };
 
-/** Màu nhận diện 7 nhóm ngành — `id` khớp `fieldId` của mô hình. */
+/** Phong cách mặc định dự phòng cho nhóm ngành có id lạ. */
+export const DEFAULT_FIELD_STYLE = {
+  dot: "bg-slate-400",
+  chip: "bg-slate-100 text-slate-700 border-slate-200",
+  ring: "ring-slate-400",
+};
+
+/**
+ * Màu nhận diện 9 nhóm ngành đào tạo HUIT — khớp id (0..8) của mô hình research3.
+ * CHỈ dùng các họ màu: blue, sky, cyan, indigo, violet, teal, slate, stone, fuchsia.
+ * CẤM dùng emerald, amber, rose (dành riêng cho mức độ an toàn trúng tuyển).
+ */
 export const FIELD_STYLE: Record<number, { dot: string; chip: string; ring: string }> = {
-  0: { dot: "bg-blue-500", chip: "bg-blue-50 text-blue-700 border-blue-200", ring: "ring-blue-500" },
-  1: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 border-amber-200", ring: "ring-amber-500" },
-  2: { dot: "bg-rose-500", chip: "bg-rose-50 text-rose-700 border-rose-200", ring: "ring-rose-500" },
-  3: { dot: "bg-violet-500", chip: "bg-violet-50 text-violet-700 border-violet-200", ring: "ring-violet-500" },
-  4: { dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700 border-emerald-200", ring: "ring-emerald-500" },
-  5: { dot: "bg-slate-500", chip: "bg-slate-100 text-slate-700 border-slate-300", ring: "ring-slate-500" },
-  6: { dot: "bg-cyan-500", chip: "bg-cyan-50 text-cyan-700 border-cyan-200", ring: "ring-cyan-500" },
+  0: { dot: "bg-blue-600", chip: "bg-blue-50 text-blue-700 border-blue-200", ring: "ring-blue-500" }, // CNTT & Máy tính
+  1: { dot: "bg-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-200", ring: "ring-indigo-500" }, // Kinh doanh & Marketing
+  2: { dot: "bg-teal-600", chip: "bg-teal-50 text-teal-700 border-teal-200", ring: "ring-teal-500" }, // Tài chính & Kế toán
+  3: { dot: "bg-sky-600", chip: "bg-sky-50 text-sky-700 border-sky-200", ring: "ring-sky-500" }, // Logistics & Quản lý sản xuất
+  4: { dot: "bg-fuchsia-600", chip: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200", ring: "ring-fuchsia-500" }, // Du lịch, Khách sạn & Ẩm thực
+  5: { dot: "bg-slate-600", chip: "bg-slate-100 text-slate-700 border-slate-300", ring: "ring-slate-500" }, // Cơ khí - Điện - Tự động hoá
+  6: { dot: "bg-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-200", ring: "ring-violet-500" }, // Hoá - Vật liệu - Dệt may
+  7: { dot: "bg-cyan-600", chip: "bg-cyan-50 text-cyan-700 border-cyan-200", ring: "ring-cyan-500" }, // Thực phẩm, Sinh học & Môi trường
+  8: { dot: "bg-stone-600", chip: "bg-stone-100 text-stone-700 border-stone-300", ring: "ring-stone-500" }, // Luật & Ngôn ngữ
 };
 
 export const ADMISSION_SOURCE =

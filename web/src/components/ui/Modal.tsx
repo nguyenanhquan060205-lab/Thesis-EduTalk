@@ -57,10 +57,10 @@ export default function Modal({
       aria-modal="true"
       aria-labelledby={labelledBy}
       onClick={onClose}
-      // z-index cao hơn navbar (z-50) và BottomNav (z-50)
+      data-lenis-prevent
       className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain"
     >
-      <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center">
+      <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center" data-lenis-prevent>
         {children}
       </div>
     </div>,

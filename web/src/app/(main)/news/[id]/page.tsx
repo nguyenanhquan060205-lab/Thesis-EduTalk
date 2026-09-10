@@ -36,6 +36,7 @@ export default function NewsDetailPage() {
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -80,8 +81,6 @@ export default function NewsDetailPage() {
       </div>
     );
   }
-
-  const [copied, setCopied] = useState(false);
 
   const handleShare = () => {
     if (typeof navigator !== "undefined") {
