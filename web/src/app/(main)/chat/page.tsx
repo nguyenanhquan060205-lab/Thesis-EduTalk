@@ -169,35 +169,60 @@ export default function ChatPage() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 bg-white/90 dark:bg-[#0D1729]/90 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-10">
-          <div className="flex gap-3 max-w-4xl mx-auto items-end">
-            <textarea 
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.nativeEvent.isComposing || e.keyCode === 229) return;
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              placeholder={user ? "Nhập câu hỏi của bạn về ngành học, điểm chuẩn HUIT..." : "Nhập câu hỏi của bạn (đăng nhập để nhận giải đáp)..."}
-              className="flex-1 bg-slate-50/80 dark:bg-[#070E1E]/80 border border-slate-200 dark:border-[#1E3454] rounded-2xl px-5 py-3.5 text-sm text-slate-900 dark:text-slate-100 font-medium placeholder-slate-400 outline-none focus:border-[#0054A6] focus:ring-4 focus:ring-[#0054A6]/10 transition shadow-inner resize-none min-h-[52px] max-h-[120px]"
-              rows={1}
-            />
-            <button 
-              onClick={handleSend}
-              disabled={!input.trim() || isTyping}
-              className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#0072CE] hover:from-[#00478F] hover:to-[#005FA3] flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-[#0054A6]/25 hover:shadow-lg hover:shadow-[#0054A6]/35 active:scale-95 shrink-0 cursor-pointer"
-            >
-              <Send className="w-5 h-5 ml-0.5" />
-            </button>
+        {!user ? (
+          <div className="p-4 bg-white/95 dark:bg-[#0D1729]/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-10">
+            <div className="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-blue-50/70 dark:bg-[#070E1E]/80 border border-blue-100 dark:border-[#1E3454]">
+              <div className="text-center sm:text-left">
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Đăng nhập tài khoản để gửi câu hỏi
+                </p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Tra cứu điểm chuẩn, học phí và thông tin tuyển sinh HUIT 2026.
+                </p>
+              </div>
+              <Link
+                href="/auth/login?redirect=/chat"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0054A6] to-[#0072CE] hover:from-[#00488F] hover:to-[#005FA3] text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Đăng nhập ngay</span>
+              </Link>
+            </div>
+            <p className="text-center text-[11px] text-slate-400 mt-2.5 font-medium">
+              Thông tin từ Trợ lý EduTalk mang tính chất tham khảo. Quyết định lựa chọn là ở bạn nhé!
+            </p>
           </div>
+        ) : (
+          <div className="p-4 bg-white/90 dark:bg-[#0D1729]/90 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-10">
+            <div className="flex gap-3 max-w-4xl mx-auto items-end">
+              <textarea 
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder="Nhập câu hỏi của bạn về ngành học, điểm chuẩn HUIT..."
+                className="flex-1 bg-slate-50/80 dark:bg-[#070E1E]/80 border border-slate-200 dark:border-[#1E3454] rounded-2xl px-5 py-3.5 text-sm text-slate-900 dark:text-slate-100 font-medium placeholder-slate-400 outline-none focus:border-[#0054A6] focus:ring-4 focus:ring-[#0054A6]/10 transition shadow-inner resize-none min-h-[52px] max-h-[120px]"
+                rows={1}
+              />
+              <button 
+                onClick={handleSend}
+                disabled={!input.trim() || isTyping}
+                className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#0072CE] hover:from-[#00478F] hover:to-[#005FA3] flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-[#0054A6]/25 hover:shadow-lg hover:shadow-[#0054A6]/35 active:scale-95 shrink-0 cursor-pointer"
+              >
+                <Send className="w-5 h-5 ml-0.5" />
+              </button>
+            </div>
 
-          <p className="text-center text-[11px] text-slate-400 mt-3 font-medium">
-            Thông tin từ Trợ lý EduTalk mang tính chất tham khảo. Quyết định lựa chọn là ở bạn nhé!
-          </p>
-        </div>
+            <p className="text-center text-[11px] text-slate-400 mt-3 font-medium">
+              Thông tin từ Trợ lý EduTalk mang tính chất tham khảo. Quyết định lựa chọn là ở bạn nhé!
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

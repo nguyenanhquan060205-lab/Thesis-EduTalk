@@ -188,60 +188,75 @@ export default function ChatWidget() {
             </div>
 
             {/* Input Area */}
-            <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
-              {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
-              {messages.length <= 2 && (
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar overscroll-contain" data-lenis-prevent>
-                  {SUGGESTIONS.map((s) => (
-                    <motion.button
-                      key={s}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => void sendMessage(s, user)}
-                      className="px-2.5 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0054A6] border border-blue-200/60 text-[11px] font-bold whitespace-nowrap transition shrink-0 cursor-pointer"
-                    >
-                      {s}
-                    </motion.button>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex gap-2 items-end">
-                <textarea 
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt.
-                    // Bộ gõ dùng chính phím Enter để chốt chữ đang gõ dở, nên
-                    // trình duyệt bắn keydown Enter HAI lần: một lần chốt bộ gõ,
-                    // một lần Enter thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter
-                    // sẽ gửi đi hai tin nhắn giống hệt nhau.
-                    // `keyCode === 229` là cách một số trình duyệt cũ báo cùng
-                    // trạng thái đó.
-                    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
-
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  data-lenis-prevent
-                  placeholder={user ? "Hỏi AI bất kỳ điều gì..." : "Hỏi AI bất kỳ điều gì (đăng nhập để nhận giải đáp)..."}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
-                  rows={1}
-                />
-                <motion.button 
-                  whileTap={{ scale: 0.92 }}
-                  onClick={handleSend}
-                  disabled={!input.trim() || isTyping}
-                  className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0 cursor-pointer"
+            {!user ? (
+              <div className="p-3.5 bg-white dark:bg-[#0D1729] border-t border-slate-100 dark:border-slate-800 z-10 text-center space-y-2">
+                <Link
+                  href={`/auth/login?redirect=${encodeURIComponent(pathname || "/chat")}`}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0054A6] to-[#0072CE] hover:from-[#00488F] hover:to-[#005FA3] text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
                 >
-                  <Send className="w-4.5 h-4.5 ml-0.5" />
-                </motion.button>
+                  <LogIn className="w-4 h-4" />
+                  <span>Đăng nhập để đặt câu hỏi</span>
+                </Link>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  Đăng nhập để hỏi đáp về 39 ngành học và quy chế tuyển sinh HUIT.
+                </p>
               </div>
-              <p className="text-center text-[10px] text-slate-400">
-                Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
-              </p>
-            </div>
+            ) : (
+              <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
+                {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
+                {messages.length <= 2 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar overscroll-contain" data-lenis-prevent>
+                    {SUGGESTIONS.map((s) => (
+                      <motion.button
+                        key={s}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => void sendMessage(s, user)}
+                        className="px-2.5 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0054A6] border border-blue-200/60 text-[11px] font-bold whitespace-nowrap transition shrink-0 cursor-pointer"
+                      >
+                        {s}
+                      </motion.button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex gap-2 items-end">
+                  <textarea 
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt.
+                      // Bộ gõ dùng chính phím Enter để chốt chữ đang gõ dở, nên
+                      // trình duyệt bắn keydown Enter HAI lần: một lần chốt bộ gõ,
+                      // một lần Enter thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter
+                      // sẽ gửi đi hai tin nhắn giống hệt nhau.
+                      // `keyCode === 229` là cách một số trình duyệt cũ báo cùng
+                      // trạng thái đó.
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    data-lenis-prevent
+                    placeholder="Hỏi AI bất kỳ điều gì..."
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
+                    rows={1}
+                  />
+                  <motion.button 
+                    whileTap={{ scale: 0.92 }}
+                    onClick={handleSend}
+                    disabled={!input.trim() || isTyping}
+                    className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0 cursor-pointer"
+                  >
+                    <Send className="w-4.5 h-4.5 ml-0.5" />
+                  </motion.button>
+                </div>
+                <p className="text-center text-[10px] text-slate-400">
+                  Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
+                </p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
