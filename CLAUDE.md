@@ -12,13 +12,14 @@ quy ước đó — đừng chèn chú thích tiếng Anh vào file đang dùng 
 
 | Thư mục | Nội dung | Skill tương ứng |
 |---|---|---|
-| `research/` | Pipeline **cũ**, 2 tầng, 43 đặc trưng — chỉ còn là đường lùi (`EDUTALK_PIPELINE=legacy`) | — |
-| `research2/` | Pipeline mới, **7 khối ngành gốc HUIT** | `research-pipeline` |
-| `research3/` | Pipeline mới, **9 nhóm ngành chia lại** — ⭐ **backend đang phục vụ mô hình này** | `research-pipeline` |
+| `research/` | **Hướng 1** — gộp 676 phiếu khảo sát + 16.296 dòng từ hồ sơ trúng tuyển rồi chia 70/15/15 — ⭐ **backend đang phục vụ mô hình này** | `research-pipeline` |
+| `research1/` | **Hướng 2** — cùng pipeline, nhưng niêm phong 676 phiếu làm tập đo người thật | `research-pipeline` |
+| `research2/` | Pipeline cũ, **7 khối ngành gốc HUIT** | `research-pipeline` |
+| `research3/` | Pipeline cũ, **9 nhóm ngành chia lại** — mô hình phục vụ trước Hướng 1, giữ làm đường lùi | `research-pipeline` |
 | `backend/` | FastAPI + MongoDB + Firebase + Gemini, serve mô hình | `backend-api` |
 | `web/` | Next.js 16 App Router — cổng thí sinh + dashboard admin | `web-ui` |
 | `mobile/` | Flutter (iOS + Android) | `mobile-flutter` |
-| `scripts_baocao/` | Sinh và vá báo cáo Word so sánh research2 ↔ research3 | — |
+| `scripts_baocao/` | Sinh 3 báo cáo Word: Hướng 1, Hướng 2, so sánh hai hướng | — |
 | `docs/` | Báo cáo `.docx` bàn giao | — |
 
 ---
@@ -47,9 +48,9 @@ firebase_ai) · `http` · Cloudinary · `flutter_animate` · `lottie`.
   `ChangeNotifier` (`ThemeNotifier`) qua `provider`. Đừng đòi refactor sang BLoC.
 - **`go_router` có trong pubspec nhưng không dùng ở đâu cả.** Điều hướng thực tế toàn bộ
   là `Navigator.push`. Viết `context.go(...)` sẽ nổ lúc chạy.
-- **Không dùng Postgres trên thực tế.** `docker-compose.yml` còn khai service
-  `postgres:15-alpine` và `DATABASE_URL`, nhưng **code không đụng tới** — dữ liệu nằm ở
-  MongoDB và Firestore. File compose đó là tàn dư, đừng lấy làm nguồn tin về CSDL.
+- **Không có Postgres, không có SQL.** Dữ liệu nằm ở MongoDB Atlas và Firestore, cả hai
+  đều là dịch vụ ngoài. `docker-compose.yml` từng khai `postgres:15-alpine` kèm
+  `DATABASE_URL` — đã gỡ 20/09/2026 vì không dòng code nào đọc tới.
 
 ---
 
@@ -60,6 +61,7 @@ conda activate Edutalk          # môi trường Python duy nhất của dự á
 
 # backend  →  http://localhost:8000  (Swagger ở /docs)
 cd backend && uvicorn app.main:app --reload
+pytest -q                       # 169 test (cần: pip install -r requirements-dev.txt)
 
 # web      →  http://localhost:3000
 cd web && npm run dev           # next dev --webpack
@@ -71,32 +73,62 @@ cd mobile && flutter run
 Web đọc backend qua `NEXT_PUBLIC_API_URL`, mặc định `http://localhost:8000`
 (`web/src/lib/api.ts`).
 
+> **scipy phải là bản conda-forge.** Từ macOS 26 trở lên, trình nạp thư viện từ chối
+> `_spropack.so` trong bản scipy 1.15.3 của PyPI (`zero-fill section type`), kéo theo
+> **scikit-learn và xgboost đều không import được**. Cách chữa đã kiểm chứng 19/09/2026:
+> `conda install -n Edutalk -c conda-forge scipy=1.15.2 numpy=1.26.4` — numpy giữ nguyên
+> phiên bản nên số liệu mô hình không đổi (đã xác nhận bằng `kiem_mo_hinh_huong1.py`).
+
 ---
 
 ## Sợi dây nối research ↔ backend
 
-Backend phục vụ mô hình của **`research3/`** (9 nhóm ngành, 63 đặc trưng), nạp bởi
-`backend/app/services/major_predictor_r3.py`. Pipeline cũ `research/` (2 tầng, 43 đặc
-trưng) vẫn còn và bật lại được:
+Backend phục vụ mô hình **Hướng 1** (`research/`, 9 nhóm ngành, 63 đặc trưng), nạp bởi
+`backend/app/services/major_predictor_h1.py` từ gói **`backend/data/mo_hinh/huong1/`**.
+Gói nằm trong `backend/` để theo được vào ảnh Docker.
 
 ```bash
-EDUTALK_PIPELINE=legacy          # quay về research/
-EDUTALK_MODEL_DIR=<tuyệt đối>/research2/data/processed/10_ChotModel   # đổi thư mục mô hình
+# Chạy lại Giai đoạn 10 của research/ thì phải đóng gói lại, rồi kiểm:
+python backend/scripts/dong_goi_mo_hinh_huong1.py
+python backend/scripts/kiem_mo_hinh_huong1.py
 ```
 
-Số liệu đang phục vụ, đo trên 102 em test: **tư vấn Top-3 = 86,3%**, khám phá Top-3 =
-35,3%. Backend tái tạo đúng cả sáu con số của notebook.
+Backend kiểm SHA-256 từng file của gói lúc khởi động. Vòng lặp phản hồi (`backend/app/services/huan_luyen/`)
+huấn luyện lại định kỳ từ nhãn "ngành đã chọn" của người dùng và lưu phiên bản vào MongoDB
+GridFS — phiên bản đang phục vụ có thể khác gói; `EDUTALK_PHIEN_BAN=goc` ép dùng gói.
+Đường lùi duy nhất còn lại là `EDUTALK_PIPELINE=r3` (mô hình `research3/` phục vụ trước
+đây), và nó **chỉ chạy ở máy dev**: gói mô hình nằm trong `research3/`, ngoài
+`context: ./backend` của Docker nên ảnh không có. Nhánh `legacy` (pipeline 2 tầng đời đầu)
+đã xoá 20/09/2026 cùng 554 dòng code của nó.
+
+**Đừng nhầm tên file predictor.** `major_predictor_h1.py` chỉ có `__init__` (133 dòng) và
+thừa kế toàn bộ `recommend`, `build_features`, `giai_thich` từ `major_predictor_r3.py`.
+Nghĩa là file tên "_r3" chính là **mã đang phục vụ Hướng 1**, không phải bản dự phòng —
+xoá nó là sập hệ thống.
+
+**Bảng tuyển sinh không thuộc pipeline nào.** `backend/data/co_cau_truc/tuyen_sinh_huit_2026.json`
+(39 ngành · tổ hợp · điểm chuẩn 3 năm) là **dữ liệu của trường**, dùng chung cho mọi cách
+nhóm ngành. Trước đây nó nằm nhờ trong `research/`; giờ nhà chính thức là `backend/data/`,
+để nó theo được vào ảnh Docker (`docker-compose.yml` khai `context: ./backend`). Thiếu file
+này thì mô hình **vẫn chạy** nhưng mất lọc tổ hợp và nhãn rủi ro — có log cảnh báo.
+
+Điểm vận hành: **tư vấn hiện 2 ngành, khám phá hiện 5**. Số liệu đang phục vụ, đo trên
+2.546 dòng test (tắt lọc mềm theo tổ hợp): **tư vấn Top-2 = 90,6%** (đoán bừa 47,6%),
+**khám phá Top-5 = 81,8%** (đoán bừa 12,8%). Tập test phần lớn là hồ sơ trúng tuyển có
+Likert do copula sinh; trên người thật (Hướng 2, 676 phiếu) mức kỳ vọng là 78,6% và 59,9%.
+Backend tái tạo đúng từng dòng của notebook.
 
 **Bẫy chí mạng:** cách dựng đặc trưng ở backend phải **giống hệt** lúc huấn luyện. Lệch
 một hằng số thì mô hình vẫn chạy, vẫn trả kết quả trông hợp lý, nhưng sai âm thầm và
-không có gì báo lỗi. Cách kiểm duy nhất đáng tin: chạy 102 em trong
-`khaosat_test_KHOA.csv` qua `recommend()` rồi đối chiếu với `metrics.json`.
+không có gì báo lỗi. Cách kiểm duy nhất đáng tin: `backend/scripts/kiem_mo_hinh_huong1.py`
+— cho 2.546 dòng `test_KHOA.csv` đi qua `recommend()` rồi đối chiếu với `bang_ket_qua.csv`.
 
 ---
 
 ## Quy ước chung khi làm việc trên kho này
 
-1. **Notebook không viết tay.** Mọi `.ipynb` trong `research2/`, `research3/` được sinh
+1. **Notebook không viết tay.** Mọi `.ipynb` trong `research/`, `research1/`, `research2/`,
+   `research3/` được sinh
    từ `scripts/g0X.py`. Sửa thẳng notebook sẽ mất trắng ở lần sinh sau. Xem skill
    `research-pipeline`.
 2. **Mọi bảng chỉ số phải có cột "đoán bừa".** Nhóm 2 ngành thì Top-3 tự đúng 100% mà
@@ -104,5 +136,6 @@ không có gì báo lỗi. Cách kiểm duy nhất đáng tin: chạy 102 em tro
 3. **Không sửa số liệu trong `docs/*.docx` bằng cách sinh lại tài liệu** — người dùng đã
    chỉnh định dạng bằng tay. Dùng `scripts_baocao/va_so.py`, nó chỉ ghi đè phần text và
    giữ nguyên font, màu, khung bảng, hình.
-4. **Không đụng `research/`** khi làm research2/research3 — đó là pipeline cũ, giữ
-   nguyên làm đường lùi.
+4. **Giai đoạn 1–5 của `research/` và `research1/` trùng khít** (cùng `g01`–`g05.py`,
+   cùng file kết quả từng byte). Sửa ở hướng này thì sửa y hệt ở hướng kia, nếu không
+   phép so sánh hai hướng mất ý nghĩa.

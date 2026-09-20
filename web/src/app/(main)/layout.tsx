@@ -10,7 +10,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col relative overflow-x-hidden">
+    // overflow-x-clip chứ KHÔNG phải -hidden: `hidden` tạo khung cuộn mới và làm
+    // thanh điều hướng `sticky` bên trong mất tác dụng — xem chú thích ở globals.css
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col relative overflow-x-clip">
       <Navbar />
 
       {/* Full-width container for full-bleed banners, inner components manage their own max-w-7xl */}

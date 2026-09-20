@@ -21,27 +21,30 @@ gõ lại theo trí nhớ. Bốn chỗ dễ sai nhất đã ghi chú tại chỗ
     chế độ tư vấn    Top-3   69,6%  →  86,3%   (hơn 16,7đ)
     điểm kỹ năng             40,2%  →  53,4%   (hơn thật 13,2đ, đã trừ đoán bừa)
 
-Lùi về pipeline cũ: đặt biến môi trường EDUTALK_PIPELINE=legacy
 """
 
 from __future__ import annotations
 
 import json
+import logging
 import os
 from pathlib import Path
 
 import numpy as np
 
+from app.core import paths
+
+log = logging.getLogger(__name__)
+
 from app.services.major_predictor import (
     MUC_TIEU_MA,
     TO_HOP_MAP,
     TRONG_SO_NGOAI_TO_HOP,
-    MajorPredictor,
 )
 
 
 def _goc_repo() -> Path:
-    return Path(__file__).resolve().parents[3]
+    return paths.REPO
 
 
 def _model_dir_r3() -> Path:
@@ -65,8 +68,7 @@ class MajorPredictorR3:
             raise FileNotFoundError(
                 "Thiếu tệp mô hình: "
                 + ", ".join(str(p) for p in thieu)
-                + ". Đặt EDUTALK_MODEL_DIR trỏ tới research3/data/processed/10_ChotModel, "
-                "hoặc EDUTALK_PIPELINE=legacy để dùng lại pipeline cũ."
+                + ". Đặt EDUTALK_MODEL_DIR trỏ tới research3/data/processed/10_ChotModel."
             )
 
         M = json.loads(f_meta.read_text(encoding="utf-8"))
@@ -156,14 +158,31 @@ class MajorPredictorR3:
         # Bản đồ gộp cột → đơn vị hiển thị, dựng một lần vì không đổi theo thí sinh.
         self._don_vi = self._dung_don_vi_hien()
 
-        # ── Tổ hợp xét tuyển + điểm chuẩn ────────────────────────────────────
-        # Bảng tuyển sinh nằm ở pipeline cũ và dùng chung cho mọi cách nhóm — nó là
-        # dữ liệu của trường, không phải kết quả huấn luyện.
+        self._nap_bang_tuyen_sinh(goc)
+
+    def _nap_bang_tuyen_sinh(self, goc: Path) -> None:
+        """Tổ hợp xét tuyển + điểm chuẩn của 39 ngành.
+
+        Bảng tuyển sinh là DỮ LIỆU CỦA TRƯỜNG, không phải kết quả huấn luyện, nên nó
+        dùng chung cho mọi cách nhóm ngành và không nằm trong thư mục mô hình. Lớp của
+        Hướng 1 (`major_predictor_h1.py`) gọi lại đúng hàm này.
+
+        Nhà chính thức của nó là `backend/data/co_cau_truc/` — trong cùng thư mục được
+        đóng gói vào ảnh Docker (`docker-compose.yml` khai `context: ./backend`). Đường
+        đầu tính theo thư mục `backend/` nên chạy được cả trong container (ở đó gốc
+        repo không tồn tại); các đường sau chỉ là dự phòng cho máy dev.
+
+        Thiếu bảng này thì mô hình VẪN CHẠY và vẫn trả kết quả trông hợp lý, chỉ mất im
+        lặng phần lọc theo tổ hợp và nhãn rủi ro — nên phải ghi log.
+        """
         self.to_hop_xet_tuyen: dict[int, set[str]] = {}
         self.diem_chuan: dict[int, dict[str, float]] = {}
+        _goc = _goc_repo()
         for ts in (
+            paths.CO_CAU_TRUC / "tuyen_sinh_huit_2026.json",
+            _goc / "backend" / "data" / "co_cau_truc" / "tuyen_sinh_huit_2026.json",
             goc / "tuyen_sinh_huit_2026.json",
-            _goc_repo() / "research" / "data" / "processed" / "tuyen_sinh_huit_2026.json",
+            _goc / "research" / "data" / "processed" / "tuyen_sinh_huit_2026.json",
         ):
             if not ts.exists():
                 continue
@@ -176,6 +195,22 @@ class MajorPredictorR3:
                         y: v for y, v in muc["diem_chuan_thpt"].items() if v is not None
                     }
             break
+        if not self.to_hop_xet_tuyen:
+            log.warning(
+                "Không tìm thấy tuyen_sinh_huit_2026.json — mô hình VẪN chạy nhưng "
+                "MẤT phần lọc theo tổ hợp và nhãn rủi ro. Đặt file vào "
+                "backend/data/co_cau_truc/ rồi khởi động lại."
+            )
+
+    def so_goi_y(self, field_id: int | None) -> int:
+        """Số ngành hiển thị mặc định = điểm vận hành mà mô hình được đánh giá.
+
+        Hướng 1 ghi điểm vận hành trong gói mô hình (tư vấn 2, khám phá 5), nên web và
+        mobile không phải gõ cứng con số — đổi mô hình thì số gợi ý đổi theo. research3
+        báo cáo ở Top-3 cho cả hai chế độ.
+        """
+        dvh = getattr(self, "diem_van_hanh", None) or {"tu_van": 3, "kham_pha": 3}
+        return int(dvh["kham_pha"] if field_id is None else dvh["tu_van"])
 
     # ── Dựng 63 đặc trưng ───────────────────────────────────────────────────
     def build_features(
@@ -264,13 +299,73 @@ class MajorPredictorR3:
             raise RuntimeError(f"Dựng thiếu đặc trưng: {sorted(thieu)}")
         return np.array([[gt[c] for c in self.columns]], dtype=float)
 
-    # Dùng lại nguyên vẹn từ pipeline cũ — chỉ cần self.diem_chuan, không phụ thuộc
-    # kiến trúc mô hình. Đây là phần hiển thị điểm chuẩn, không tham gia xếp hạng.
-    _tuyen_sinh = MajorPredictor._tuyen_sinh
-    # `muc_do` là staticmethod — truy cập qua lớp trả về hàm trần, gán thẳng sẽ biến nó
-    # thành phương thức thường và `self` chiếm mất tham số đầu.
-    muc_do = staticmethod(MajorPredictor.muc_do)
-    TEN_MON = MajorPredictor.TEN_MON
+    # Ba thành phần dưới đây trước ở class `MajorPredictor` (pipeline 2 tầng đời đầu)
+    # và r3 mượn sang. Đã chuyển hẳn về đây khi xoá class đó: chúng chỉ cần
+    # `self.diem_chuan`, không phụ thuộc kiến trúc mô hình, nên thuộc về r3 hơn.
+    TEN_MON = {
+        "Toan": "Toán", "Ly": "Lý", "Hoa": "Hóa", "Anh": "Tiếng Anh",
+        "Van": "Ngữ văn", "Su": "Lịch sử", "Sinh": "Sinh học",
+        "Dia": "Địa lý", "Gdktpl": "GD Kinh tế & Pháp luật", "Tin": "Tin học",
+    }
+
+    def _tuyen_sinh(self, j: int, tong_diem: float | None) -> dict | None:
+        """Đối chiếu điểm thí sinh với điểm chuẩn 3 năm gần nhất.
+
+        Dùng KHOẢNG min–max của 3 năm chứ không dùng một năm, vì điểm chuẩn HUIT
+        dao động trung bình 2,26 điểm giữa các năm (cao nhất 4,25 ở ngành Điều
+        khiển & TĐH). Một năm là một điểm dữ liệu, ba năm mới thành khoảng tin cậy.
+
+        Phần này CHỈ để hiển thị, KHÔNG ảnh hưởng tới thứ hạng gợi ý — đo trên
+        cross-validation cho thấy lọc theo điểm chuẩn làm giảm độ chính xác
+        (36,8% → 36,2%), do nhiều thí sinh đỗ bằng học bạ / ĐGNL.
+        """
+        dc = self.diem_chuan.get(j)
+        if not dc:
+            return None
+        nam = sorted(dc)
+        gia_tri = [dc[y] for y in nam]
+        thap, cao, moi_nhat = min(gia_tri), max(gia_tri), dc[nam[-1]]
+
+        muc = None
+        if tong_diem is not None:
+            if tong_diem >= cao:
+                muc = "an_toan"
+            elif tong_diem >= thap:
+                muc = "co_kha_nang"
+            else:
+                muc = "rui_ro_cao"
+
+        if len(gia_tri) >= 2:
+            chenh = gia_tri[-1] - gia_tri[0]
+            xu_huong = "tang" if chenh >= 0.5 else "giam" if chenh <= -0.5 else "on_dinh"
+        else:
+            xu_huong = "khong_du_du_lieu"
+
+        return {
+            "cutoffs": dc,
+            "min": round(thap, 2),
+            "max": round(cao, 2),
+            "latest": round(moi_nhat, 2),
+            "trend": xu_huong,
+            "level": muc,
+            "gap": None if tong_diem is None else round(tong_diem - moi_nhat, 2),
+        }
+
+    @staticmethod
+    def muc_do(phan_tram: float) -> str:
+        """Tỷ trọng → chữ mô tả mức độ.
+
+        NƠI DUY NHẤT định nghĩa các mức này. Giao diện và prompt của trợ lý đều
+        dùng lại chuỗi trả về từ đây — trước kia mỗi bên tự đặt ngưỡng riêng nên
+        bảng ghi "mạnh" mà câu văn bên dưới lại nói "ảnh hưởng nhẹ thôi".
+        """
+        if phan_tram >= 25:
+            return "rất mạnh"
+        if phan_tram >= 10:
+            return "mạnh"
+        if phan_tram >= 3:
+            return "vừa"
+        return "không đáng kể"
 
     TEN_DEP = {
         "likert_nang_dong": "Năng động",
@@ -495,19 +590,24 @@ class MajorPredictorR3:
         goal: str,
         scores: list[float] | None = None,
         field_id: int | None = None,
-        limit: int = 5,
+        limit: int | None = None,
         n_fields: int = 3,
         soft_filter: float = 0.0,
         filter_subject_group: bool = True,
+        loai_bo_ngoai_to_hop: bool = False,
     ) -> dict:
         """
         field_id = None  → Khám phá — model_nganh.json xếp hạng cả 39 ngành
-        field_id = 0..8  → Tư vấn   — model_khoi{k}.json chỉ xếp hạng ngành trong nhóm
+        field_id = 0..8  → Tư vấn   — mô hình riêng của nhóm chỉ xếp hạng ngành trong nhóm
+
+        `limit` bỏ trống thì lấy đúng số gợi ý mà mô hình được đánh giá (`so_goi_y`).
 
         `soft_filter` không còn ý nghĩa ở chế độ tư vấn: mô hình nhóm hoàn toàn không
         biết tới ngành ngoài nhóm nên không thể cho chúng điểm. Giữ tham số để chữ ký
         không đổi; truyền giá trị khác 0 sẽ được cảnh báo.
         """
+        if limit is None:
+            limit = self.so_goi_y(field_id)
         n_nganh = len(self.major_code)
         X = self.build_features(interests, subject_group, scores, gender, goal)
 
@@ -544,18 +644,35 @@ class MajorPredictorR3:
                 for i_cb, j in enumerate(self.lop_theo_khoi[field_id]):
                     p[j] = float(cuc_bo[i_cb])
 
-        # Hạ trọng số ngành KHÔNG xét tổ hợp của thí sinh (lọc mềm, không loại hẳn):
-        # HUIT còn xét học bạ và ĐGNL nên thí sinh có thể đỗ ngành không khớp tổ hợp.
-        n_ngoai = 0
-        if filter_subject_group and self.to_hop_xet_tuyen:
-            trong = np.array(
-                [
-                    subject_group in self.to_hop_xet_tuyen.get(j, set())
-                    for j in range(n_nganh)
-                ]
+        # Ngành có xét tổ hợp thí sinh khai không (bảng 2026). None = thiếu bảng tuyển
+        # sinh, không biết — khác hẳn False, nên không được gộp làm một.
+        trong = (
+            np.array(
+                [subject_group in self.to_hop_xet_tuyen.get(j, set()) for j in range(n_nganh)]
             )
-            n_ngoai = int((~trong).sum())
-            p = p * np.where(trong, 1.0, TRONG_SO_NGOAI_TO_HOP)
+            if self.to_hop_xet_tuyen
+            else None
+        )
+
+        # Xử lý ngành KHÔNG xét tổ hợp thí sinh khai. Mặc định lọc mềm (hạ trọng số);
+        # hai router của web bật `loai_bo_ngoai_to_hop=True` để loại hẳn. Lý do và số
+        # đo nằm ở chú thích TRONG_SO_NGOAI_TO_HOP bên `major_predictor.py`.
+        n_ngoai, n_xet, da_loai_cung = 0, n_nganh, False
+        if filter_subject_group and trong is not None:
+            # Chế độ tư vấn chỉ xếp hạng trong nhóm, nên cảnh báo đếm TRONG NHÓM — đếm
+            # trên cả 39 ngành thì thí sinh đọc "17/39 bị hạ" mà nhóm mình không hề bị.
+            pham_vi = (
+                self.lop_theo_khoi[field_id] if field_id is not None else list(range(n_nganh))
+            )
+            n_xet = len(pham_vi)
+            n_ngoai = int((~trong[pham_vi]).sum())
+
+            # LỌC CỨNG: loại hẳn ngành không xét tổ hợp thí sinh khai. Không thể loại
+            # khi CẢ phạm vi đều ngoài tổ hợp — lúc đó danh sách rỗng, thà hạ ưu tiên
+            # rồi nói rõ trong cảnh báo còn hơn trả về không có gì.
+            da_loai_cung = loai_bo_ngoai_to_hop and n_ngoai < n_xet
+            he_so = 0.0 if da_loai_cung else TRONG_SO_NGOAI_TO_HOP
+            p = p * np.where(trong, 1.0, he_so)
 
         tong_p = p.sum()
         p = p / tong_p if tong_p > 0 else np.full_like(p, 1.0 / n_nganh)
@@ -579,10 +696,25 @@ class MajorPredictorR3:
                 "Chưa có điểm thi nên gợi ý kém chính xác hơn. Thi xong nên làm lại."
             )
         if filter_subject_group and n_ngoai:
-            warnings.append(
-                f"{n_ngoai}/{n_nganh} ngành không xét tổ hợp {subject_group} đã được hạ "
-                "ưu tiên (không loại hẳn, vì có thể xét bằng học bạ hoặc ĐGNL)."
-            )
+            pham_vi_chu = "ngành trong nhóm" if mode == "guided" else "ngành"
+            if n_ngoai == n_xet:
+                # Hạ đều tất cả thì thứ tự không đổi — nói "đã hạ ưu tiên" là sai sự thật.
+                warnings.append(
+                    f"Không {pham_vi_chu} nào xét tổ hợp {subject_group} bằng điểm thi "
+                    "tốt nghiệp THPT theo đề án 2026. Nên chọn lại tổ hợp hoặc nhóm ngành "
+                    "khác; các phương thức xét tuyển khác nằm ngoài phạm vi gợi ý này."
+                )
+            elif da_loai_cung:
+                warnings.append(
+                    f"Chỉ gợi ý {n_xet - n_ngoai} {pham_vi_chu} có xét tổ hợp {subject_group} "
+                    f"bằng điểm thi tốt nghiệp THPT; đã loại {n_ngoai} {pham_vi_chu} không xét "
+                    "tổ hợp này. Gợi ý chỉ tính theo phương thức thi tốt nghiệp THPT."
+                )
+            else:
+                warnings.append(
+                    f"{n_ngoai}/{n_xet} {pham_vi_chu} không xét tổ hợp {subject_group} bằng "
+                    "điểm thi tốt nghiệp THPT đã được hạ ưu tiên."
+                )
         if mode == "guided":
             warnings.append(
                 f"Đang xếp hạng bằng mô hình riêng của nhóm \"{self.field_name[field_id]}\" "
@@ -641,6 +773,7 @@ class MajorPredictorR3:
                     "field": self.field_name[self.field_of_major[int(j)]],
                     "score": round(float(p[j]), 4),
                     "subjectGroups": sorted(self.to_hop_xet_tuyen.get(int(j), [])),
+                    "xetToHop": None if trong is None else bool(trong[int(j)]),
                     "admission": self._tuyen_sinh(int(j), tong_diem),
                     "explain": self.giai_thich(mode, contribs[int(j)], X),
                 }

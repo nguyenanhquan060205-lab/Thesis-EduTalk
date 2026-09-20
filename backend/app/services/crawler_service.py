@@ -1,15 +1,16 @@
-import os
 from datetime import datetime, timezone
 
 import google.generativeai as genai
 import httpx
-from app.core.mongodb import get_db
 from bs4 import BeautifulSoup
+
+from app.core.config import settings
+from app.core.mongodb import get_db
 
 
 class CrawlerService:
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.api_key = settings.GEMINI_API_KEY
         if self.api_key:
             genai.configure(api_key=self.api_key)
 

@@ -6,10 +6,19 @@ import { cn } from "@/lib/utils";
 export const SpotlightCard = ({
   children,
   className,
+  contentClassName,
   spotlightColor = "rgba(0, 84, 166, 0.12)",
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Lớp cho khối bọc `children` bên trong.
+   *
+   * Cần vì `children` KHÔNG nằm trực tiếp trong thẻ ngoài — nó bị bọc thêm một
+   * `div` để nằm trên lớp sáng. Hệ quả: đặt `flex justify-between` ở `className`
+   * thì thẻ ngoài chỉ có đúng một con nên không đẩy được chân thẻ xuống đáy.
+   * Thẻ nào muốn chân thẳng hàng thì truyền `flex h-full flex-col justify-between`
+   * vào đây. */
+  contentClassName?: string;
   spotlightColor?: string;
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
@@ -39,7 +48,7 @@ export const SpotlightCard = ({
           background: `radial-gradient(550px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), ${spotlightColor}, transparent 45%)`,
         }}
       />
-      <div className="relative z-10">{children}</div>
+      <div className={cn("relative z-10", contentClassName)}>{children}</div>
     </div>
   );
 };

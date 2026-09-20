@@ -7,15 +7,9 @@ Migrate từ: mobile/lib/services/post_service.dart
 # pyrefly: ignore [missing-import]
 # pyrefly: ignore [missing-import]
 
-from app.services.auth_service import AuthService
-from app.services.post_service import PostService
-from fastapi import APIRouter, File, Header, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
-router = APIRouter()
-post_service = PostService()
-auth_service = AuthService()
-
-
+from app.api.deps import get_current_uid, get_database
 from app.models.post_models import (
     AddCommentRequest,
     CreatePostRequest,
@@ -23,11 +17,15 @@ from app.models.post_models import (
     EditPostRequest,
     ReportRequest,
 )
+from app.services.post_service import PostService
+
+router = APIRouter()
+post_service = PostService()
 
 # ==================== Helper ====================
 
 
-async def yeu_cau_duoc_phep(uid: str) -> None:
+async def yeu_cau_duoc_phep(uid: str, db) -> None:
     """Chặn tạo nội dung khi tài khoản bị khoá hoặc email chưa xác minh.
 
     Kiểm tra ở đây là thứ chặn **ngay lập tức** với tài khoản vừa bị khoá: ID
@@ -37,10 +35,7 @@ async def yeu_cau_duoc_phep(uid: str) -> None:
     Tài khoản cũ (chưa có trường `emailVerified`) coi như đã xác minh, để không
     khoá nhầm người đang dùng từ trước.
     """
-    # pyrefly: ignore [missing-import]
-    from app.core.mongodb import get_db
-
-    doc = await get_db()["users"].find_one({"_id": uid})
+    doc = await db["users"].find_one({"_id": uid})
     if doc is None:
         return
 
@@ -61,17 +56,6 @@ async def yeu_cau_duoc_phep(uid: str) -> None:
         )
 
 
-async def get_current_uid(authorization: str) -> str:
-    """Lấy UID từ Authorization header (Bearer token)."""
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded:
-        raise HTTPException(
-            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
-        )
-    return decoded["uid"]
-
-
 # ==================== Endpoints ====================
 
 
@@ -88,14 +72,14 @@ async def get_posts(limit: int = 20):
 @router.post("/")
 async def create_post(
     body: CreatePostRequest,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
 ):
     """
     Tạo bài viết mới.
     Tương đương: PostService.createPost() trong Dart.
     """
-    uid = await get_current_uid(authorization)
-    await yeu_cau_duoc_phep(uid)
+    await yeu_cau_duoc_phep(uid, db)
     post_data = body.model_dump()
     post_data["authorId"] = uid  # Dùng UID từ token, không tin vào body
     post_id = await post_service.create_post(post_data)
@@ -107,20 +91,21 @@ async def create_post(
 
 
 @router.get("/mine", summary="Bài viết của tôi (gồm cả bài chờ duyệt)")
-async def get_my_posts(authorization: str = Header(...)):
+async def get_my_posts(uid: str = Depends(get_current_uid)):
     """Trả về mọi bài của người đang đăng nhập, kể cả `pending` và `rejected`.
 
     `GET /api/v1/posts/` chỉ trả bài đã duyệt nên tác giả không thấy bài mình
     vừa gửi — endpoint này để họ theo dõi, xoá, hoặc nhắc admin duyệt.
     """
-    uid = await get_current_uid(authorization)
     return {"data": await post_service.get_my_posts(uid)}
 
 
 @router.post("/{post_id}/remind", summary="Nhắc admin duyệt bài")
-async def remind_admin(post_id: str, authorization: str = Header(...)):
+async def remind_admin(
+    post_id: str,
+    uid: str = Depends(get_current_uid),
+):
     """Tác giả nhắc duyệt bài đang chờ. Giới hạn 1 lần mỗi 12 giờ."""
-    uid = await get_current_uid(authorization)
     result = await post_service.remind_admin(post_id=post_id, uid=uid)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=result.get("message"))
@@ -130,13 +115,12 @@ async def remind_admin(post_id: str, authorization: str = Header(...)):
 @router.post("/upload-image")
 async def upload_image(
     file: UploadFile = File(...),  # noqa: B008
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """
     Upload ảnh bài viết lên Cloudinary.
     Tương đương: PostService.uploadPostImage() trong Dart.
     """
-    await get_current_uid(authorization)
     file_bytes = await file.read()
     url = await post_service.upload_post_image(file_bytes, file.filename or "image")
     if not url:
@@ -148,11 +132,10 @@ async def upload_image(
 async def edit_post(
     post_id: str,
     body: EditPostRequest,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """Chỉ tác giả sửa được, và chỉ khi bài đã qua duyệt. Bài còn chờ duyệt thì
     xoá đi đăng lại — tránh việc sửa đi sửa lại trong lúc admin đang xem."""
-    uid = await get_current_uid(authorization)
     result = await post_service.edit_post(
         post_id=post_id, author_id=uid, new_content=body.content
     )
@@ -164,13 +147,12 @@ async def edit_post(
 @router.delete("/{post_id}")
 async def delete_post(
     post_id: str,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """
     Xóa bài viết.
     Tương đương: PostService.deletePost() trong Dart.
     """
-    uid = await get_current_uid(authorization)
     result = await post_service.delete_post(post_id=post_id, author_id=uid)
     if result["status"] != "success":
         raise HTTPException(status_code=403, detail=result["message"])
@@ -181,10 +163,9 @@ async def delete_post(
 async def report_post(
     post_id: str,
     body: ReportRequest | None = None,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """Không thể báo cáo bài của chính mình, và mỗi người chỉ báo được một lần."""
-    uid = await get_current_uid(authorization)
     result = await post_service.report_post(post_id=post_id, uid=uid)
     LOI = {
         "not_found": (404, "Bài viết không tồn tại."),
@@ -201,13 +182,12 @@ async def report_post(
 @router.post("/{post_id}/upvote")
 async def upvote_post(
     post_id: str,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """
     Like / Unlike bài viết (Toggle).
     Tương đương: PostService.upvotePost() trong Dart.
     """
-    uid = await get_current_uid(authorization)
     result = await post_service.upvote_post(post_id=post_id, uid=uid)
     return result
 
@@ -226,14 +206,14 @@ async def get_comments(post_id: str):
 async def add_comment(
     post_id: str,
     body: AddCommentRequest,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
 ):
     """
     Thêm bình luận vào bài viết.
     Tương đương: PostService.addComment() trong Dart.
     """
-    uid = await get_current_uid(authorization)
-    await yeu_cau_duoc_phep(uid)
+    await yeu_cau_duoc_phep(uid, db)
     comment_data = {"text": body.text, "parentId": body.parentId}
     result = await post_service.add_comment(
         post_id=post_id,
@@ -250,10 +230,9 @@ async def edit_comment(
     post_id: str,
     comment_id: str,
     body: EditCommentRequest,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """Chỉ tác giả bình luận sửa được."""
-    uid = await get_current_uid(authorization)
     result = await post_service.edit_comment(
         comment_id=comment_id, author_id=uid, new_text=body.text
     )
@@ -264,10 +243,10 @@ async def edit_comment(
 
 @router.delete("/{post_id}/comments/{comment_id}", summary="Xóa bình luận")
 async def delete_comment(
-    post_id: str, comment_id: str, authorization: str = Header(...)
+    post_id: str, comment_id: str,
+    uid: str = Depends(get_current_uid),
 ):
     """Tác giả bình luận hoặc admin. Xóa kèm mọi trả lời của bình luận đó."""
-    uid = await get_current_uid(authorization)
     result = await post_service.delete_comment(comment_id=comment_id, uid=uid)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=result.get("message"))
@@ -276,10 +255,10 @@ async def delete_comment(
 
 @router.post("/{post_id}/comments/{comment_id}/upvote", summary="Thích bình luận")
 async def upvote_comment(
-    post_id: str, comment_id: str, authorization: str = Header(...)
+    post_id: str, comment_id: str,
+    uid: str = Depends(get_current_uid),
 ):
     """Bật/tắt thích. Ai cũng thích được, kể cả bình luận của chính mình."""
-    uid = await get_current_uid(authorization)
     result = await post_service.upvote_comment(comment_id=comment_id, uid=uid)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=result.get("message"))
@@ -291,10 +270,9 @@ async def report_comment(
     post_id: str,
     comment_id: str,
     body: ReportRequest | None = None,
-    authorization: str = Header(...),
+    uid: str = Depends(get_current_uid),
 ):
     """Không thể báo cáo bình luận của chính mình. Từ 5 báo cáo thì tự ẩn."""
-    uid = await get_current_uid(authorization)
     result = await post_service.report_comment(
         comment_id=comment_id, uid=uid, reason=(body.reason if body else "")
     )

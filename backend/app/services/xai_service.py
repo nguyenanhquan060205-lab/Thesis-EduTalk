@@ -12,10 +12,10 @@ hơn là không giải thích, vì nó nguỵ trang thành XAI và mượn uy t�
 số nằm ngay bên cạnh.
 """
 
-import os
-
 import google.generativeai as genai
 from dotenv import load_dotenv
+
+from app.core.config import settings
 
 load_dotenv()
 
@@ -133,7 +133,7 @@ class XAIService:
     """Chuyển bảng số SHAP thành 2–3 câu tiếng Việt."""
 
     def __init__(self) -> None:
-        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.api_key = settings.GEMINI_API_KEY
         if self.api_key:
             genai.configure(api_key=self.api_key)
         self._model = genai.GenerativeModel(model_name="gemini-flash-lite-latest")

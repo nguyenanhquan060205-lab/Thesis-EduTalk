@@ -1,0 +1,12 @@
+{
+  "file": "test_KHOA.csv",
+  "bam_sha256": "fca56fce42a3a9a306af4c5ecf74b5b4a11714c01bf83524615d5a3c3e5f0c62",
+  "n_dong": 2445,
+  "p_train": 0.7,
+  "p_val": 0.15,
+  "p_test": 0.15,
+  "seed": 42,
+  "sai_so_95": 1.6,
+  "sai_so_95_khaosat_niemphong": 3.0,
+  "ghi_chu": "Giai đoạn 8 và 9 KHÔNG được mở — dùng val.csv. Giai đoạn 10 kiểm băm trước khi mở."
+}

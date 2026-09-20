@@ -35,7 +35,8 @@ class RecommendRequest(BaseModel):
         ),
     )
     goal: str = Field("Chưa xác định", description=f"Một trong {GOALS}")
-    # Chặn trên là 8 vì pipeline research3 chia 9 nhóm ngành; pipeline cũ chỉ có 7
+    # Chặn trên là 8 vì mô hình đang phục vụ (Hướng 1, cùng cách nhóm với research3)
+    # chia 9 nhóm ngành; pipeline cũ chỉ có 7
     # khối (0..6). Để `le=6` như trước thì hai nhóm cuối — trong đó có nhóm ĐÔNG
     # NHẤT là "Thực phẩm, Sinh học & Môi trường" (7 ngành) — bị chặn ngay ở lớp
     # kiểm tra dữ liệu, người dùng chọn xong nhận 422 mà không hiểu vì sao.
@@ -50,7 +51,15 @@ class RecommendRequest(BaseModel):
             "Danh sách nhóm hợp lệ lấy từ GET /api/v1/predict/catalog."
         ),
     )
-    limit: int = Field(5, ge=1, le=39, description="Số ngành muốn hiển thị")
+    limit: int | None = Field(
+        None,
+        ge=1,
+        le=39,
+        description=(
+            "Số ngành muốn hiển thị. Bỏ trống = số gợi ý chuẩn mà mô hình được đánh giá "
+            "(tư vấn 2, khám phá 5) — xem `soGoiY` ở GET /api/v1/predict/catalog."
+        ),
+    )
     softFilter: float = Field(
         0.0,
         ge=0.0,
@@ -100,7 +109,9 @@ class ExplainFeature(BaseModel):
     ten: str
     giaTri: str = Field(..., description="Giá trị đã định dạng để hiển thị")
     dongGop: float = Field(
-        ..., description="φ₂ + β·φ₁ — dương là đẩy lên, âm là kéo xuống"
+        ...,
+        description="Đóng góp SHAP của mục này (tổng các cột mã hoá nó) — dương là đẩy "
+        "lên, âm là kéo xuống",
     )
     phanTram: float = Field(..., description="|φ| trên tổng |φ|, để diễn đạt bằng %")
     mucDo: str = Field(
@@ -108,8 +119,12 @@ class ExplainFeature(BaseModel):
         description="'rất mạnh' | 'mạnh' | 'vừa' | 'không đáng kể'. Giao diện và "
         "trợ lý AI đều dùng chuỗi này, không tự đặt ngưỡng riêng.",
     )
-    tang2: float = Field(..., description="Phần do tầng 2 (chọn ngành)")
-    tang1: float = Field(..., description="Phần do tầng 1 (chọn khối); guided = 0")
+    tang2: float = Field(
+        ..., description="Giữ để giao diện cũ không vỡ — mô hình hiện tại: bằng dongGop"
+    )
+    tang1: float = Field(
+        ..., description="Giữ để giao diện cũ không vỡ — mô hình hiện tại chỉ một tầng: 0"
+    )
     anVoiThiSinh: bool = Field(
         False,
         description="True thì KHÔNG hiển thị cho thí sinh — hiện giới tính, vì nêu "
@@ -119,7 +134,7 @@ class ExplainFeature(BaseModel):
 
 
 class MajorExplain(BaseModel):
-    """Giải thích của một ngành, tính bằng TreeSHAP trên cả hai tầng."""
+    """Giải thích của một ngành, tính bằng TreeSHAP trên đúng mô hình đã xếp hạng ngành đó."""
 
     mode: str
     base: float = Field(..., description="Điểm nền khi chưa biết gì về thí sinh")
@@ -135,7 +150,8 @@ class MajorExplain(BaseModel):
     )
     tongDongGop: float = Field(
         0.0,
-        description="Tổng đóng góp cả 43 đặc trưng. Điểm xếp hạng = base + tongDongGop. "
+        description="Tổng đóng góp của mọi đặc trưng (63 với mô hình hiện tại). "
+        "Điểm xếp hạng = base + tongDongGop. "
         "So sánh giữa các ngành phải dùng con số này, KHÔNG dùng riêng các thanh hiển thị.",
     )
 
@@ -148,6 +164,12 @@ class MajorSuggestion(BaseModel):
     score: float
     subjectGroups: list[str] = Field(
         default_factory=list, description="Tổ hợp ngành này xét tuyển"
+    )
+    xetToHop: bool | None = Field(
+        None,
+        description="Ngành có xét tổ hợp thí sinh đã khai không (bảng 2026). False = "
+        "không dùng được điểm thi tổ hợp này, chỉ còn học bạ / ĐGNL — giao diện nên báo. "
+        "None = thiếu bảng tuyển sinh, không biết.",
     )
     admission: AdmissionInfo | None = None
     explain: MajorExplain | None = Field(
@@ -164,8 +186,9 @@ class RecommendResponse(BaseModel):
     )
     fieldsStage1: list[FieldSuggestion] = Field(
         default_factory=list,
-        description="Dự đoán thô của riêng tầng 1. Ở chế độ guided nó KHÔNG tham gia "
-        "xếp hạng — chỉ để đối chiếu với nhóm ngành người dùng đã chọn.",
+        description="Phân bố nhóm suy ra từ mô hình 39 ngành (tầng khám phá). Ở chế độ "
+        "guided nó KHÔNG tham gia xếp hạng — chỉ để đối chiếu với nhóm ngành người dùng "
+        "đã chọn.",
     )
     majors: list[MajorSuggestion]
     totalScore: float | None = Field(None, description="Tổng điểm 3 môn của thí sinh")
@@ -190,21 +213,20 @@ class FieldGroup(BaseModel):
     majors: list[MajorItem]
 
 
+class SoGoiY(BaseModel):
+    """Số ngành hiển thị ở mỗi chế độ — đúng điểm vận hành mà mô hình được đánh giá."""
+
+    tuVan: int = Field(..., description="Chế độ guided (đã chọn nhóm ngành)")
+    khamPha: int = Field(..., description="Chế độ explore (chưa chọn nhóm ngành)")
+
+
 class CatalogResponse(BaseModel):
     fields: list[FieldGroup]
+    soGoiY: SoGoiY | None = Field(
+        None,
+        description="Gửi /recommend không kèm `limit` thì server tự dùng đúng các số này",
+    )
 
 
-# ── Schema cũ, giữ để không phá client đang chạy ─────────────────────────────
-
-
-class SurveySubmit(BaseModel):
-    scores: list[int] = Field(..., min_length=10, max_length=10)
-
-
-class PredictionResult(BaseModel):
-    major: str
-    similarity: float
-
-
-class PredictionResponse(BaseModel):
-    results: list[PredictionResult]
+# `SurveySubmit` / `PredictionResult` / `PredictionResponse` đã xoá cùng endpoint
+# `POST /api/v1/predict/` (19/09/2026) — xem chú thích trong `api/v1/predict.py`.

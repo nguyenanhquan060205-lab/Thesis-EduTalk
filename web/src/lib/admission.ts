@@ -59,7 +59,8 @@ export const DEFAULT_FIELD_STYLE = {
 };
 
 /**
- * Màu nhận diện 9 nhóm ngành đào tạo HUIT — khớp id (0..8) của mô hình research3.
+ * Màu nhận diện 9 nhóm ngành đào tạo HUIT — khớp id (0..8) của mô hình đang phục vụ
+ * (Hướng 1 và research3 dùng chung cách nhóm này).
  * CHỈ dùng các họ màu: blue, sky, cyan, indigo, violet, teal, slate, stone, fuchsia.
  * CẤM dùng emerald, amber, rose (dành riêng cho mức độ an toàn trúng tuyển).
  */

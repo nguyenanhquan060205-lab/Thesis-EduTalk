@@ -454,7 +454,7 @@ export default function MajorsPage() {
               <option value="cutoff_desc">Điểm 2026: Cao nhất</option>
               <option value="cutoff_asc">Điểm 2026: Thấp nhất</option>
               <option value="trend_desc">Biến động: Tăng nhiều nhất</option>
-              <option value="name_asc">Tên ngành: A ➔ Z</option>
+              <option value="name_asc">Tên ngành: A → Z</option>
             </select>
           </div>
 

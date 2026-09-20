@@ -1,0 +1,23 @@
+# Phụ thuộc CHỈ dùng khi phát triển và chạy test. Cố ý tách khỏi `requirements.txt`:
+# `docker-compose.yml` dựng ảnh từ `./backend`, mà bản Render free chỉ có 512 MB RAM —
+# một tiến trình đã chiếm 320 MB. Đừng nhét pytest vào ảnh chạy thật.
+#
+#     conda activate Edutalk
+#     pip install -r requirements-dev.txt
+#     cd backend && pytest -q
+#
+# httpx đã có trong requirements.txt (TestClient của Starlette dùng nó).
+
+pytest
+pytest-asyncio
+
+# ruff bắt được thứ pytest KHÔNG bắt: tên chưa định nghĩa (`F821`) ở nhánh code mà
+# test chưa chạm tới. Đợt dọn cấu trúc đã dính đúng một lần — bỏ import `auth_service`
+# trong khi hai dòng phía dưới còn dùng, test vẫn xanh vì nhánh đó cần admin thật.
+#
+#     python -m ruff check app tests --select F
+ruff
+
+# Đọc PDF chương trình đào tạo cho scripts/lay_ctdt.py (chỉ dùng khi chuẩn bị dữ liệu,
+# không cần trong ảnh Docker)
+pypdf

@@ -116,7 +116,12 @@ Cùng mô hình, cùng kết quả. Nhưng luôn gọi `/recommend` thì trang `
 viễn rỗng**.
 
 `subjectOrder` quyết định thứ tự điểm gửi đi — sai thứ tự thì mô hình vẫn trả kết quả
-trông hợp lý nhưng sai. Web gửi `limit = 3`, nên **Top-3 là chỉ tiêu chính** của cả dự án.
+trông hợp lý nhưng sai.
+
+**Web không gửi `limit`.** Backend tự trả đúng số gợi ý mà mô hình được đánh giá: tư vấn
+**2** ngành, khám phá **5** ngành (đọc từ gói mô hình). Cần hiện con số đó trên giao diện
+thì lấy `soGoiY` từ `PredictService.catalog()`, đừng gõ cứng — đổi mô hình là số đổi theo.
+Chỉ tiêu chính của dự án vì vậy là **tư vấn Top-2 và khám phá Top-5**.
 
 ---
 

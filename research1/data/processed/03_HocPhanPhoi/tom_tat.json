@@ -1,0 +1,11 @@
+{
+  "K_co_ngot": 8,
+  "n_nganh": 39,
+  "n_phieu": 676,
+  "n_likert": 10,
+  "n_muc_tieu": 4,
+  "w_min": 0.42857142857142855,
+  "w_max": 0.8545454545454545,
+  "sigma_suy_bien": 0,
+  "hoc_tu": "toàn bộ 676 phiếu — chia train/test ở Giai đoạn 7"
+}

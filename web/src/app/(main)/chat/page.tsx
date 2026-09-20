@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { Lightbulb, Send } from "lucide-react";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
 import animationData from "@/assets/animations/Live chatbot.json";
@@ -26,6 +26,11 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Chốt chặn gửi trùng. Phải là ref chứ KHÔNG dùng state `isTyping`: state chỉ
+  // đổi sau khi render lại, nên hai lời gọi trong cùng một nhịp sự kiện đều đọc
+  // được giá trị cũ và cùng lọt qua. Ref đổi ngay lập tức.
+  const dangGui = useRef(false);
+
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
@@ -38,7 +43,8 @@ export default function ChatPage() {
   useEffect(() => { scrollToBottom(); }, [messages, isTyping]);
 
   const sendMessageText = async (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || dangGui.current) return;
+    dangGui.current = true;
     
     // Thêm tin nhắn của user
     const newUserMsg: Message = { id: Date.now() /* eslint-disable-line react-hooks/purity */, text: text.trim(), sender: "user" };
@@ -77,6 +83,7 @@ export default function ChatPage() {
       }]);
     } finally {
       setIsTyping(false);
+      dangGui.current = false;
     }
   };
 
@@ -125,8 +132,8 @@ export default function ChatPage() {
               className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'bot' && (
-                <div className="w-12 h-12 flex items-center justify-center shrink-0 mt-1 -ml-2 mr-1">
-                  <Lottie animationData={animationData} loop={true} className="w-16 h-16 scale-125" />
+                <div className="w-12 h-12 flex items-center justify-center shrink-0 mt-1 mr-1">
+                  <Lottie animationData={animationData} loop={true} className="w-full h-full" />
                 </div>
               )}
               <div className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
@@ -161,9 +168,10 @@ export default function ChatPage() {
                   <button
                     key={i}
                     onClick={() => sendMessageText(sug)}
-                    className="text-xs font-semibold text-slate-700 bg-white hover:bg-blue-50/80 hover:text-[#0054A6] hover:border-[#0054A6]/40 border border-slate-200/90 rounded-2xl px-4 py-2.5 transition-all shadow-xs hover:shadow-md hover:scale-[1.02] active:scale-[0.97] cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-blue-50/80 hover:text-[#0054A6] hover:border-[#0054A6]/40 border border-slate-200/90 rounded-2xl px-4 py-2.5 transition-all shadow-xs hover:shadow-md hover:scale-[1.02] active:scale-[0.97] cursor-pointer"
                   >
-                    💡 {sug}
+                    <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-500" aria-hidden />
+                    {sug}
                   </button>
                 ))}
               </div>
@@ -176,8 +184,8 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex gap-3 justify-start"
             >
-              <div className="w-12 h-12 flex items-center justify-center shrink-0 mt-1 -ml-2 mr-1">
-                <Lottie animationData={animationData} loop={true} className="w-16 h-16 scale-125" />
+              <div className="w-12 h-12 flex items-center justify-center shrink-0 mt-1 mr-1">
+                <Lottie animationData={animationData} loop={true} className="w-full h-full" />
               </div>
               <div className="bg-white border border-slate-100 px-5 py-4 rounded-2xl rounded-tl-sm flex gap-1.5 items-center w-fit shadow-sm shadow-slate-200/50">
                 <div className="flex gap-1.5">
@@ -198,6 +206,13 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
+                // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt. Bộ gõ
+                // dùng chính phím Enter để chốt chữ đang gõ dở, nên trình duyệt
+                // bắn keydown Enter HAI lần: một lần chốt bộ gõ, một lần Enter
+                // thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter sẽ gửi đi hai
+                // tin nhắn giống hệt nhau.
+                if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();

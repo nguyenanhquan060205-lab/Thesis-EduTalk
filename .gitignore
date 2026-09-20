@@ -39,3 +39,6 @@ temp_repos/
 .*.docx
 .backup_*
 .truoc_khi_va_*
+
+# Cache của ruff — sinh lại mỗi lần lint, không thuộc về kho
+.ruff_cache/

@@ -1,0 +1,17 @@
+nhom,nguon,trong
+Likert thô,khaosat,0.0
+Likert thô,ttth,0.0
+Likert chuẩn hoá theo người,khaosat,0.0
+Likert chuẩn hoá theo người,ttth,0.0
+Thống kê Likert,khaosat,0.0
+Thống kê Likert,ttth,0.0
+Điểm thi thô,khaosat,70.0
+Điểm thi thô,ttth,70.0
+Điểm z-score từng môn,khaosat,70.0
+Điểm z-score từng môn,ttth,70.0
+Phái sinh từ điểm,khaosat,0.0
+Phái sinh từ điểm,ttth,0.0
+Tổ hợp xét tuyển (one-hot),khaosat,0.0
+Tổ hợp xét tuyển (one-hot),ttth,0.0
+Nhân khẩu học & mục tiêu,khaosat,0.0
+Nhân khẩu học & mục tiêu,ttth,0.0

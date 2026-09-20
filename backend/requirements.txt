@@ -35,3 +35,17 @@ python-dotenv==1.0.1
 # Crawler & Scheduler
 beautifulsoup4
 apscheduler
+
+# ==================== RAG — kho tri thức cho chatbot ====================
+# Kho vector. Chỉ dùng chế độ nhúng trong tiến trình (EphemeralClient), không chạy
+# Chroma dạng server, nên `kubernetes` và `onnxruntime` đi kèm là thừa (~133 MB).
+chromadb==1.5.9
+
+# GHIM CÓ CHỦ Ý — đừng gỡ, đừng nâng.
+# chromadb kéo theo opentelemetry, mà opentelemetry-proto >= 1.28 đòi protobuf >= 5,
+# trong khi google-ai-generativelanguage 0.6.6 (nền của google-generativeai 0.7.2)
+# đòi protobuf < 5. Bỏ hai dòng dưới thì pip cài ra bộ mâu thuẫn: máy đang chạy vẫn
+# ổn nhưng lần dựng lại môi trường sau sẽ vỡ, và vỡ lúc deploy chứ không phải lúc dev.
+# 4.25.9 là phiên bản duy nhất thoả cả hai phía.
+protobuf==4.25.9
+opentelemetry-exporter-otlp-proto-grpc==1.27.0

@@ -22,7 +22,14 @@ class SurveySubmitRequest(BaseModel):
         description="Điểm 3 môn theo đúng thứ tự môn của tổ hợp. Bỏ trống nếu chưa thi.",
     )
     goal: str = Field("Chưa xác định")
+    # Chặn trên 8 = 9 nhóm ngành của mô hình đang phục vụ, khớp RecommendRequest. Để
+    # `le=6` như thời 7 khối thì người đã đăng nhập chọn nhóm 7 hoặc 8 nhận 422.
     fieldId: int | None = Field(
-        None, ge=0, le=6, description="Bỏ trống = explore, điền = guided"
+        None, ge=0, le=8, description="Bỏ trống = explore, điền = guided"
     )
-    limit: int = Field(5, ge=1, le=39)
+    limit: int | None = Field(
+        None,
+        ge=1,
+        le=39,
+        description="Bỏ trống = số gợi ý chuẩn của mô hình (tư vấn 2, khám phá 5)",
+    )

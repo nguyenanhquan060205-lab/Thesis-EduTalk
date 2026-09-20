@@ -1,0 +1,12 @@
+{
+  "file": "test_KHOA.csv",
+  "bam_sha256": "c9d722b89e1d689076eba95be9677d1fc4c62bef290e067b1ad378c52885e4ba",
+  "n_dong": 2546,
+  "n_that": 117,
+  "p_train": 0.7,
+  "p_val": 0.15,
+  "p_test": 0.15,
+  "seed": 42,
+  "sai_so_95_tren_dong_that": 7.2,
+  "ghi_chu": "Giai đoạn 8 và 9 KHÔNG được mở — dùng val.csv. Giai đoạn 10 kiểm băm trước khi mở."
+}

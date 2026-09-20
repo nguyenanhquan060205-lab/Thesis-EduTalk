@@ -1,0 +1,151 @@
+{
+  "n_hoc": 14426,
+  "n_test": 2546,
+  "binh_dang": "sample_weight = 1.0 cho mọi dòng; nguon/is_that ngoài tập đặc trưng",
+  "hp": {
+    "n_estimators": 150,
+    "max_depth": 3,
+    "min_child_weight": 10,
+    "reg_lambda": 5.0,
+    "colsample_bytree": 0.4
+  },
+  "rieng_nhom": true,
+  "rang_buoc_gd9": {
+    "do_tren": "khám phá (xếp hạng cả 39 ngành)",
+    "kp_train_toi_da": 0.95,
+    "kp_gap_toi_da": 0.1
+  },
+  "test": {
+    "tu_van": {
+      "top1": 0.72,
+      "top2": 0.9061,
+      "top3": 0.9729,
+      "top5": 0.9965
+    },
+    "kham_pha": {
+      "top1": 0.4222,
+      "top2": 0.6033,
+      "top3": 0.7031,
+      "top5": 0.8178
+    }
+  },
+  "train_val": {
+    "tu_van": {
+      "top1": 0.8096,
+      "top2": 0.9504,
+      "top3": 0.988,
+      "top5": 0.9995
+    },
+    "kham_pha": {
+      "top1": 0.5049,
+      "top2": 0.6791,
+      "top3": 0.7749,
+      "top5": 0.8792
+    }
+  },
+  "diem_van_hanh": {
+    "tu_van": 2,
+    "kham_pha": 5
+  },
+  "gap_train_test": {
+    "tu_van": 0.0442,
+    "kham_pha": 0.0719,
+    "k": {
+      "tu_van": 2,
+      "kham_pha": 3
+    }
+  },
+  "doan_bua": {
+    "tu_van_trong_nhom": {
+      "top1": 0.238,
+      "top2": 0.476,
+      "top3": 0.7139,
+      "top5": 0.9434
+    },
+    "tu_van_nganh_dong_nhat": {
+      "top1": 0.4297,
+      "top2": 0.7078,
+      "top3": 0.8833,
+      "top5": 0.987
+    },
+    "kham_pha": {
+      "top1": 0.0256,
+      "top2": 0.0513,
+      "top3": 0.0769,
+      "top5": 0.1282
+    }
+  },
+  "ky_nang": {
+    "tu_van_top2": 0.8209,
+    "kham_pha_top3": 0.6783
+  },
+  "chi_so_xep_hang": {
+    "TƯ VẤN (biết nhóm)": {
+      "k": 2,
+      "hit_k": 0.9061,
+      "macro_hit_k": 0.8238,
+      "mrr": 0.8416,
+      "ndcg_k": 0.8374,
+      "hang_trung_vi": 1.0,
+      "hang_trung_binh": 1.412,
+      "n_nganh_duoi_50": 3,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.5008
+    },
+    "KHÁM PHÁ (cả 39)": {
+      "k": 5,
+      "hit_k": 0.8178,
+      "macro_hit_k": 0.7011,
+      "mrr": 0.5929,
+      "ndcg_k": 0.6338,
+      "hang_trung_vi": 2.0,
+      "hang_trung_binh": 3.5416,
+      "n_nganh_duoi_50": 7,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.1091
+    }
+  },
+  "chi_so_lop": {
+    "tư vấn · TRAIN+VAL": {
+      "acc_top1": 0.8096,
+      "f1_macro": 0.7678,
+      "f1_weighted": 0.8041,
+      "precision_macro": 0.8423,
+      "recall_macro": 0.742,
+      "auc_ovr": null
+    },
+    "tư vấn · TEST": {
+      "acc_top1": 0.72,
+      "f1_macro": 0.63,
+      "f1_weighted": 0.7067,
+      "precision_macro": 0.6578,
+      "recall_macro": 0.6196,
+      "auc_ovr": null
+    },
+    "khám phá · TRAIN+VAL": {
+      "acc_top1": 0.5049,
+      "f1_macro": 0.4777,
+      "f1_weighted": 0.4945,
+      "precision_macro": 0.5643,
+      "recall_macro": 0.4514,
+      "auc_ovr": 0.9588
+    },
+    "khám phá · TEST": {
+      "acc_top1": 0.4222,
+      "f1_macro": 0.3725,
+      "f1_weighted": 0.4066,
+      "precision_macro": 0.4241,
+      "recall_macro": 0.3583,
+      "auc_ovr": 0.9274
+    }
+  },
+  "sai_so_95": {
+    "tu_van_top2": 1.1,
+    "kham_pha_top3": 1.8
+  },
+  "han_che": [
+    "Bộ sinh copula đã thấy cả 676 phiếu khảo sát trước khi chia tập, kể cả phiếu rơi vào test — hệ quả của yêu cầu gộp thành một file train final rồi mới chia. Con số test là cận trên lạc quan.",
+    "Mất cân bằng theo ngành: 10 ngành ít dữ liệu nhất đạt Hit@5 khám phá 57.0%, 10 ngành nhiều nhất 90.4%. macro-F1 0.373 so với weighted-F1 0.407 đo cùng hiện tượng đó.",
+    "Phần Likert của 15.696 hồ sơ TTTH do copula sinh, không phải các em tự điền; điểm, tổ hợp và ngành trúng tuyển là thật."
+  ]
+}

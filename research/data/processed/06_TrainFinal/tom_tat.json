@@ -1,0 +1,14 @@
+{
+  "n_dong": 16972,
+  "n_that": 676,
+  "n_tong_hop": 16296,
+  "ti_le_tong_hop": 0.9602,
+  "n_dac_trung": 63,
+  "n_nganh": 39,
+  "n_nhom": 9,
+  "phuong_phap_sinh": "copula",
+  "trung_khit_phieu_that": 0.0059,
+  "da_dang_tong_hop": 0.9626,
+  "dong_moi_nganh_min": 36,
+  "dong_moi_nganh_max": 1879
+}

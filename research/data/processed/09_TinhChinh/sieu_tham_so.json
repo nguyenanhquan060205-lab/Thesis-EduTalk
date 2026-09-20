@@ -1,0 +1,43 @@
+{
+  "hp": {
+    "n_estimators": 150,
+    "max_depth": 3,
+    "min_child_weight": 10,
+    "reg_lambda": 5.0,
+    "colsample_bytree": 0.4
+  },
+  "rieng_nhom": true,
+  "rang_buoc": {
+    "do_tren": "khám phá (xếp hạng cả 39 ngành)",
+    "kp_train_toi_da": 0.95,
+    "kp_gap_toi_da": 0.1
+  },
+  "n_cau_hinh": 48,
+  "n_hop_le": 5,
+  "n_hop_le_neu_ap_len_tu_van": 14,
+  "k_tu_van": 2,
+  "val": {
+    "kp_train": 0.783,
+    "kp_val": 0.6889,
+    "gap_kp": 0.0941,
+    "tv_train": 0.934,
+    "tv_val": 0.8849,
+    "gap_tv": 0.0491
+  },
+  "doi_chung_tang_tu_van": [
+    {
+      "rieng_nhom": false,
+      "n_mo_hinh": 1,
+      "tv_train": 0.934006734006734,
+      "tv_val": 0.884917517674784,
+      "gap": 0.04908921633194996
+    },
+    {
+      "rieng_nhom": true,
+      "n_mo_hinh": 10,
+      "tv_train": 0.9517676767676768,
+      "tv_val": 0.8951296150824823,
+      "gap": 0.056638061685194474
+    }
+  ]
+}

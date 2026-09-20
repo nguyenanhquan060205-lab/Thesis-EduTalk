@@ -5,8 +5,9 @@ Migrate từ: mobile/lib/services/ai_chat_service.dart
 """
 
 # pyrefly: ignore [missing-import]
-from app.services.gemini_service import GeminiService
 from fastapi import APIRouter, HTTPException
+
+from app.services.gemini_service import GeminiService
 
 router = APIRouter()
 gemini_service = GeminiService()
@@ -15,11 +16,6 @@ gemini_service = GeminiService()
 from app.models.chat_models import SendMessageRequest
 
 # ==================== Endpoints ====================
-
-
-@router.get("/")
-def get_chat_status():
-    return {"message": "Chat API status OK"}
 
 
 @router.post("/message")
@@ -33,11 +29,13 @@ async def send_message(body: SendMessageRequest):
     """
     try:
         history_dicts = [{"role": m.role, "text": m.text} for m in body.history]
-        response_text = await gemini_service.send_message(
+        # Trả về kèm `co_rag` và `nguon` để phía web hiển thị được câu trả lời
+        # này dựa trên tài liệu nào — thí sinh cần kiểm chứng được, và hội đồng
+        # sẽ hỏi "số này ở đâu ra".
+        return await gemini_service.send_message(
             message=body.message,
             history=history_dicts,
         )
-        return {"response": response_text}
     except RuntimeError as e:
         raise HTTPException(status_code=503, detail=str(e))
 

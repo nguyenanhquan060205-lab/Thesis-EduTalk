@@ -1,0 +1,15 @@
+{
+  "bam_sha256": "99fb31be34977fccbac79b68f0b18abffd613204b016fdbc9bf20e1b2947ce5b",
+  "n_dong": 676,
+  "n_nganh": 39,
+  "n_vong_tron": 52,
+  "nganh_vong_tron": [
+    7380101,
+    7480107,
+    7510601,
+    7510605,
+    7810101
+  ],
+  "mo_o_giai_doan": 10,
+  "ghi_chu": "Mô hình phân loại KHÔNG BAO GIỜ được đọc file này trước Giai đoạn 10. Bộ sinh copula ở Giai đoạn 3 CÓ học từ dữ liệu gốc của nó."
+}

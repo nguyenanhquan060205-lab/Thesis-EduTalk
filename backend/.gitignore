@@ -1,3 +1,6 @@
 ﻿__pycache__/
 .env
 serviceAccountKey.json
+
+# Bộ nhớ đệm HTML của scripts/lay_ctdt.py — tải lại được, đừng commit
+data/.dem_ctdt/

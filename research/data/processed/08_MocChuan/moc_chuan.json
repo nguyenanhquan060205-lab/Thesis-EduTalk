@@ -1,0 +1,61 @@
+{
+  "n_train": 11880,
+  "n_val": 2546,
+  "ghi_chu": "sample_weight = 1.0 cho mọi dòng; nguon/is_that ngoài tập đặc trưng",
+  "k": {
+    "tu_van": 2,
+    "kham_pha": 3
+  },
+  "moc": {
+    "1 · ngành đông nhất": {
+      "tv_val": 0.7086,
+      "kp_val": 0.2282,
+      "tv_train": null,
+      "kp_train": null
+    },
+    "2 · bừa trong nhóm": {
+      "tv_val": 0.476,
+      "kp_val": 0.0769,
+      "tv_train": null,
+      "kp_train": null
+    },
+    "3 · chỉ 15 cột tổ hợp": {
+      "tv_val": 0.7486,
+      "kp_val": 0.3083,
+      "tv_train": 0.7582,
+      "kp_train": 0.3111
+    },
+    "4 · chỉ nguồn khảo sát (437 dòng)": {
+      "tv_val": 0.7007,
+      "kp_val": 0.3798,
+      "tv_train": 0.7165,
+      "kp_train": 0.4155
+    },
+    "MÔ HÌNH đủ dữ liệu": {
+      "tv_val": 0.9097,
+      "kp_val": 0.7565,
+      "tv_train": 0.9992,
+      "kp_train": 0.991
+    }
+  },
+  "dong_gop_nguon_ttth": {
+    "tv": 0.209,
+    "kp": 0.3767
+  },
+  "dong_gop_48_dac_trung": {
+    "tv": 0.161,
+    "kp": 0.4482
+  },
+  "gap_train_val": {
+    "tv": 0.0896,
+    "kp": 0.2345
+  },
+  "chi_so_lop_khampha_val": {
+    "acc_top1": 0.4835,
+    "f1_macro": 0.4624,
+    "f1_weighted": 0.4756,
+    "precision_macro": 0.4984,
+    "recall_macro": 0.4455,
+    "auc_ovr": 0.9409
+  }
+}

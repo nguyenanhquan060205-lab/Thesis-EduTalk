@@ -3,12 +3,12 @@
 import React, { useRef } from "react";
 import { AnimatedBeam } from "@/components/motion/AnimatedBeam";
 import { BorderBeam } from "@/components/motion/BorderBeam";
-import { 
-  UserCheck, 
-  Cpu, 
-  BrainCircuit, 
-  Database, 
-  Sparkles, 
+import {
+  UserCheck,
+  Cpu,
+  BrainCircuit,
+  Database,
+  Sparkles,
   GraduationCap,
   ArrowRight,
   ShieldCheck
@@ -35,12 +35,12 @@ export function AiPipelineSection() {
           Hệ Thống Tư Vấn Tuyển Sinh <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] to-[#0084FF]">Pipeline XGBoost & XAI SHAP</span>
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          Sự kết hợp giữa pipeline học máy XGBoost (research3), giải thích minh bạch quyết định (TreeSHAP), và cơ sở dữ liệu tri thức tuyển sinh HUIT 2026.
+          Sự kết hợp giữa mô hình XGBoost học từ phiếu khảo sát và hồ sơ trúng tuyển HUIT, giải thích minh bạch quyết định (TreeSHAP), và cơ sở dữ liệu tri thức tuyển sinh HUIT 2026.
         </p>
       </div>
 
       {/* Interactive Pipeline Diagram with Beams */}
-      <div 
+      <div
         ref={containerRef}
         className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-slate-900 via-slate-950 to-[#001833] p-8 sm:p-12 shadow-2xl text-white"
       >
@@ -51,7 +51,7 @@ export function AiPipelineSection() {
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6 sm:gap-4 items-center">
-          
+
           {/* Node 1: Thí sinh Input */}
           <div ref={nodeUserRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-cyan-400/40 transition-all group">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/10">
@@ -70,7 +70,7 @@ export function AiPipelineSection() {
             </div>
             <span className="text-xs font-black text-white">2. Pipeline XGBoost</span>
             <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-              Chọn nhóm → Model riêng (Top-3: 86,3%)<br />Không chọn → Model phẳng (Top-3: 35,3%)
+              Chọn nhóm → mô hình riêng của nhóm, gợi ý 2 ngành<br />Không chọn → mô hình 39 ngành, gợi ý 5 ngành
             </p>
           </div>
 
@@ -101,9 +101,9 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#00B4D8] text-white flex items-center justify-center mb-3 shadow-lg shadow-cyan-500/25">
               <GraduationCap className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">5. Đề Xuất Top 3</span>
+            <span className="text-xs font-black text-white">5. Đề Xuất Ngành Phù Hợp</span>
             <p className="text-[11px] text-cyan-200 mt-1 leading-snug font-semibold">
-              Tối ưu khả năng trúng tuyển & cơ hội nghề nghiệp
+              Kèm tổ hợp xét tuyển & điểm chuẩn 3 năm của từng ngành
             </p>
           </div>
 
