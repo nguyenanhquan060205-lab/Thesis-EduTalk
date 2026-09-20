@@ -34,7 +34,8 @@ import {
   ShieldCheck,
   Truck,
   Cog,
-  Dna
+  Dna,
+  Loader2,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PredictService, type CatalogField, type SoGoiY } from "@/services/predict";
@@ -206,6 +207,17 @@ export function PredictWizard() {
   const router = useRouter();
   const { user } = useAuthStore();
   const shouldReduceMotion = useReducedMotion();
+
+  // Bắt buộc đăng nhập: nếu chưa đăng nhập thì đá nhanh về trang đăng nhập
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem("edutalk-auth-storage");
+      const hasUser = raw ? !!JSON.parse(raw)?.state?.user : false;
+      if (!hasUser) {
+        router.replace("/auth/login?redirect=/predict");
+      }
+    }
+  }, [router]);
 
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [predictMode, setPredictMode] = useState<"auto" | "guided">("auto");
@@ -402,6 +414,17 @@ export function PredictWizard() {
     else if (currentStep === 3) p += Math.round((likertAnswered / LIKERT_ITEMS.length) * 33);
     return Math.min(100, p);
   }, [step1Done, step2Done, step3Done, currentStep, likertAnswered]);
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 gap-3 text-slate-500">
+        <Loader2 className="w-8 h-8 animate-spin text-[#0054A6]" />
+        <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
+          Đang chuyển hướng đến trang đăng nhập…
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

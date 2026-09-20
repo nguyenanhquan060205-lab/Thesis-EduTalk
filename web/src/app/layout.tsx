@@ -2,13 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScroll";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ["latin", "vietnamese"],
-  variable: "--font-inter",
+  variable: "--font-sans",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"]
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const viewport: Viewport = {
@@ -29,14 +30,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
-      <body className={`${plusJakartaSans.variable} font-sans bg-[#f8fafc] text-slate-900 antialiased min-h-screen selection:bg-blue-500 selection:text-white`}>
-        <SmoothScrollProvider>
-          {children}
-        </SmoothScrollProvider>
-        <Toaster richColors position="top-right" closeButton />
+    <html lang="vi" className={plusJakartaSans.variable} suppressHydrationWarning>
+      <body className="font-sans bg-[#f8fafc] dark:bg-[#070E1E] text-slate-900 dark:text-slate-100 antialiased min-h-screen selection:bg-blue-500 selection:text-white transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
+          <Toaster richColors position="top-right" closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
-

@@ -41,9 +41,9 @@ export function StatsCounter() {
       <motion.div
         onViewportEnter={() => setInView(true)}
         viewport={{ once: true, margin: "-50px" }}
-        className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm -mt-12 relative z-20"
+        className="bg-white dark:bg-[#0D1729] rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-none -mt-12 relative z-20 transition-colors duration-300"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
           {STATS.map((stat, idx) => {
             const Icon = stat.icon;
             return (
@@ -53,19 +53,19 @@ export function StatsCounter() {
                   idx > 0 ? "pt-5 sm:pt-3" : ""
                 }`}
               >
-                <div className="w-11 h-11 rounded-2xl bg-blue-50 text-[#0054A6] flex items-center justify-center mb-3 shadow-2xs">
+                <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 flex items-center justify-center mb-3 shadow-2xs">
                   <Icon className="w-5 h-5" />
                 </div>
 
-                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center tabular-nums">
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center tabular-nums">
                   <NumberFlow value={inView || shouldReduceMotion ? stat.target : 0} />
-                  <span className="text-[#0054A6] ml-1">{stat.suffix}</span>
+                  <span className="text-[#0054A6] dark:text-sky-400 ml-1">{stat.suffix}</span>
                 </div>
 
-                <span className="text-xs font-black text-slate-700 mt-1">
+                <span className="text-xs font-black text-slate-700 dark:text-slate-300 mt-1">
                   {stat.label}
                 </span>
-                <span className="text-[11px] text-slate-400 font-medium mt-0.5">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
                   {stat.subtext}
                 </span>
               </div>

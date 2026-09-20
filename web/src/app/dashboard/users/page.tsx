@@ -141,34 +141,48 @@ export default function UserManagementPage() {
 
   if (!loaded) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-3 text-slate-400">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0054A6]" />
-        <p className="text-sm font-bold">Đang tải danh sách người dùng…</p>
+      <div className="dash-empty min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: "var(--dash-accent)" }} />
+        <p className="text-xs font-bold" style={{ color: "var(--dash-text-faint)" }}>
+          Đang tải danh sách người dùng…
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 sm:p-10 max-w-6xl mx-auto space-y-6 text-slate-900 animate-fade-in-up">
-      <div className="border-b border-slate-200 pb-6">
-        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0054A6] border border-blue-200 text-[10px] font-black uppercase mb-2">
-          <Users className="w-3.5 h-3.5" /> Quản trị tài khoản
+    <div className="dash-page space-y-6 animate-fade-in-up">
+      {/* Header */}
+      <div className="flex items-start gap-4 pb-5 border-b" style={{ borderColor: "var(--dash-border)" }}>
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: "var(--dash-active-bg)", color: "var(--dash-accent)" }}
+        >
+          <Users size={20} />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
-          Quản Lý Người Dùng & Thí Sinh
-        </h1>
-        <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1 flex items-center gap-1.5">
-          <span>Hệ thống ghi nhận</span>
-          <strong className="text-slate-900 font-black">
-            <NumberFlow value={ds.length} />
-          </strong>
-          <span>tài khoản. Email và số điện thoại đã được mã hoá bảo mật ở tầng API.</span>
-        </p>
+        <div>
+          <div className="dash-section-label mb-1">Quản trị tài khoản · User Directory</div>
+          <h1 className="dash-page-title">Quản Lý Người Dùng & Thí Sinh</h1>
+          <p className="text-xs font-medium mt-1 flex items-center gap-1.5" style={{ color: "var(--dash-text-muted)" }}>
+            <span>Hệ thống ghi nhận</span>
+            <strong style={{ color: "var(--dash-text)" }}>
+              <NumberFlow value={ds.length} />
+            </strong>
+            <span>tài khoản. Email và số điện thoại đã được mã hoá bảo mật ở tầng API.</span>
+          </p>
+        </div>
       </div>
 
       {error && (
-        <div className="p-5 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 text-sm font-bold flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 shrink-0" />
+        <div
+          className="p-4 rounded-xl text-xs font-bold flex items-center gap-2 border"
+          style={{
+            background: "rgba(239,68,68,0.1)",
+            borderColor: "rgba(239,68,68,0.25)",
+            color: "#EF4444",
+          }}
+        >
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -176,12 +190,12 @@ export default function UserManagementPage() {
       {/* Tìm kiếm & Lọc */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--dash-text-faint)" }} />
           <input
             value={tim}
             onChange={(e) => setTim(e.target.value)}
             placeholder="Tìm theo tên hoặc email…"
-            className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-medium text-slate-900 placeholder-slate-400 outline-none focus:border-[#0054A6] shadow-xs"
+            className="dash-input w-full pl-10 pr-4 py-2 text-xs"
           />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -189,11 +203,20 @@ export default function UserManagementPage() {
             <button
               key={k}
               onClick={() => setLoc(k)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer active:scale-[0.98] ${
+              className="px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer"
+              style={
                 loc === k
-                  ? "bg-[#0054A6] text-white border-[#0054A6] shadow-xs"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-              }`}
+                  ? {
+                      background: "var(--dash-accent)",
+                      color: "#fff",
+                      borderColor: "var(--dash-accent)",
+                    }
+                  : {
+                      background: "var(--dash-surface)",
+                      color: "var(--dash-text-muted)",
+                      borderColor: "var(--dash-border)",
+                    }
+              }
             >
               {NHAN_LOC[k]}
             </button>
@@ -202,9 +225,9 @@ export default function UserManagementPage() {
       </div>
 
       {hienThi.length === 0 && !error && (
-        <div className="p-12 bg-white rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
-          <Users className="w-8 h-8 text-slate-400 mx-auto" />
-          <p className="text-sm font-bold text-slate-600">
+        <div className="dash-card text-center py-12">
+          <Users className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--dash-text-faint)" }} />
+          <p className="text-xs font-bold" style={{ color: "var(--dash-text-muted)" }}>
             Không có tài khoản nào khớp với bộ lọc tìm kiếm.
           </p>
         </div>
@@ -217,53 +240,58 @@ export default function UserManagementPage() {
           return (
             <div
               key={u.id}
-              className="p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition group"
+              className="dash-card flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition"
             >
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0054A6] to-[#003B73] flex items-center justify-center font-black text-white shrink-0 shadow-xs">
+              <div
+                className="w-11 h-11 rounded-2xl flex items-center justify-center font-black text-white shrink-0"
+                style={{ background: "var(--dash-accent)" }}
+              >
                 {(u.name ?? "?").charAt(0).toUpperCase()}
               </div>
 
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-black text-slate-900 truncate">{u.name}</span>
+                  <span className="text-sm font-black truncate" style={{ color: "var(--dash-text)" }}>
+                    {u.name}
+                  </span>
                   {laToi && (
-                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-50 text-[#0054A6] border border-blue-200">
+                    <span className="dash-badge dash-badge-blue">
                       Bạn (Hiện tại)
                     </span>
                   )}
                   {u.role === "admin" && (
-                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span className="dash-badge dash-badge-blue">
                       Quản trị viên
                     </span>
                   )}
                   {u.isPremium && (
-                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                    <span className="dash-badge dash-badge-amber">
                       Premium
                     </span>
                   )}
                   {u.disabled && (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">
-                      <Lock className="w-3 h-3" /> Bị khoá
+                    <span className="dash-badge dash-badge-red">
+                      <Lock className="w-3 h-3 mr-1" /> Bị khoá
                     </span>
                   )}
                   {u.emailVerified === false ? (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
-                      <ShieldAlert className="w-3 h-3" /> Chưa xác minh
+                    <span className="dash-badge dash-badge-amber">
+                      <ShieldAlert className="w-3 h-3 mr-1" /> Chưa xác minh
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      <ShieldCheck className="w-3 h-3" /> Đã xác minh
+                    <span className="dash-badge dash-badge-green">
+                      <ShieldCheck className="w-3 h-3 mr-1" /> Đã xác minh
                     </span>
                   )}
                 </div>
-                <div className="text-[11px] text-slate-500 font-medium flex flex-wrap gap-x-3 gap-y-0.5">
-                  <span>{u.email || "—"}</span>
+                <div className="text-[11px] font-medium flex flex-wrap gap-x-3 gap-y-0.5" style={{ color: "var(--dash-text-faint)" }}>
+                  <span style={{ color: "var(--dash-text-muted)" }}>{u.email || "—"}</span>
                   <span>{u.phone || "—"}</span>
                   {u.createdAt && <span>Tham gia {ngayGio(u.createdAt)}</span>}
                   <span>{u.usageCount ?? 0} lượt tư vấn</span>
                 </div>
                 {u.disabled && u.disabledReason && (
-                  <div className="text-[11px] text-rose-600 font-medium">
+                  <div className="text-[11px] font-medium" style={{ color: "#EF4444" }}>
                     Lý do khoá: {u.disabledReason}
                   </div>
                 )}
@@ -273,11 +301,8 @@ export default function UserManagementPage() {
                 <button
                   onClick={() => doiPremium(u)}
                   disabled={busy === u.id}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
-                    u.isPremium
-                      ? "border-amber-300 text-amber-700 bg-amber-50/50 hover:bg-amber-100"
-                      : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                  }`}
+                  className="dash-btn"
+                  style={u.isPremium ? { borderColor: "#F59E0B", color: "#F59E0B" } : {}}
                 >
                   <Crown className="w-3.5 h-3.5" />
                   <span>{u.isPremium ? "Gỡ Premium" : "Cấp Premium"}</span>
@@ -287,11 +312,8 @@ export default function UserManagementPage() {
                   <button
                     onClick={() => doiKhoa(u)}
                     disabled={busy === u.id}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
-                      u.disabled
-                        ? "border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                    }`}
+                    className="dash-btn"
+                    style={u.disabled ? { borderColor: "#10B981", color: "#10B981" } : {}}
                   >
                     {u.disabled ? (
                       <>
@@ -312,7 +334,8 @@ export default function UserManagementPage() {
                       setXacNhan("");
                     }}
                     disabled={busy === u.id}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
+                    className="dash-btn"
+                    style={{ color: "#EF4444" }}
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Xoá
                   </button>
@@ -323,8 +346,8 @@ export default function UserManagementPage() {
         })}
       </div>
 
-      <div className="flex items-start gap-2.5 text-[11px] text-slate-500 font-medium bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-        <EyeOff className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
+      <div className="dash-card-2 flex items-start gap-2.5 text-[11px] font-medium" style={{ color: "var(--dash-text-muted)" }}>
+        <EyeOff className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "var(--dash-text-faint)" }} />
         <p>
           Email, số điện thoại và ngày sinh được che bảo vệ ngay ở backend trước khi trả về —
           ngay cả trong công cụ kiểm tra mạng Network cũng chỉ hiển thị bản đã che.
@@ -334,50 +357,62 @@ export default function UserManagementPage() {
       {/* Modal Xác nhận xoá */}
       <Modal open={!!xoa} onClose={() => setXoa(null)}>
         {xoa && (
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 border border-slate-200 shadow-2xl space-y-4">
+          <div
+            className="rounded-3xl max-w-md w-full p-6 border shadow-2xl space-y-4"
+            style={{
+              background: "var(--dash-surface)",
+              borderColor: "var(--dash-border)",
+              color: "var(--dash-text)",
+            }}
+          >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                <div
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}
+                >
                   <Trash2 className="w-5 h-5" />
                 </div>
-                <h2 className="text-base font-black text-slate-900">Xác Nhận Xoá Tài Khoản</h2>
+                <h2 className="text-base font-black" style={{ color: "var(--dash-text)" }}>Xác Nhận Xoá Tài Khoản</h2>
               </div>
               <button
                 onClick={() => setXoa(null)}
-                className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="p-1.5 rounded-xl transition cursor-pointer"
+                style={{ color: "var(--dash-text-faint)" }}
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-600 font-medium leading-relaxed">
+            <p className="text-xs font-medium leading-relaxed" style={{ color: "var(--dash-text-muted)" }}>
               Thao tác này xoá vĩnh viễn tài khoản khỏi <strong>Firebase</strong>,{" "}
               <strong>MongoDB</strong> và toàn bộ <strong>lịch sử tư vấn</strong> của
               người này. Hành động này không thể hoàn tác.
             </p>
 
             <div className="space-y-1.5">
-              <label className="block text-[11px] font-black text-slate-700 uppercase tracking-wider">
-                Gõ lại <span className="text-rose-600">{xoa.name}</span> để xác nhận
+              <label className="dash-section-label">
+                Gõ lại <span style={{ color: "#EF4444" }}>{xoa.name}</span> để xác nhận
               </label>
               <input
                 value={xacNhan}
                 onChange={(e) => setXacNhan(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-rose-500"
+                className="dash-input w-full text-xs font-bold"
               />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setXoa(null)}
-                className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition cursor-pointer active:scale-[0.98]"
+                className="dash-btn"
               >
                 Huỷ bỏ
               </button>
               <button
                 onClick={xoaThat}
                 disabled={xacNhan.trim() !== (xoa.name ?? "") || busy === xoa.id}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-40 text-white font-bold text-xs transition cursor-pointer active:scale-[0.98]"
+                className="dash-btn"
+                style={{ background: "#EF4444", color: "#fff", borderColor: "#EF4444" }}
               >
                 {busy === xoa.id ? "Đang xoá…" : "Xoá vĩnh viễn"}
               </button>

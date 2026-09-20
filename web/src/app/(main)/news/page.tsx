@@ -74,7 +74,7 @@ export default function NewsPage() {
   const [featured, ...rest] = filtered;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 pb-24 space-y-6 animate-fade-in-up">
+    <div className="max-w-7xl 2xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-24 space-y-6 animate-fade-in-up w-full">
       {/* HEADER */}
       <div className="bg-white rounded-3xl p-6 sm:p-9 border border-slate-200/90 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">

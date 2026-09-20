@@ -10,6 +10,8 @@ import api from "@/lib/api";
 export interface Muc {
   ten: string;
   soLuong: number;
+  khamPha?: number;
+  tuVan?: number;
 }
 
 export interface Analytics {
@@ -24,7 +26,12 @@ export interface Analytics {
     thongBaoChuaDoc: number;
   };
   soNgay: number;
-  theoNgay: { ngay: string; soLuong: number }[];
+  theoNgay: {
+    ngay: string;
+    soLuong: number;
+    khamPha?: number;
+    tuVan?: number;
+  }[];
   topNganh: Muc[];
   theoNhomNganh: Muc[];
   topToHop: Muc[];
@@ -46,12 +53,24 @@ export interface Analytics {
     tongDiem: number | null;
     nganh: string | null;
     nhom: string | null;
+    danhSachNganh?: {
+      name: string;
+      field?: string;
+      rank?: number;
+      code?: string;
+    }[];
   }[];
   chatLuongDauVao: {
     thieuDiemThi: number;
     thieuGioiTinh: number;
     /** Bản ghi tạo trước khi hệ thống bắt đầu ghi cờ `genderMissing` */
     khongRoGioiTinh: number;
+  };
+  danhGia?: {
+    trungBinhSao: number;
+    tongDanhGia: number;
+    phanBoSao: { sao: number; soLuong: number }[];
+    phanHoiHuuIch: { nhan: string; soLuong: number }[];
   };
 }
 

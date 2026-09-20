@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { KineticHeading } from "@/components/motion/KineticHeading";
 import { ShimmerButton } from "@/components/motion/ShimmerButton";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const HERO_SLIDES = [
   {
@@ -46,6 +47,14 @@ const HERO_SLIDES = [
 export function HeroBanner() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const { user } = useAuthStore();
+
+  const resolveHref = (href: string) => {
+    if (href === "/predict" && !user) {
+      return "/auth/login?redirect=/predict";
+    }
+    return href;
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -136,7 +145,7 @@ export function HeroBanner() {
 
               {/* 2 Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-4">
-                <Link href={slide.primaryBtn.href}>
+                <Link href={resolveHref(slide.primaryBtn.href)}>
                   <ShimmerButton
                     shimmerColor="#38bdf8"
                     className="text-xs sm:text-sm"

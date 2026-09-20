@@ -93,9 +93,9 @@ class CrawlerService:
                         post_content = detail_soup.find("div", class_="post-content")
                         if post_content:
                             # Chỉnh sửa lại các link tương đối thành tuyệt đối
-                            for tag in post_content.find_all(["img", "a"]):
+                            for tag in post_content.find_all(["img", "a", "iframe"]):
                                 if (
-                                    tag.name == "img"
+                                    tag.name in ("img", "iframe")
                                     and tag.has_attr("src")
                                     and tag["src"].startswith("/")
                                 ):
