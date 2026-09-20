@@ -29,6 +29,14 @@ function LoginFormContent() {
     }
   }, [searchParams]);
 
+  const getPostLoginRedirect = (role?: string) => {
+    const redirectParam = searchParams.get("redirect");
+    if (redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")) {
+      return redirectParam;
+    }
+    return role === "admin" ? "/dashboard" : "/";
+  };
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -46,18 +54,10 @@ function LoginFormContent() {
         try {
           const profile = await AuthService.getProfile(res.uid);
           setUser(profile);
-          if (profile.role === "admin") {
-            router.push("/dashboard");
-          } else {
-            router.push("/");
-          }
+          router.push(getPostLoginRedirect(profile.role));
         } catch {
           setUser({ id: res.uid, name: email.split("@")[0], email, role: res.role });
-          if (res.role === "admin") {
-            router.push("/dashboard");
-          } else {
-            router.push("/");
-          }
+          router.push(getPostLoginRedirect(res.role));
         }
       } else {
         setError(res.status === "success" ? "Thiếu Token xác thực." : res.status);
@@ -86,19 +86,14 @@ function LoginFormContent() {
           // Tài khoản Google chưa có giới tính → hỏi ngay, đừng để mô hình đoán
           // mặc định "Nu" (khám phá Top-5 mất 3,1 điểm trên tập test của mô hình Hướng 1).
           if (res.needsProfile) {
-            router.push("/profile?setup=1");
-          } else if (profile.role === "admin") {
-            router.push("/dashboard");
+            const redirectParam = searchParams.get("redirect");
+            router.push(redirectParam ? `/profile?setup=1&redirect=${encodeURIComponent(redirectParam)}` : "/profile?setup=1");
           } else {
-            router.push("/");
+            router.push(getPostLoginRedirect(profile.role));
           }
         } catch {
           setUser({ id: res.uid, name: result.user.displayName || "User", email: result.user.email || "", role: res.role });
-          if (res.role === "admin") {
-            router.push("/dashboard");
-          } else {
-            router.push("/");
-          }
+          router.push(getPostLoginRedirect(res.role));
         }
       } else {
         setError("Đăng nhập bằng Google thất bại.");

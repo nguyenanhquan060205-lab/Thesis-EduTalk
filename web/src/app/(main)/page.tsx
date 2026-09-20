@@ -87,14 +87,14 @@ export default function HomePage() {
       {/* ==================================================================== */}
       {/* VÙNG 3: INFINITE MARQUEE STRIP (TRÀN VIỀN, NỀN SLATE-100)            */}
       {/* ==================================================================== */}
-      <div className="w-full bg-slate-100/80 border-y border-slate-200/80 py-3.5 overflow-hidden">
+      <div className="w-full bg-slate-100/80 dark:bg-[#0D1729]/80 border-y border-slate-200/80 dark:border-slate-800 py-3.5 overflow-hidden transition-colors duration-300">
         <Marquee repeat={5} duration="40s">
           {MARQUEE_ITEMS.map(({ icon: Icon, text }, idx) => (
             <span
               key={idx}
-              className="inline-flex items-center gap-2 text-xs font-black text-slate-700 px-6 tracking-wide"
+              className="inline-flex items-center gap-2 text-xs font-black text-slate-700 dark:text-slate-300 px-6 tracking-wide"
             >
-              <Icon className="w-4 h-4 text-[#0054A6] shrink-0" strokeWidth={2.25} aria-hidden />
+              <Icon className="w-4 h-4 text-[#0054A6] dark:text-sky-400 shrink-0" strokeWidth={2.25} aria-hidden />
               {text}
             </span>
           ))}
@@ -110,28 +110,28 @@ export default function HomePage() {
             const Icon = strip.icon;
             return (
               <Link key={strip.id} href={strip.href} className="group block">
-                <SpotlightCard className="h-full flex flex-col justify-between p-7 hover:border-[#0054A6]/60">
+                <SpotlightCard className="h-full flex flex-col justify-between p-7 hover:border-[#0054A6]/60 dark:hover:border-sky-500/50">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-blue-200 bg-blue-50 text-[#0054A6] shadow-2xs group-hover:scale-110 group-hover:bg-[#0054A6] group-hover:text-white transition-all">
+                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-blue-200 dark:border-sky-800/60 bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 shadow-2xs group-hover:scale-110 group-hover:bg-[#0054A6] group-hover:text-white transition-all">
                         <Icon className="w-6 h-6" />
                       </div>
-                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {strip.tag}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
+                      <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-[#0054A6] dark:group-hover:text-sky-400 transition-colors leading-snug">
                         {strip.title}
                       </h3>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed mt-2">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed mt-2">
                         {strip.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-[#0054A6]">
+                  <div className="pt-5 mt-5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-black text-[#0054A6] dark:text-sky-400">
                     <span>Khám phá ngay</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                   </div>
@@ -156,14 +156,14 @@ export default function HomePage() {
       {/* VÙNG 7: PHƯƠNG THỨC XÉT TUYỂN (CHỈ PHƯƠNG THỨC ĐIỂM THI THPT 2026)   */}
       {/* ==================================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8 text-left">
-        <div className="border-b border-slate-200 pb-5">
-          <span className="text-xs font-black text-[#0054A6] uppercase tracking-wider">
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
+          <span className="text-xs font-black text-[#0054A6] dark:text-sky-400 uppercase tracking-wider">
             Cơ Sở Tuyển Sinh Áp Dụng
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
             Xét Điểm Thi Tốt Nghiệp THPT 2026
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">
             Hệ thống phân tích và ước lượng khả năng trúng tuyển dựa trên kết quả thi tốt nghiệp THPT 2026 theo đề án tuyển sinh chính thức của HUIT.
           </p>
         </div>
@@ -171,7 +171,7 @@ export default function HomePage() {
         {/* Khối trình bày chủ đích 1 phương thức: chia cột thoáng, có quy tắc tính và 15 tổ hợp thực tế */}
         <SpotlightCard
           spotlightColor="rgba(0, 84, 166, 0.08)"
-          className="p-6 sm:p-10 border border-slate-200/90 rounded-3xl bg-white shadow-xs space-y-8"
+          className="p-6 sm:p-10 rounded-3xl space-y-8"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Cột trái: Thông tin phương thức & Quy tắc tính điểm (5 cột) */}
@@ -181,41 +181,41 @@ export default function HomePage() {
                   <span className="px-3 py-1 rounded-md bg-[#0054A6] text-white text-xs font-black shadow-2xs">
                     Phương Thức 1
                   </span>
-                  <span className="text-xs font-bold text-slate-400">Mã phương thức: 100</span>
+                  <span className="text-xs font-bold text-slate-400 dark:text-slate-500">Mã phương thức: 100</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
                   Xét Theo Điểm Thi Tốt Nghiệp THPT
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                   Sử dụng tổng điểm 3 môn thi tốt nghiệp THPT năm 2026 theo tổ hợp môn tương ứng của từng ngành để xét tuyển vào 39 chuyên ngành đào tạo chính quy tại HUIT.
                 </p>
               </div>
 
               {/* Chi tiết cách tính điểm */}
-              <div className="space-y-3 pt-4 border-t border-slate-100">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-700">
+              <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Quy Tắc Tính Điểm & Đối Soát
                 </h4>
                 <div className="space-y-2.5">
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0054A6] border border-blue-200/60 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 border border-blue-200/60 dark:border-sky-800 flex items-center justify-center shrink-0 mt-0.5">
                       <Calculator className="w-4 h-4" />
                     </div>
                     <div className="text-xs">
-                      <strong className="text-slate-900 block font-bold">Công thức xét tuyển:</strong>
-                      <span className="text-slate-600 font-medium leading-relaxed">
+                      <strong className="text-slate-900 dark:text-white block font-bold">Công thức xét tuyển:</strong>
+                      <span className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                         Điểm xét = Điểm môn 1 + Điểm môn 2 + Điểm môn 3 + Điểm ưu tiên (nếu có). Thang điểm chuẩn 30.
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0054A6] border border-blue-200/60 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 border border-blue-200/60 dark:border-sky-800 flex items-center justify-center shrink-0 mt-0.5">
                       <ShieldCheck className="w-4 h-4" />
                     </div>
                     <div className="text-xs">
-                      <strong className="text-slate-900 block font-bold">Căn cứ dữ liệu:</strong>
-                      <span className="text-slate-600 font-medium leading-relaxed">
+                      <strong className="text-slate-900 dark:text-white block font-bold">Căn cứ dữ liệu:</strong>
+                      <span className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                         {ADMISSION_SOURCE}
                       </span>
                     </div>
@@ -225,17 +225,17 @@ export default function HomePage() {
             </div>
 
             {/* Cột phải: 15 Tổ hợp môn áp dụng từ dữ liệu thật (7 cột) */}
-            <div className="lg:col-span-7 space-y-4 lg:pl-6 lg:border-l lg:border-slate-100">
+            <div className="lg:col-span-7 space-y-4 lg:pl-6 lg:border-l lg:border-slate-100 dark:lg:border-slate-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-black text-slate-900">
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white">
                     15 Tổ Hợp Môn Xét Tuyển Được Hỗ Trợ
                   </h4>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                     Thí sinh có thể đối soát và nhận gợi ý ngành phù hợp theo các tổ hợp sau:
                   </p>
                 </div>
-                <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-blue-50 text-[#0054A6] border border-blue-200 text-[10px] font-black shrink-0">
+                <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 border border-blue-200 dark:border-sky-800 text-[10px] font-black shrink-0">
                   {Object.keys(ADMISSION_BLOCKS).length} Tổ hợp
                 </span>
               </div>
@@ -244,18 +244,18 @@ export default function HomePage() {
                 {Object.entries(ADMISSION_BLOCKS).map(([code, info]) => (
                   <div
                     key={code}
-                    className="p-3 rounded-xl bg-slate-50/90 border border-slate-200/80 hover:border-[#0054A6]/50 hover:bg-blue-50/30 transition-all space-y-1"
+                    className="p-3 rounded-xl bg-slate-50/90 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 hover:border-[#0054A6]/50 dark:hover:border-sky-500/50 hover:bg-blue-50/30 dark:hover:bg-sky-950/30 transition-all space-y-1"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-black text-[#0054A6]">{code}</span>
-                      <span className="text-[9px] font-semibold text-slate-500 truncate max-w-[80px]">
+                      <span className="text-xs font-black text-[#0054A6] dark:text-sky-400">{code}</span>
+                      <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[80px]">
                         {info.category}
                       </span>
                     </div>
-                    <p className="text-[11px] font-bold text-slate-800 leading-snug truncate" title={info.name}>
+                    <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-snug truncate" title={info.name}>
                       {info.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate" title={info.desc}>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate" title={info.desc}>
                       {info.desc}
                     </p>
                   </div>
@@ -265,10 +265,10 @@ export default function HomePage() {
           </div>
 
           {/* Dòng ghi chú phạm vi trung thực */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
-            <Info className="w-5 h-5 text-slate-500 shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-600 font-medium leading-relaxed">
-              <strong className="text-slate-800 font-bold">Lưu ý về phạm vi hệ thống:</strong> EduTalk hiện chỉ phân tích và tư vấn theo phương thức <strong>Xét điểm thi tốt nghiệp THPT 2026</strong> dựa trên dữ liệu điểm chuẩn đã công bố. Các phương thức xét tuyển khác của Nhà trường (như Xét học bạ THPT, Điểm thi ĐGNL ĐHQG-HCM, Tuyển thẳng) vẫn có hiệu lực trong đề án tuyển sinh chính thức nhưng nằm ngoài phạm vi mô hình dự báo của công cụ này.
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+            <Info className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+              <strong className="text-slate-800 dark:text-slate-200 font-bold">Lưu ý về phạm vi hệ thống:</strong> EduTalk hiện chỉ phân tích và tư vấn theo phương thức <strong>Xét điểm thi tốt nghiệp THPT 2026</strong> dựa trên dữ liệu điểm chuẩn đã công bố. Các phương thức xét tuyển khác của Nhà trường (như Xét học bạ THPT, Điểm thi ĐGNL ĐHQG-HCM, Tuyển thẳng) vẫn có hiệu lực trong đề án tuyển sinh chính thức nhưng nằm ngoài phạm vi mô hình dự báo của công cụ này.
             </div>
           </div>
         </SpotlightCard>

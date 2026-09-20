@@ -42,6 +42,7 @@ import {
 } from "@/services/predict";
 import { ADMISSION_BLOCKS, FIELD_STYLE, DEFAULT_FIELD_STYLE, ADMISSION_SOURCE } from "@/lib/admission";
 import Modal from "@/components/ui/Modal";
+import { useAuthStore } from "@/store/useAuthStore";
 
 /** Một ngành đã gắn kèm nhóm ngành của nó, để lọc và hiển thị phẳng. */
 interface MajorRow extends CatalogMajor {
@@ -89,24 +90,26 @@ function CutoffBars({ cutoffs }: { cutoffs: Record<string, number> }) {
           <div key={y} className="flex flex-col items-center gap-1 group/bar">
             <span
               className={`text-[10px] font-black tabular-nums transition-colors leading-tight ${
-                isLatest ? "text-[#0054A6]" : "text-slate-500 group-hover/bar:text-slate-700"
+                isLatest
+                  ? "text-[#0054A6] dark:text-sky-400"
+                  : "text-slate-500 dark:text-slate-400 group-hover/bar:text-slate-900 dark:group-hover/bar:text-white"
               }`}
             >
               {typeof v === "number" ? v.toFixed(2) : "—"}
             </span>
-            <div className="w-full h-8 flex items-end rounded-lg bg-slate-200/80 p-0.5 overflow-hidden">
+            <div className="w-full h-8 flex items-end rounded-lg bg-slate-200/80 dark:bg-slate-800 p-0.5 overflow-hidden">
               <div
                 style={{ height: `${pct}%` }}
                 className={`w-full rounded-md transition-all duration-500 ease-out ${
                   isLatest
-                    ? "bg-gradient-to-t from-[#0054A6] to-[#0072CE] shadow-xs"
-                    : "bg-slate-300 group-hover/bar:bg-slate-400"
+                    ? "bg-gradient-to-t from-[#0054A6] to-[#0072CE] dark:from-sky-500 dark:to-blue-600 shadow-xs"
+                    : "bg-slate-300 dark:bg-slate-700 group-hover/bar:bg-slate-400 dark:group-hover/bar:bg-slate-500"
                 }`}
               />
             </div>
             <span
               className={`text-[9px] font-bold ${
-                isLatest ? "text-[#0054A6] font-black" : "text-slate-400"
+                isLatest ? "text-[#0054A6] dark:text-sky-400 font-black" : "text-slate-400 dark:text-slate-500"
               }`}
             >
               {y}
@@ -142,6 +145,7 @@ function TrendBadge({ cutoffs }: { cutoffs: Record<string, number> }) {
 }
 
 export default function MajorsPage() {
+  const { user } = useAuthStore();
   const [fields, setFields] = useState<CatalogField[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -571,7 +575,7 @@ export default function MajorsPage() {
                       <span>{m.fieldName}</span>
                     </span>
 
-                    <span className="font-mono text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                    <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
                       {m.code}
                     </span>
                   </div>
@@ -656,7 +660,7 @@ export default function MajorsPage() {
                     onClick={() => setDetail(m)}
                     className="hover:bg-blue-50/40 transition cursor-pointer"
                   >
-                    <td className="px-5 py-3.5 font-mono font-black text-[#0054A6]">
+                    <td className="px-5 py-3.5 font-black text-[#0054A6]">
                       {m.code}
                     </td>
                     <td className="px-5 py-3.5 font-extrabold text-slate-900">{m.name}</td>
@@ -741,7 +745,7 @@ export default function MajorsPage() {
                   <button
                     type="button"
                     onClick={() => handleCopyCode(detail.code)}
-                    className="font-mono text-[11px] font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
+                    className="text-[11px] font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
                     title="Sao chép mã ngành"
                   >
                     {copiedCode ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
@@ -837,7 +841,7 @@ export default function MajorsPage() {
                       className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col gap-1.5"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-xs font-black text-white bg-slate-800 px-2 py-0.5 rounded-md">
+                        <span className="text-xs font-black text-white bg-slate-800 px-2 py-0.5 rounded-md">
                           {b}
                         </span>
                         <span className="text-[10px] font-bold text-slate-400">
@@ -869,7 +873,7 @@ export default function MajorsPage() {
               </button>
 
               <Link
-                href="/predict"
+                href={user ? "/predict" : "/auth/login?redirect=/predict"}
                 className="px-6 py-3 rounded-2xl bg-[#0054A6] hover:bg-[#00478F] text-white font-black text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95"
               >
                 <Sparkles className="w-4 h-4" />

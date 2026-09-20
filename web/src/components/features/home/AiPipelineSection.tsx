@@ -14,8 +14,10 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function AiPipelineSection() {
+  const { user } = useAuthStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeUserRef = useRef<HTMLDivElement>(null);
   const nodeXgboostRef = useRef<HTMLDivElement>(null);
@@ -50,59 +52,74 @@ export function AiPipelineSection() {
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6 sm:gap-4 items-center">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-4 items-stretch">
 
           {/* Node 1: Thí sinh Input */}
-          <div ref={nodeUserRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-cyan-400/40 transition-all group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/10">
+          <div
+            ref={nodeUserRef}
+            className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-cyan-400/40 transition-all group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/10 shrink-0">
               <UserCheck className="w-7 h-7" />
             </div>
             <span className="text-xs font-black text-white">1. Dữ Liệu Thí Sinh</span>
-            <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+            <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
               15 tổ hợp môn + 10 câu trắc nghiệm sở thích Likert
             </p>
           </div>
 
           {/* Node 2: Pipeline XGBoost */}
-          <div ref={nodeXgboostRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-blue-400/40 transition-all group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/10">
+          <div
+            ref={nodeXgboostRef}
+            className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-blue-400/40 transition-all group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/10 shrink-0">
               <Cpu className="w-7 h-7" />
             </div>
             <span className="text-xs font-black text-white">2. Pipeline XGBoost</span>
-            <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-              Chọn nhóm → mô hình riêng của nhóm, gợi ý 2 ngành<br />Không chọn → mô hình 39 ngành, gợi ý 5 ngành
+            <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
+              Mô hình 2 tầng: 39 ngành (Top 5) hoặc theo nhóm (Top 2)
             </p>
           </div>
 
           {/* Node 3: XAI SHAP */}
-          <div ref={nodeShapRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-purple-400/40 transition-all group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/10">
+          <div
+            ref={nodeShapRef}
+            className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-purple-400/40 transition-all group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/10 shrink-0">
               <BrainCircuit className="w-7 h-7" />
             </div>
             <span className="text-xs font-black text-white">3. Minh Bạch XAI SHAP</span>
-            <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-              TreeSHAP giải thích đóng góp 63 đặc trưng cho từng gợi ý ngành
+            <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
+              TreeSHAP giải thích đóng góp 63 đặc trưng cho từng gợi ý
             </p>
           </div>
 
           {/* Node 4: ChromaDB + RAG */}
-          <div ref={nodeRagRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-amber-400/40 transition-all group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 flex items-center justify-center text-amber-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/10">
+          <div
+            ref={nodeRagRef}
+            className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-amber-400/40 transition-all group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 flex items-center justify-center text-amber-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/10 shrink-0">
               <Database className="w-7 h-7" />
             </div>
             <span className="text-xs font-black text-white">4. Tri Thức Tuyển Sinh</span>
-            <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+            <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
               ChromaDB RAG truy xuất điểm chuẩn & đề án HUIT 2026
             </p>
           </div>
 
           {/* Node 5: Trúng tuyển HUIT */}
-          <div ref={nodeResultRef} className="flex flex-col items-center text-center p-5 rounded-2xl bg-gradient-to-b from-[#0054A6]/40 to-[#0054A6]/20 border border-[#00B4D8]/50 backdrop-blur-md hover:scale-105 transition-all group shadow-xl shadow-[#0054A6]/20">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#00B4D8] text-white flex items-center justify-center mb-3 shadow-lg shadow-cyan-500/25">
+          <div
+            ref={nodeResultRef}
+            className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-gradient-to-b from-[#0054A6]/40 to-[#0054A6]/20 border border-[#00B4D8]/50 backdrop-blur-md hover:border-cyan-300 transition-all group shadow-xl shadow-[#0054A6]/20"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#00B4D8] text-white flex items-center justify-center mb-3 shadow-lg shadow-cyan-500/25 shrink-0 group-hover:scale-110 transition-transform">
               <GraduationCap className="w-7 h-7" />
             </div>
             <span className="text-xs font-black text-white">5. Đề Xuất Ngành Phù Hợp</span>
-            <p className="text-[11px] text-cyan-200 mt-1 leading-snug font-semibold">
+            <p className="text-[11px] text-cyan-200 mt-2 leading-relaxed font-semibold flex-1 flex items-center justify-center">
               Kèm tổ hợp xét tuyển & điểm chuẩn 3 năm của từng ngành
             </p>
           </div>
@@ -153,7 +170,7 @@ export function AiPipelineSection() {
             <span>Mô hình kiểm định chéo K-Fold đạt độ chính xác cao trên tập dữ liệu tuyển sinh HUIT</span>
           </div>
           <Link
-            href="/predict"
+            href={user ? "/predict" : "/auth/login?redirect=/predict"}
             className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-[#0054A6] hover:from-cyan-400 hover:to-[#0072CE] text-white text-xs font-black transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2 shrink-0 group active:scale-95"
           >
             <span>Trải Nghiệm Khảo Sát Ngay</span>

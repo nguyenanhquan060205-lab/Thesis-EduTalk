@@ -58,9 +58,14 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
         {"status": "unread"}
     )
 
-    # ── Lượt tư vấn theo ngày ────────────────────────────────────────────────
+    # ── Lượt tư vấn theo ngày (tách theo chế độ khám phá vs tư vấn định hướng) ──
     theo_ngay = [
-        {"ngay": d["_id"], "soLuong": d["soLuong"]}
+        {
+            "ngay": d["_id"],
+            "soLuong": d["soLuong"],
+            "khamPha": d.get("khamPha", 0),
+            "tuVan": d.get("tuVan", 0),
+        }
         async for d in db["prediction_history"].aggregate(
             [
                 {"$match": {"createdAt": {"$gte": moc}}},
@@ -73,6 +78,24 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
                             }
                         },
                         "soLuong": {"$sum": 1},
+                        "khamPha": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$eq": ["$mode", "explore"]},
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
+                        "tuVan": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$ne": ["$mode", "explore"]},
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
                     }
                 },
                 {"$sort": {"_id": 1}},
@@ -80,16 +103,45 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
         )
     ]
 
-    # ── Ngành / nhóm ngành / tổ hợp / mục tiêu ───────────────────────────────
+    # ── Ngành / nhóm ngành theo chuẩn kiến trúc 2 tầng (Khám phá: Top-5, Tư vấn: Top-2) ──
+    match_2_tang = {
+        "$match": {
+            "$or": [
+                {"mode": "explore", "majors.rank": {"$lte": 5}},
+                {"mode": {"$ne": "explore"}, "majors.rank": {"$lte": 2}},
+            ]
+        }
+    }
+
     top_nganh = [
-        {"ten": d["_id"], "soLuong": d["soLuong"]}
+        {
+            "ten": d["_id"],
+            "soLuong": d["soLuong"],
+            "khamPha": d.get("khamPha", 0),
+            "tuVan": d.get("tuVan", 0),
+        }
         async for d in db["prediction_history"].aggregate(
             [
                 {"$unwind": "$majors"},
-                {"$match": {"majors.rank": 1}},
-                {"$group": {"_id": "$majors.name", "soLuong": {"$sum": 1}}},
+                match_2_tang,
+                {
+                    "$group": {
+                        "_id": "$majors.name",
+                        "soLuong": {"$sum": 1},
+                        "khamPha": {
+                            "$sum": {
+                                "$cond": [{"$eq": ["$mode", "explore"]}, 1, 0]
+                            }
+                        },
+                        "tuVan": {
+                            "$sum": {
+                                "$cond": [{"$ne": ["$mode", "explore"]}, 1, 0]
+                            }
+                        },
+                    }
+                },
                 {"$sort": {"soLuong": -1}},
-                {"$limit": 10},
+                {"$limit": 15},
             ]
         )
     ]
@@ -98,7 +150,7 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
         async for d in db["prediction_history"].aggregate(
             [
                 {"$unwind": "$majors"},
-                {"$match": {"majors.rank": 1}},
+                match_2_tang,
                 {"$group": {"_id": "$majors.field", "soLuong": {"$sum": 1}}},
                 {"$sort": {"soLuong": -1}},
             ]
@@ -169,7 +221,19 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
     async for d in (
         db["prediction_history"].find().sort("createdAt", -1).limit(10)
     ):
-        dau = (d.get("majors") or [{}])[0]
+        mode_val = d.get("mode")
+        majors_raw = d.get("majors") or []
+        gioi_han_k = 5 if mode_val == "explore" else 2
+        danh_sach_nganh = [
+            {
+                "name": m.get("name"),
+                "field": m.get("field"),
+                "rank": m.get("rank"),
+                "code": m.get("code"),
+            }
+            for m in majors_raw[:gioi_han_k]
+        ]
+        dau = majors_raw[0] if majors_raw else {}
         vao = d.get("input") or {}
         diem = vao.get("scores")
         hoat_dong.append(
@@ -177,13 +241,44 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
                 "thoiGian": d["createdAt"].isoformat()
                 if isinstance(d.get("createdAt"), datetime)
                 else None,
-                "cheDo": d.get("mode"),
+                "cheDo": mode_val,
                 "toHop": vao.get("subjectGroup"),
                 "tongDiem": round(sum(diem), 2) if diem else None,
                 "nganh": dau.get("name"),
                 "nhom": dau.get("field"),
+                "danhSachNganh": danh_sach_nganh,
             }
         )
+
+    # ── Đánh giá người dùng & Phản hồi trúng tuyển ───────────────────────────
+    danh_gia_sao = [
+        {"sao": d["_id"], "soLuong": d["soLuong"]}
+        async for d in db["danh_gia_app"].aggregate(
+            [
+                {"$group": {"_id": "$sao", "soLuong": {"$sum": 1}}},
+                {"$sort": {"_id": -1}},
+            ]
+        )
+    ]
+    tong_danh_gia = await db["danh_gia_app"].count_documents({})
+    tb_sao = 0.0
+    if tong_danh_gia > 0:
+        agg_sao = await db["danh_gia_app"].aggregate(
+            [{"$group": {"_id": None, "tb": {"$avg": "$sao"}}}]
+        ).to_list(1)
+        if agg_sao and agg_sao[0].get("tb") is not None:
+            tb_sao = round(agg_sao[0]["tb"], 1)
+
+    phan_hoi_huu_ich = [
+        {"nhan": d["_id"] or "Chưa phản hồi", "soLuong": d["soLuong"]}
+        async for d in db["prediction_history"].aggregate(
+            [
+                {"$match": {"phan_hoi.goiYHuuIch": {"$exists": True, "$ne": None}}},
+                {"$group": {"_id": "$phan_hoi.goiYHuuIch", "soLuong": {"$sum": 1}}},
+                {"$sort": {"soLuong": -1}},
+            ]
+        )
+    ]
 
     return {
         "tongQuan": {
@@ -217,4 +312,10 @@ async def get_analytics(days: int = 30, db=Depends(get_database)):
             "nguoiMoiThayDoi": phan_tram(nguoi_moi, nguoi_moi_truoc),
         },
         "hoatDongGanDay": hoat_dong,
+        "danhGia": {
+            "trungBinhSao": tb_sao,
+            "tongDanhGia": tong_danh_gia,
+            "phanBoSao": danh_gia_sao,
+            "phanHoiHuuIch": phan_hoi_huu_ich,
+        },
     }

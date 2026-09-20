@@ -2,14 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Minus, Send, Maximize2 } from "lucide-react";
+import { MessageSquare, Minus, Send, Maximize2, LogIn } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import Lottie from "lottie-react";
 import ReactMarkdown from "react-markdown";
 import animationData from "@/assets/animations/Live chatbot.json";
-import api from "@/lib/api";
-
-type Message = { id: number; text: string; sender: "bot" | "user" };
+import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
 
 const SUGGESTIONS = [
   "Điểm chuẩn ngành CNTT 2026?",
@@ -18,16 +18,14 @@ const SUGGESTIONS = [
 ];
 
 export default function ChatWidget() {
+  const { user } = useAuthStore();
+  const { messages, isTyping, syncGreeting, sendMessage } = useChatStore();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   // Bong bóng mời chào chỉ hiện lúc đầu rồi tự ẩn. Để hiện mãi thì nó là một lớp
   // phủ cố định che chữ ở MỌI trang — đã thấy nó đè lên tiêu đề ở trang chủ.
   const [hienLoiMoi, setHienLoiMoi] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "Chào bạn! Mình là Trợ lý EduTalk. Mình có thể giúp gì cho bạn?", sender: "bot" }
-  ]);
   
   const pathname = usePathname();
   const router = useRouter();
@@ -35,10 +33,10 @@ export default function ChatWidget() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
 
-  // Chốt chặn gửi trùng. Phải là ref chứ KHÔNG dùng state `isTyping`: state chỉ
-  // đổi sau khi render lại, nên hai lời gọi trong cùng một nhịp sự kiện đều đọc
-  // được giá trị cũ và cùng lọt qua. Ref đổi ngay lập tức.
-  const dangGui = useRef(false);
+  // Đồng bộ lời chào theo trạng thái đăng nhập
+  useEffect(() => {
+    syncGreeting(user);
+  }, [user, syncGreeting]);
 
   // Ẩn lời mời sau 8 giây — đủ để đọc, không đủ lâu để thành vật cản.
   useEffect(() => {
@@ -74,53 +72,11 @@ export default function ChatWidget() {
   // Không hiển thị widget nếu đang ở trang /chat full screen
   if (pathname === "/chat") return null;
 
-  const sendMessageText = async (text: string) => {
-    if (!text.trim() || dangGui.current) return;
-    dangGui.current = true;
-
-    // Thêm tin nhắn của user
-    const newUserMsg: Message = { id: Date.now(), text: text.trim(), sender: "user" };
-    setMessages(prev => [...prev, newUserMsg]);
-    setInput("");
-    setIsTyping(true);
-
-    try {
-      // Chuẩn bị history cho API
-      const history = messages
-        .filter(m => m.id !== 1)
-        .map(m => ({
-          role: m.sender === "bot" ? "model" : "user",
-          text: m.text
-        }));
-
-      // Gọi API Gemini
-      const res = await api.post("/api/v1/chat/message", {
-        message: text.trim(),
-        history: history
-      });
-
-      const botResponse = res.data.response || "Xin lỗi, mình không thể trả lời lúc này.";
-      
-      setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
-        text: botResponse, 
-        sender: "bot"
-      }]);
-    } catch (error) {
-      console.error("Lỗi khi gọi AI:", error);
-      setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
-        text: "Hệ thống AI đang bận hoặc mất kết nối. Vui lòng thử lại sau!", 
-        sender: "bot"
-      }]);
-    } finally {
-      setIsTyping(false);
-      dangGui.current = false;
-    }
-  };
-
   const handleSend = () => {
-    sendMessageText(input);
+    if (!input.trim() || isTyping) return;
+    const text = input;
+    setInput("");
+    void sendMessage(text, user);
   };
 
   return (
@@ -179,8 +135,8 @@ export default function ChatWidget() {
                   className={`flex gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.sender === 'bot' && (
-                    <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 mr-0.5">
-                      <Lottie animationData={animationData} loop={true} className="w-full h-full" />
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 -ml-1 mr-0.5">
+                      <Lottie animationData={animationData} loop={true} className="w-14 h-14 scale-125" />
                     </div>
                   )}
                   <div className={`max-w-[85%] rounded-2xl p-3.5 text-[14px] leading-relaxed shadow-sm ${
@@ -191,7 +147,20 @@ export default function ChatWidget() {
                     {msg.sender === 'user' ? (
                       msg.text
                     ) : (
-                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      <>
+                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        {msg.requiresAuth && (
+                          <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center">
+                            <Link
+                              href={`/auth/login?redirect=${encodeURIComponent(pathname || "/chat")}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#0054A6] to-[#0072CE] hover:from-[#00488F] hover:to-[#005FA3] text-white text-[11px] font-black shadow-xs active:scale-95 transition-all cursor-pointer"
+                            >
+                              <LogIn className="w-3.5 h-3.5" />
+                              <span>Đăng nhập ngay</span>
+                            </Link>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </motion.div>
@@ -203,8 +172,8 @@ export default function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex gap-2 justify-start"
                 >
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 mr-0.5">
-                    <Lottie animationData={animationData} loop={true} className="w-full h-full" />
+                  <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 -ml-1 mr-0.5">
+                    <Lottie animationData={animationData} loop={true} className="w-14 h-14 scale-125" />
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-2 shadow-sm items-center">
                     <div className="flex gap-1.5">
@@ -219,60 +188,75 @@ export default function ChatWidget() {
             </div>
 
             {/* Input Area */}
-            <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
-              {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
-              {messages.length <= 2 && (
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar overscroll-contain" data-lenis-prevent>
-                  {SUGGESTIONS.map((s) => (
-                    <motion.button
-                      key={s}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => sendMessageText(s)}
-                      className="px-2.5 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0054A6] border border-blue-200/60 text-[11px] font-bold whitespace-nowrap transition shrink-0 cursor-pointer"
-                    >
-                      {s}
-                    </motion.button>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex gap-2 items-end">
-                <textarea 
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt.
-                    // Bộ gõ dùng chính phím Enter để chốt chữ đang gõ dở, nên
-                    // trình duyệt bắn keydown Enter HAI lần: một lần chốt bộ gõ,
-                    // một lần Enter thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter
-                    // sẽ gửi đi hai tin nhắn giống hệt nhau.
-                    // `keyCode === 229` là cách một số trình duyệt cũ báo cùng
-                    // trạng thái đó.
-                    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
-
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  data-lenis-prevent
-                  placeholder="Hỏi AI bất kỳ điều gì..."
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
-                  rows={1}
-                />
-                <motion.button 
-                  whileTap={{ scale: 0.92 }}
-                  onClick={handleSend}
-                  disabled={!input.trim() || isTyping}
-                  className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0 cursor-pointer"
+            {!user ? (
+              <div className="p-3.5 bg-white dark:bg-[#0D1729] border-t border-slate-100 dark:border-slate-800 z-10 text-center space-y-2">
+                <Link
+                  href={`/auth/login?redirect=${encodeURIComponent(pathname || "/chat")}`}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0054A6] to-[#0072CE] hover:from-[#00488F] hover:to-[#005FA3] text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
                 >
-                  <Send className="w-4.5 h-4.5 ml-0.5" />
-                </motion.button>
+                  <LogIn className="w-4 h-4" />
+                  <span>Đăng nhập để đặt câu hỏi</span>
+                </Link>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  Đăng nhập để hỏi đáp về 39 ngành học và quy chế tuyển sinh HUIT.
+                </p>
               </div>
-              <p className="text-center text-[10px] text-slate-400">
-                Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
-              </p>
-            </div>
+            ) : (
+              <div className="p-3 bg-white border-t border-slate-100 z-10 shadow-[0_-4px_15px_-10px_rgba(0,0,0,0.05)] space-y-2">
+                {/* Gợi ý câu hỏi nhanh khi bắt đầu */}
+                {messages.length <= 2 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar overscroll-contain" data-lenis-prevent>
+                    {SUGGESTIONS.map((s) => (
+                      <motion.button
+                        key={s}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => void sendMessage(s, user)}
+                        className="px-2.5 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0054A6] border border-blue-200/60 text-[11px] font-bold whitespace-nowrap transition shrink-0 cursor-pointer"
+                      >
+                        {s}
+                      </motion.button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex gap-2 items-end">
+                  <textarea 
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt.
+                      // Bộ gõ dùng chính phím Enter để chốt chữ đang gõ dở, nên
+                      // trình duyệt bắn keydown Enter HAI lần: một lần chốt bộ gõ,
+                      // một lần Enter thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter
+                      // sẽ gửi đi hai tin nhắn giống hệt nhau.
+                      // `keyCode === 229` là cách một số trình duyệt cũ báo cùng
+                      // trạng thái đó.
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    data-lenis-prevent
+                    placeholder="Hỏi AI bất kỳ điều gì..."
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
+                    rows={1}
+                  />
+                  <motion.button 
+                    whileTap={{ scale: 0.92 }}
+                    onClick={handleSend}
+                    disabled={!input.trim() || isTyping}
+                    className="w-[46px] h-[46px] rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 shrink-0 cursor-pointer"
+                  >
+                    <Send className="w-4.5 h-4.5 ml-0.5" />
+                  </motion.button>
+                </div>
+                <p className="text-center text-[10px] text-slate-400">
+                  Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
+                </p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

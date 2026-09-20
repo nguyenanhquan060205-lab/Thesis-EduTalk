@@ -37,7 +37,7 @@ export const SpotlightCard = ({
       ref={divRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#0054A6]/50 hover:shadow-xl hover:shadow-[#0054A6]/5 hover:-translate-y-0.5",
+        "group relative overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0D1729] p-6 shadow-sm dark:shadow-none transition-all duration-300 hover:border-[#0054A6]/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-[#0054A6]/5 dark:hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] hover:-translate-y-0.5",
         className
       )}
     >

@@ -1,85 +1,954 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-sans), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-sans), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ================================================
+   SINGLE UNIFIED FONT RULE: Plus Jakarta Sans
+   Toàn bộ website (UI người dùng, Admin dashboard,
+   buttons, inputs, tables, codes) chỉ dùng 1 font duy nhất.
+   ================================================ */
+*,
+*::before,
+*::after,
+html,
+body,
+input,
+button,
+select,
+textarea,
+table,
+th,
+td,
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-sans) !important;
 }
 
 body {
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-
-  /* `clip` chứ KHÔNG phải `hidden`. Cùng tác dụng chặn tràn ngang, nhưng `hidden`
-     biến body thành một khung cuộn — mà `position: sticky` thì dính vào khung cuộn
-     gần nhất, nên thanh điều hướng `sticky top-0` sẽ trôi theo trang thay vì đứng
-     yên. `clip` không tạo khung cuộn nên sticky hoạt động đúng. */
   overflow-x: clip;
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* ================================================
+   DARK MODE: HUIT Navy Command Center
+   Light: clean slate / Dark: deep navy #070E1E
+   ================================================ */
+:root {
+  --dash-bg: #F1F5F9;
+  --dash-surface: #FFFFFF;
+  --dash-surface-2: #F8FAFC;
+  --dash-border: #E2E8F0;
+  --dash-border-subtle: #F1F5F9;
+  --dash-text: #0F172A;
+  --dash-text-muted: #64748B;
+  --dash-text-faint: #94A3B8;
+  --dash-accent: #0054A6;
+  --dash-accent-glow: rgba(0, 84, 166, 0.15);
+  --dash-sidebar: #FFFFFF;
+  --dash-sidebar-border: #E2E8F0;
+  --dash-active-bg: #EFF6FF;
+  --dash-active-border: #BFDBFE;
+  --dash-chart-grid: #F1F5F9;
+}
+
+.dark {
+  --dash-bg: #070E1E;
+  --dash-surface: #0D1729;
+  --dash-surface-2: #111D2E;
+  --dash-border: #1E3454;
+  --dash-border-subtle: #162039;
+  --dash-text: #F0F6FF;
+  --dash-text-muted: #7FA8CC;
+  --dash-text-faint: #4A6B8A;
+  --dash-accent: #3B8FD4;
+  --dash-accent-glow: rgba(59, 143, 212, 0.2);
+  --dash-sidebar: #0A1525;
+  --dash-sidebar-border: #1E3454;
+  --dash-active-bg: rgba(59, 143, 212, 0.12);
+  --dash-active-border: rgba(59, 143, 212, 0.35);
+  --dash-chart-grid: #1E3454;
+}
+
+/* ================================================
+   USER PORTAL DARK MODE SYNCHRONIZATION
+   Áp dụng độc quyền cho giao diện User (.user-portal & dialogs),
+   tuyệt đối không ảnh hưởng đến Admin dashboard (/dashboard).
+   Tự động đồng bộ hoá toàn bộ trang con, thẻ cards, form, inputs,
+   tables, modals, notifications sang tông nền HUIT Navy sang trọng.
+   ================================================ */
+
+/* 1. Surfaces & Cards */
+.dark .user-portal .bg-white,
+.dark [role="dialog"] .bg-white,
+.dark .user-portal .bg-white\/80,
+.dark .user-portal .bg-white\/85,
+.dark .user-portal .bg-white\/90,
+.dark .user-portal .bg-white\/95 {
+  background-color: #0D1729 !important;
+  border-color: #1E3454 !important;
+}
+
+.dark .user-portal .bg-slate-50,
+.dark [role="dialog"] .bg-slate-50,
+.dark .user-portal .bg-slate-100,
+.dark .user-portal .bg-\[\#F5F8FA\],
+.dark .user-portal .bg-\[\#F8FAFC\],
+.dark .user-portal .bg-slate-50\/50,
+.dark .user-portal .bg-slate-50\/70,
+.dark .user-portal .bg-slate-50\/80,
+.dark .user-portal .bg-slate-50\/90 {
+  background-color: #111D2E !important;
+  border-color: #1E3454 !important;
+}
+
+.dark .user-portal .bg-slate-900,
+.dark [role="dialog"] .bg-slate-900 {
+  background-color: #0054A6 !important;
+  border-color: #0054A6 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .user-portal .hover\:bg-slate-50:hover,
+.dark .user-portal .hover\:bg-slate-100:hover,
+.dark .user-portal .hover\:bg-slate-200:hover,
+.dark [role="dialog"] .hover\:bg-slate-50:hover,
+.dark [role="dialog"] .hover\:bg-slate-100:hover,
+.dark .user-portal [class*="hover:bg-slate-50"]:hover,
+.dark .user-portal [class*="hover:bg-slate-100"]:hover {
+  background-color: #162540 !important;
+}
+
+/* 2. Text Colors & Headings */
+.dark .user-portal h1,
+.dark .user-portal h2,
+.dark .user-portal h3,
+.dark .user-portal h4,
+.dark .user-portal h5,
+.dark .user-portal h6,
+.dark [role="dialog"] h1,
+.dark [role="dialog"] h2,
+.dark [role="dialog"] h3,
+.dark [role="dialog"] h4 {
+  color: #F0F6FF;
+}
+
+.dark .user-portal .text-slate-900,
+.dark [role="dialog"] .text-slate-900,
+.dark .user-portal .text-slate-800,
+.dark [role="dialog"] .text-slate-800,
+.dark .user-portal .text-slate-950,
+.dark [role="dialog"] .text-slate-950,
+.dark .user-portal .text-\[\#0F172A\],
+.dark [role="dialog"] .text-\[\#0F172A\] {
+  color: #F0F6FF !important;
+}
+
+.dark .user-portal .text-slate-700,
+.dark [role="dialog"] .text-slate-700,
+.dark .user-portal .text-slate-600,
+.dark [role="dialog"] .text-slate-600 {
+  color: #CBD5E1 !important;
+}
+
+.dark .user-portal .text-slate-500,
+.dark [role="dialog"] .text-slate-500,
+.dark .user-portal .text-slate-400,
+.dark [role="dialog"] .text-slate-400 {
+  color: #94A3B8 !important;
+}
+
+/* HUIT Blue text -> Electric Sky Cyan in Dark Mode */
+.dark .user-portal .text-\[\#0054A6\],
+.dark [role="dialog"] .text-\[\#0054A6\],
+.dark .user-portal .text-blue-700,
+.dark .user-portal .text-blue-800,
+.dark .user-portal .text-blue-900 {
+  color: #38BDF8 !important;
+}
+
+/* Status & Safety text colors in Dark Mode */
+.dark .user-portal .text-violet-700,
+.dark .user-portal .text-violet-800,
+.dark .user-portal .text-violet-900,
+.dark [role="dialog"] .text-violet-700 {
+  color: #C4B5FD !important;
+}
+
+.dark .user-portal .text-emerald-600,
+.dark .user-portal .text-emerald-700,
+.dark .user-portal .text-emerald-800,
+.dark .user-portal .text-emerald-900,
+.dark [role="dialog"] .text-emerald-600,
+.dark [role="dialog"] .text-emerald-700 {
+  color: #34D399 !important;
+}
+
+.dark .user-portal .text-amber-600,
+.dark .user-portal .text-amber-700,
+.dark .user-portal .text-amber-800,
+.dark [role="dialog"] .text-amber-600,
+.dark [role="dialog"] .text-amber-700 {
+  color: #FBBF24 !important;
+}
+
+.dark .user-portal .text-rose-600,
+.dark .user-portal .text-rose-700,
+.dark .user-portal .text-rose-800,
+.dark [role="dialog"] .text-rose-600,
+.dark [role="dialog"] .text-rose-700 {
+  color: #FB7185 !important;
+}
+
+.dark .user-portal .text-indigo-700,
+.dark .user-portal .text-indigo-800 {
+  color: #A5B4FC !important;
+}
+
+.dark .user-portal .text-teal-700,
+.dark .user-portal .text-teal-800 {
+  color: #5EEAD4 !important;
+}
+
+.dark .user-portal .text-sky-700,
+.dark .user-portal .text-sky-800 {
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .text-fuchsia-700,
+.dark .user-portal .text-fuchsia-800 {
+  color: #F0ABFC !important;
+}
+
+.dark .user-portal .text-cyan-700,
+.dark .user-portal .text-cyan-800 {
+  color: #67E8F9 !important;
+}
+
+.dark .user-portal .text-stone-700,
+.dark .user-portal .text-stone-800 {
+  color: #CBD5E1 !important;
+}
+
+/* White background CTA buttons exception in Dark Mode */
+.dark .user-portal button[style*="255, 255, 255"],
+.dark .user-portal button[style*="255, 255, 255"] span,
+.dark .user-portal button[style*="255, 255, 255"] svg {
+  color: #0054A6 !important;
+}
+.dark .user-portal button[style*="255, 255, 255"]:hover,
+.dark .user-portal button[style*="255, 255, 255"]:hover span,
+.dark .user-portal button[style*="255, 255, 255"]:hover svg {
+  color: #003B73 !important;
+}
+
+/* 2b. Hovers & Interactive Contrast in Dark Mode */
+.dark .user-portal .hover\:text-\[\#0054A6\]:hover,
+.dark [role="dialog"] .hover\:text-\[\#0054A6\]:hover,
+.dark .user-portal .hover\:text-\[\#003B73\]:hover,
+.dark .user-portal .hover\:text-blue-600:hover,
+.dark .user-portal .hover\:text-blue-700:hover,
+.dark .user-portal .hover\:text-blue-800:hover,
+.dark .user-portal [class*="hover:text-[#0054A6]"]:hover {
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .group:hover .group-hover\:text-\[\#0054A6\],
+.dark [role="dialog"] .group:hover .group-hover\:text-\[\#0054A6\],
+.dark .user-portal .group:hover .group-hover\:text-blue-600,
+.dark .user-portal [class*="group"]:hover [class*="group-hover:text-[#0054A6]"],
+.dark .user-portal [class*="group"]:hover [class*="group-hover:text-blue-"] {
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .hover\:text-slate-900:hover,
+.dark .user-portal .hover\:text-slate-800:hover,
+.dark .user-portal .hover\:text-slate-700:hover,
+.dark .user-portal .hover\:text-slate-600:hover,
+.dark .user-portal .hover\:text-slate-500:hover,
+.dark [role="dialog"] .hover\:text-slate-700:hover,
+.dark [role="dialog"] .hover\:text-slate-600:hover,
+.dark [role="dialog"] .hover\:text-slate-500:hover,
+.dark .user-portal [class*="hover:text-slate-"]:hover {
+  color: #FFFFFF !important;
+}
+
+.dark .user-portal .group:hover .group-hover\:text-slate-600,
+.dark .user-portal .group:hover .group-hover\:text-slate-700,
+.dark .user-portal .group:hover .group-hover\:text-slate-800,
+.dark .user-portal .group:hover .group-hover\:text-slate-900,
+.dark .user-portal [class*="group"]:hover [class*="group-hover:text-slate-"],
+.dark .user-portal [class*="group-hover/bar:text-slate-700"] {
+  color: #FFFFFF !important;
+}
+
+.dark .user-portal .hover\:text-rose-600:hover,
+.dark .user-portal .hover\:text-rose-700:hover,
+.dark [role="dialog"] .hover\:text-rose-600:hover {
+  color: #FB7185 !important;
+}
+.dark .user-portal .hover\:text-amber-600:hover,
+.dark .user-portal .hover\:text-amber-700:hover,
+.dark [role="dialog"] .hover\:text-amber-600:hover {
+  color: #FBBF24 !important;
+}
+.dark .user-portal .hover\:text-emerald-600:hover,
+.dark .user-portal .hover\:text-emerald-700:hover,
+.dark [role="dialog"] .hover\:text-emerald-600:hover {
+  color: #34D399 !important;
+}
+
+.dark .user-portal .hover\:bg-blue-50:hover,
+.dark .user-portal .hover\:bg-blue-50\/80:hover,
+.dark .user-portal .hover\:bg-blue-50\/30:hover,
+.dark .user-portal .group:hover .group-hover\:bg-blue-50,
+.dark .user-portal [class*="group"]:hover [class*="group-hover:bg-blue-50"] {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .hover\:border-slate-300:hover,
+.dark .user-portal .hover\:border-slate-400:hover,
+.dark .user-portal .hover\:border-blue-200:hover,
+.dark .user-portal .hover\:border-emerald-200:hover,
+.dark .user-portal .hover\:border-indigo-200:hover,
+.dark [role="dialog"] .hover\:border-slate-300:hover,
+.dark .user-portal .group:hover .group-hover\:border-slate-300,
+.dark .user-portal [class*="group"]:hover [class*="group-hover:border-slate-300"] {
+  border-color: #38BDF8 !important;
+}
+
+.dark .user-portal .hover\:border-\[\#0054A6\]\/60:hover,
+.dark .user-portal .hover\:border-\[\#0054A6\]\/50:hover,
+.dark .user-portal .hover\:border-\[\#0054A6\]\/40:hover,
+.dark .user-portal [class*="hover:border-[#0054A6]"]:hover {
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.12) !important;
+}
+
+/* 3. Borders & Dividers */
+.dark .user-portal .border-slate-200,
+.dark [role="dialog"] .border-slate-200,
+.dark .user-portal .border-slate-100,
+.dark [role="dialog"] .border-slate-100,
+.dark .user-portal .border-slate-200\/90,
+.dark .user-portal .border-slate-200\/80,
+.dark .user-portal .border-slate-200\/70,
+.dark .user-portal .border-slate-200\/60 {
+  border-color: #1E3454 !important;
+}
+
+.dark .user-portal .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .user-portal .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+.dark [role="dialog"] .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1E3454 !important;
+}
+
+/* 4. Inputs, Textareas, Selects */
+.dark .user-portal input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark [role="dialog"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark .user-portal textarea,
+.dark [role="dialog"] textarea,
+.dark .user-portal select,
+.dark [role="dialog"] select {
+  background-color: #111D2E !important;
+  border-color: #1E3454 !important;
+  color: #F0F6FF !important;
+}
+
+.dark .user-portal input::placeholder,
+.dark [role="dialog"] input::placeholder,
+.dark .user-portal textarea::placeholder,
+.dark [role="dialog"] textarea::placeholder {
+  color: #4A6B8A !important;
+}
+
+.dark .user-portal input:focus,
+.dark [role="dialog"] input:focus,
+.dark .user-portal textarea:focus,
+.dark [role="dialog"] textarea:focus,
+.dark .user-portal select:focus,
+.dark [role="dialog"] select:focus {
+  background-color: #132238 !important;
+  border-color: #38BDF8 !important;
+}
+
+/* 5. Soft Badges & 9 Faculty Chip Styles */
+.dark .user-portal .bg-blue-50,
+.dark [role="dialog"] .bg-blue-50,
+.dark .user-portal .bg-blue-50\/80,
+.dark .user-portal .bg-blue-50\/70,
+.dark .user-portal .bg-blue-50\/40,
+.dark .user-portal .bg-blue-50\/30 {
+  background-color: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .bg-indigo-50,
+.dark [role="dialog"] .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.14) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  color: #A5B4FC !important;
+}
+
+.dark .user-portal .bg-teal-50,
+.dark [role="dialog"] .bg-teal-50 {
+  background-color: rgba(20, 184, 166, 0.14) !important;
+  border-color: rgba(20, 184, 166, 0.3) !important;
+  color: #5EEAD4 !important;
+}
+
+.dark .user-portal .bg-sky-50,
+.dark [role="dialog"] .bg-sky-50 {
+  background-color: rgba(14, 165, 233, 0.14) !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+  color: #38BDF8 !important;
+}
+
+.dark .user-portal .bg-fuchsia-50,
+.dark [role="dialog"] .bg-fuchsia-50 {
+  background-color: rgba(217, 70, 239, 0.14) !important;
+  border-color: rgba(217, 70, 239, 0.3) !important;
+  color: #F0ABFC !important;
+}
+
+.dark .user-portal .bg-violet-50,
+.dark .user-portal .bg-violet-50\/80,
+.dark [role="dialog"] .bg-violet-50 {
+  background-color: rgba(139, 92, 246, 0.14) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: #C4B5FD !important;
+}
+
+.dark .user-portal .bg-cyan-50,
+.dark .user-portal .bg-cyan-50\/80,
+.dark [role="dialog"] .bg-cyan-50 {
+  background-color: rgba(6, 182, 212, 0.14) !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+  color: #67E8F9 !important;
+}
+
+.dark .user-portal .bg-emerald-50,
+.dark .user-portal .bg-emerald-50\/80,
+.dark [role="dialog"] .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #34D399 !important;
+}
+
+.dark .user-portal .bg-amber-50,
+.dark .user-portal .bg-amber-50\/80,
+.dark [role="dialog"] .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #FBBF24 !important;
+}
+
+.dark .user-portal .bg-rose-50,
+.dark .user-portal .bg-rose-50\/80,
+.dark [role="dialog"] .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.14) !important;
+  border-color: rgba(244, 63, 94, 0.3) !important;
+  color: #FB7185 !important;
+}
+
+.dark .user-portal .bg-stone-100,
+.dark [role="dialog"] .bg-stone-100 {
+  background-color: #1A2E4B !important;
+  border-color: #2A4A72 !important;
+  color: #CBD5E1 !important;
+}
+
+/* 6. Prose / Markdown Output in Chat & Articles */
+.dark .user-portal .prose,
+.dark [role="dialog"] .prose {
+  color: #CBD5E1 !important;
+}
+.dark .user-portal .prose p,
+.dark .user-portal .prose li,
+.dark .user-portal .prose span,
+.dark [role="dialog"] .prose p,
+.dark [role="dialog"] .prose li {
+  color: #CBD5E1 !important;
+}
+.dark .user-portal .prose strong,
+.dark .user-portal .prose h1,
+.dark .user-portal .prose h2,
+.dark .user-portal .prose h3,
+.dark .user-portal .prose h4,
+.dark [role="dialog"] .prose strong {
+  color: #F0F6FF !important;
+}
+.dark .user-portal .prose a {
+  color: #38BDF8 !important;
+}
+.dark .user-portal .prose code {
+  background-color: #111D2E !important;
+  color: #38BDF8 !important;
+}
+/* Full-width responsive prose tables in User Portal (Admission cutoff & schedule tables) */
+.user-portal .prose table {
+  width: 100% !important;
+  min-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  margin: 2rem 0 !important;
+}
+
+.user-portal .prose table thead {
+  background-color: #F8FAFC !important;
+}
+
+.user-portal .prose table th {
+  padding: 0.875rem 1.25rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 800 !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  border-right: 1px solid #E2E8F0 !important;
+  text-align: left !important;
+  color: #0F172A !important;
+}
+
+.user-portal .prose table th:last-child {
+  border-right: none !important;
+}
+
+.user-portal .prose table td {
+  padding: 0.75rem 1.25rem !important;
+  font-size: 0.8125rem !important;
+  border-bottom: 1px solid #F1F5F9 !important;
+  border-right: 1px solid #F1F5F9 !important;
+  color: #334155 !important;
+}
+
+.user-portal .prose table td:last-child {
+  border-right: none !important;
+}
+
+.user-portal .prose table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.user-portal .prose table tbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+
+.dark .user-portal .prose table {
+  border-color: #1E3454 !important;
+  background-color: #0D1729 !important;
+}
+
+.dark .user-portal .prose table thead {
+  background-color: #111D2E !important;
+}
+
+.dark .user-portal .prose table th {
+  background-color: #111D2E !important;
+  color: #F0F6FF !important;
+  border-color: #1E3454 !important;
+}
+
+.dark .user-portal .prose table td {
+  border-color: #1E3454 !important;
+  color: #CBD5E1 !important;
+}
+
+.dark .user-portal .prose table tbody tr:hover {
+  background-color: rgba(22, 37, 64, 0.6) !important;
+}
+
+/* 6b. Embedded PDF & Iframe in Articles (.divA4, .divA4-content, iframes) - A4 Standard 1-Page Height */
+.user-portal .divA4,
+.user-portal .divA4-content,
+.user-portal [class*="divA4"],
+.user-portal .post-body .divA4 {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 900px !important;
+  height: 1180px !important;
+  display: block !important;
+  margin: 1.5rem 0 !important;
+  border-radius: 1.25rem !important;
+  overflow: hidden !important;
+  background-color: #0A1220 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.user-portal iframe[src*=".pdf"],
+.user-portal iframe[src*="doc.huit.edu.vn"],
+.user-portal iframe[src*="vpdf"],
+.user-portal .divA4 iframe,
+.user-portal .divA4-content iframe,
+.user-portal [class*="divA4"] iframe {
+  width: 100% !important;
+  min-height: 900px !important;
+  height: 1180px !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 1.25rem !important;
+  display: block !important;
+  background-color: #0A1220 !important;
+}
+
+/* YouTube & Video Iframes retain standard video height */
+.user-portal iframe[src*="youtube"],
+.user-portal iframe[src*="youtu.be"],
+.user-portal iframe[src*="vimeo"] {
+  width: 100% !important;
+  height: 480px !important;
+  min-height: 320px !important;
+  aspect-ratio: 16 / 9 !important;
+  border-radius: 1.25rem !important;
+  border: none !important;
+}
+
+@media (max-width: 768px) {
+  .user-portal .divA4,
+  .user-portal .divA4-content,
+  .user-portal [class*="divA4"],
+  .user-portal .post-body .divA4,
+  .user-portal iframe[src*=".pdf"],
+  .user-portal iframe[src*="doc.huit.edu.vn"],
+  .user-portal iframe[src*="vpdf"],
+  .user-portal .divA4 iframe,
+  .user-portal .divA4-content iframe {
+    height: 750px !important;
+    min-height: 600px !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .user-portal iframe[src*="youtube"],
+  .user-portal iframe[src*="youtu.be"] {
+    height: 240px !important;
+    min-height: 200px !important;
   }
 }
 
+.dark .user-portal iframe[src*=".pdf"],
+.dark .user-portal iframe[src*="doc.huit.edu.vn"],
+.dark .user-portal iframe[src*="vpdf"],
+.dark .user-portal .divA4 iframe,
+.dark .user-portal .divA4-content iframe {
+  border-color: #1E3454 !important;
+}
+
+/* Hide dead / broken 2014 social widgets from ts.huit.edu.vn */
+.user-portal .share-detail,
+.user-portal .share_buttons,
+.user-portal .g-plusone,
+.user-portal .fb-send,
+.user-portal .fb-like {
+  display: none !important;
+}
+
+/* 7. Notifications (Toasts / Sonner) */
+.dark [data-sonner-toaster] [data-sonner-toast] {
+  background-color: #0D1729 !important;
+  border-color: #1E3454 !important;
+  color: #F0F6FF !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+.dark [data-sonner-toaster] [data-sonner-toast] [data-description] {
+  color: #94A3B8 !important;
+}
+
+/* 8. Table Rows in User Portal */
+.dark .user-portal table th {
+  background-color: #111D2E !important;
+  color: #94A3B8 !important;
+  border-color: #1E3454 !important;
+}
+.dark .user-portal table tr {
+  border-color: #1E3454 !important;
+}
+.dark .user-portal table tr:hover {
+  background-color: rgba(22, 37, 64, 0.5) !important;
+}
+.dark .user-portal table td {
+  border-color: #1E3454 !important;
+  color: #F0F6FF !important;
+}
+
+/* 9. Select Option Dropdowns & Radio/Checkboxes */
+.dark .user-portal select option,
+.dark [role="dialog"] select option {
+  background-color: #0D1729 !important;
+  color: #F0F6FF !important;
+}
+
+/* 10. Secondary Slate Fills & Badges */
+.dark .user-portal .bg-slate-200,
+.dark .user-portal .bg-slate-200\/80,
+.dark [role="dialog"] .bg-slate-200 {
+  background-color: #1A2E4B !important;
+  border-color: #2A4A72 !important;
+}
+.dark .user-portal .bg-slate-300,
+.dark [role="dialog"] .bg-slate-300 {
+  background-color: #2A4A72 !important;
+}
+
+/* 11. Recharts & Charts SVG in Dark Mode */
+.dark .user-portal .recharts-cartesian-axis-tick-value,
+.dark .user-portal .recharts-text,
+.dark .user-portal .recharts-legend-item-text {
+  fill: #94A3B8 !important;
+}
+.dark .user-portal .recharts-cartesian-grid line {
+  stroke: #1E3454 !important;
+}
+.dark .user-portal .recharts-default-tooltip {
+  background-color: #0D1729 !important;
+  border-color: #1E3454 !important;
+  color: #F0F6FF !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ================================================
+   ANIMATIONS
+   ================================================ */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out forwards;
+  animation: fade-in-up 0.4s ease-out forwards;
 }
 
 @keyframes marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(calc(-100% - var(--gap))); }
+  to   { transform: translateX(calc(-100% - var(--gap))); }
 }
-
 @keyframes marquee-vertical {
   from { transform: translateY(0); }
-  to { transform: translateY(calc(-100% - var(--gap))); }
+  to   { transform: translateY(calc(-100% - var(--gap))); }
 }
-
-.animate-marquee {
-  animation: marquee var(--duration, 30s) linear infinite;
-}
-
-.animate-marquee-vertical {
-  animation: marquee-vertical var(--duration, 30s) linear infinite;
-}
+.animate-marquee          { animation: marquee var(--duration, 30s) linear infinite; }
+.animate-marquee-vertical { animation: marquee-vertical var(--duration, 30s) linear infinite; }
 
 @keyframes border-beam {
-  100% {
-    offset-distance: 100%;
-  }
+  100% { offset-distance: 100%; }
+}
+.animate-border-beam { animation: border-beam var(--duration, 8s) infinite linear; }
+
+/* ================================================
+   SCROLLBARS
+   ================================================ */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+.dark ::-webkit-scrollbar-thumb       { background: #1E3454; }
+::-webkit-scrollbar-thumb:hover       { background: #94A3B8; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #2A4A72; }
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ================================================
+   SPARKLINE animation
+   ================================================ */
+@keyframes dash-grow {
+  from { stroke-dashoffset: 200; }
+  to   { stroke-dashoffset: 0; }
+}
+.sparkline-path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: dash-grow 1.2s ease-out forwards;
 }
 
-.animate-border-beam {
-  animation: border-beam var(--duration, 8s) infinite linear;
+/* ================================================
+   DASHBOARD SHARED UTILITY CLASSES
+   Dùng cho tất cả trang /dashboard/* để đảm bảo
+   màu sắc đồng nhất giữa light và dark mode.
+   ================================================ */
+
+/* Wrapper toàn trang */
+.dash-page {
+  padding: 1.25rem;
+  min-height: 100%;
+  background: var(--dash-bg);
+}
+@media (min-width: 1024px) {
+  .dash-page { padding: 1.75rem; }
 }
 
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+/* Card surface chuẩn */
+.dash-card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
 }
 
-/* Hide Scrollbar */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Card bề mặt thứ 2 (nested) */
+.dash-card-2 {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border-subtle);
+  border-radius: 0.5rem;
+  padding: 0.875rem;
 }
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+/* Section header label */
+.dash-section-label {
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--dash-text-faint);
 }
+
+/* Tiêu đề trang H1 */
+.dash-page-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--dash-text);
+}
+
+/* Text chính */
+.dash-text    { color: var(--dash-text); }
+.dash-text-m  { color: var(--dash-text-muted); }
+.dash-text-f  { color: var(--dash-text-faint); }
+
+/* Badge trạng thái */
+.dash-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.625rem;
+  font-weight: 900;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid;
+}
+.dash-badge-green  { background: rgba(16,185,129,0.1);  color: #10B981; border-color: rgba(16,185,129,0.25); }
+.dash-badge-amber  { background: rgba(245,158,11,0.1);  color: #F59E0B; border-color: rgba(245,158,11,0.25); }
+.dash-badge-red    { background: rgba(239,68,68,0.1);   color: #EF4444; border-color: rgba(239,68,68,0.25); }
+.dash-badge-blue   { background: var(--dash-active-bg); color: var(--dash-accent); border-color: var(--dash-active-border); }
+.dash-badge-gray   { background: var(--dash-surface-2); color: var(--dash-text-muted); border-color: var(--dash-border-subtle); }
+
+/* Table chuẩn */
+.dash-table {
+  width: 100%;
+  font-size: 0.75rem;
+  border-collapse: collapse;
+}
+.dash-table thead th {
+  padding-bottom: 0.625rem;
+  padding-right: 1rem;
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dash-text-faint);
+  border-bottom: 1px solid var(--dash-border);
+  text-align: left;
+}
+.dash-table tbody td {
+  padding: 0.625rem 1rem 0.625rem 0;
+  border-bottom: 1px solid var(--dash-border-subtle);
+  color: var(--dash-text);
+}
+.dash-table tbody tr:last-child td { border-bottom: none; }
+
+/* Input / Select */
+.dash-input {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.dash-input:focus { border-color: var(--dash-accent); }
+.dash-input::placeholder { color: var(--dash-text-faint); }
+
+/* Button primary */
+.dash-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+  color: var(--dash-text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dash-btn:hover         { border-color: var(--dash-accent); color: var(--dash-accent); }
+.dash-btn:active        { transform: scale(0.97); }
+.dash-btn:disabled      { opacity: 0.45; cursor: not-allowed; }
+
+.dash-btn-primary {
+  background: var(--dash-accent);
+  color: #fff;
+  border-color: var(--dash-accent);
+}
+.dash-btn-primary:hover { opacity: 0.88; color: #fff; }
+
+/* Empty state */
+.dash-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dash-text-faint);
+}
+
+/* Divider */
+.dash-divider {
+  border: none;
+  border-top: 1px solid var(--dash-border);
+  margin: 1rem 0;
+}
+
+/* ================================================
+   RECHARTS TOOLTIP OVERRIDE: DARK & LIGHT MODE
+   Khắc phục triệt để chữ đen khi hover biểu đồ
+   ở chế độ Dark Mode.
+   ================================================ */
+.recharts-default-tooltip {
+  background: var(--dash-surface) !important;
+  border: 1px solid var(--dash-border) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+.recharts-default-tooltip *,
+.recharts-tooltip-label,
+.recharts-tooltip-item,
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value,
+.recharts-tooltip-item-separator {
+  color: var(--dash-text) !important;
+}
+
+.recharts-tooltip-label {
+  font-weight: 800 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.recharts-tooltip-cursor {
+  fill: var(--dash-active-bg) !important;
+  opacity: 0.5 !important;
+}
+

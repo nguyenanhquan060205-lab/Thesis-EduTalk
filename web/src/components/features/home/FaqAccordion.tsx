@@ -30,14 +30,14 @@ export function FaqAccordion() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-left">
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0054A6] text-xs font-black uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-sky-950/40 border border-blue-200 dark:border-sky-800 text-[#0054A6] dark:text-sky-400 text-xs font-black uppercase tracking-wider">
           <HelpCircle className="w-3.5 h-3.5" />
           <span>Giải Đáp Thắc Mắc</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
           Câu Hỏi Thường Gặp Về Tuyển Sinh HUIT
         </h2>
-        <p className="text-xs sm:text-sm text-slate-600 font-medium">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
           Những thông tin quan trọng nhất giúp thí sinh nắm rõ quy chế và cơ hội trúng tuyển 2026:
         </p>
       </div>
@@ -48,17 +48,17 @@ export function FaqAccordion() {
           return (
             <div 
               key={idx}
-              className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs transition-shadow hover:shadow-md"
+              className="bg-white dark:bg-[#0D1729] rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-xs transition-shadow hover:shadow-md"
             >
               <button
                 type="button"
                 onClick={() => setActiveFaq(isOpen ? null : idx)}
-                className="w-full p-5 text-left flex items-center justify-between gap-4 font-black text-xs sm:text-sm text-slate-900 hover:text-[#0054A6] transition cursor-pointer"
+                className="w-full p-5 text-left flex items-center justify-between gap-4 font-black text-xs sm:text-sm text-slate-900 dark:text-slate-100 hover:text-[#0054A6] dark:hover:text-sky-400 transition cursor-pointer"
               >
                 <span>{faq.q}</span>
                 <ChevronDown 
                   className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${
-                    isOpen ? "rotate-180 text-[#0054A6]" : ""
+                    isOpen ? "rotate-180 text-[#0054A6] dark:text-sky-400" : ""
                   }`} 
                 />
               </button>
@@ -72,7 +72,7 @@ export function FaqAccordion() {
                     transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-5 text-xs text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-3">
+                    <div className="px-5 pb-5 text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
                       {faq.a}
                     </div>
                   </motion.div>

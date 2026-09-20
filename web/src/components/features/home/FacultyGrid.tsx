@@ -69,22 +69,22 @@ export function FacultyGrid() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-left">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <span className="text-xs font-black text-[#0054A6] uppercase tracking-wider">
+          <span className="text-xs font-black text-[#0054A6] dark:text-sky-400 uppercase tracking-wider">
             Danh Mục Đào Tạo Chính Quy
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
             9 Nhóm Ngành Trọng Điểm Tại HUIT
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">
             Chương trình đào tạo thực nghiệm ứng dụng, gắn liền với nhu cầu thực tiễn của thị trường lao động:
           </p>
         </div>
 
         <Link
           href="/majors"
-          className="inline-flex items-center gap-1.5 text-xs font-black text-[#0054A6] hover:underline shrink-0 group"
+          className="inline-flex items-center gap-1.5 text-xs font-black text-[#0054A6] dark:text-sky-400 hover:underline shrink-0 group"
         >
           <span>Xem toàn bộ 39 chuyên ngành</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -104,31 +104,31 @@ export function FacultyGrid() {
               className="group block h-full"
             >
               <SpotlightCard
-                className="h-full p-6 hover:border-[#0054A6]/60"
+                className="h-full p-6 hover:border-[#0054A6]/60 dark:hover:border-sky-500/50"
                 contentClassName="flex h-full flex-col justify-between"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="w-11 h-11 rounded-2xl bg-blue-50 group-hover:bg-[#0054A6] text-[#0054A6] group-hover:text-white flex items-center justify-center font-black transition-all shadow-xs group-hover:scale-105">
+                    <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-sky-950/40 group-hover:bg-[#0054A6] text-[#0054A6] dark:text-sky-400 group-hover:text-white flex items-center justify-center font-black transition-all shadow-xs group-hover:scale-105">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-black px-2.5 py-1 rounded-md bg-blue-50 text-[#0054A6] border border-blue-200">
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-md bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 border border-blue-200 dark:border-sky-800">
                       {fac.count} ngành
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-[#0054A6] transition-colors leading-snug">
+                  <h3 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-[#0054A6] dark:group-hover:text-sky-400 transition-colors leading-snug">
                     {fac.name}
                   </h3>
 
-                  <p className="text-[11px] text-slate-600 font-medium leading-relaxed line-clamp-2">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium leading-relaxed line-clamp-2">
                     {fac.highlight}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                  <span className="text-slate-400 font-bold">Điểm chuẩn 2026:</span>
-                  <span className="font-black text-[#0054A6] bg-blue-50/70 px-2 py-0.5 rounded">
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400 dark:text-slate-500 font-bold">Điểm chuẩn 2026:</span>
+                  <span className="font-black text-[#0054A6] dark:text-sky-400 bg-blue-50/70 dark:bg-sky-950/50 px-2 py-0.5 rounded">
                     {fac.scoreAvg ?? "Đang cập nhật"}
                   </span>
                 </div>
