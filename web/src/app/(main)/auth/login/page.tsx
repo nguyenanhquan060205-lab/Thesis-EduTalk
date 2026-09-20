@@ -84,7 +84,7 @@ function LoginFormContent() {
           const profile = await AuthService.getProfile(res.uid);
           setUser(profile);
           // Tài khoản Google chưa có giới tính → hỏi ngay, đừng để mô hình đoán
-          // mặc định "Nu" (mất 3,9 điểm Top-3 trên 102 sinh viên thật).
+          // mặc định "Nu" (khám phá Top-5 mất 3,1 điểm trên tập test của mô hình Hướng 1).
           if (res.needsProfile) {
             router.push("/profile?setup=1");
           } else if (profile.role === "admin") {

@@ -1,0 +1,18 @@
+{
+  "phuong_phap_chot": "copula",
+  "file_dung": "05_KiemDinhDuLieuSinh/ttth_da_sinh.csv",
+  "auc": 0.5829117940548301,
+  "auc_sd": 0.024003244118377978,
+  "lech_khoi_05": 0.08291179405483007,
+  "sao_chep": 0.005891016200294551,
+  "nguong_sao_chep": 0.05,
+  "da_dang": 0.9626288659793815,
+  "da_dang_that": 0.9763313609467456,
+  "ks_dat": 0.98,
+  "wasserstein": 0.06653846153846155,
+  "nang_luong": 0.02158087871203911,
+  "ban_bi_loai_vi_sao_chep": [
+    "ga_3"
+  ],
+  "canh_bao": "Bộ sinh ĐÃ THẤY cả 676 phiếu dùng để chấm (chưa chia train/test ở giai đoạn này) — đây là cận trên lạc quan."
+}

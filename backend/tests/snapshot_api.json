@@ -1,0 +1,546 @@
+{
+  "DELETE /api/v1/admin/news/{news_id}/reject": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:news_id*"
+    ]
+  },
+  "DELETE /api/v1/admin/posts/{post_id}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "DELETE /api/v1/admin/users/{uid}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "DELETE /api/v1/auth/delete/{uid}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "DELETE /api/v1/posts/{post_id}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "DELETE /api/v1/posts/{post_id}/comments/{comment_id}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:comment_id*",
+      "path:post_id*"
+    ]
+  },
+  "GET /": {
+    "body": false,
+    "params": []
+  },
+  "GET /api/v1/admin/analytics": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "query:days"
+    ]
+  },
+  "GET /api/v1/admin/consultations": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "query:mode",
+      "query:page",
+      "query:q",
+      "query:size",
+      "query:subjectGroup"
+    ]
+  },
+  "GET /api/v1/admin/dashboard": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/huan-luyen": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/model-metrics": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/news/pending": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/notifications": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/posts": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/posts/pending": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/support": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/admin/users": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/chat/trending-majors": {
+    "body": false,
+    "params": []
+  },
+  "GET /api/v1/kho-tri-thuc/chunks": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "query:loai",
+      "query:moi_trang",
+      "query:tim",
+      "query:trang"
+    ]
+  },
+  "GET /api/v1/kho-tri-thuc/do-truy-hoi": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/kho-tri-thuc/tai-lieu": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/kho-tri-thuc/thong-tin": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/majors/": {
+    "body": false,
+    "params": []
+  },
+  "GET /api/v1/news/": {
+    "body": false,
+    "params": [
+      "query:limit"
+    ]
+  },
+  "GET /api/v1/news/{news_id}": {
+    "body": false,
+    "params": [
+      "path:news_id*"
+    ]
+  },
+  "GET /api/v1/phan-hoi/trang-thai": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/posts/": {
+    "body": false,
+    "params": [
+      "query:limit"
+    ]
+  },
+  "GET /api/v1/posts/mine": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/posts/{post_id}/comments": {
+    "body": false,
+    "params": [
+      "path:post_id*"
+    ]
+  },
+  "GET /api/v1/predict/catalog": {
+    "body": false,
+    "params": []
+  },
+  "GET /api/v1/predict/explain/{prediction_id}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:prediction_id*"
+    ]
+  },
+  "GET /api/v1/support/": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "GET /api/v1/survey/history/{uid}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "GET /api/v1/users/{uid}": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "GET /api/v1/users/{uid}/notifications": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "GET /api/v1/users/{uid}/premium": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "POST /api/v1/admin/huan-luyen/chay-ngay": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/admin/huan-luyen/phien-ban/{ma}/phuc-vu": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:ma*"
+    ]
+  },
+  "POST /api/v1/admin/news/{news_id}/approve": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:news_id*"
+    ]
+  },
+  "POST /api/v1/auth/change-email": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/change-password": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/email-change/cancel": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/email-change/set-new": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/email-change/start": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/email-change/verify-old": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/google": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/login": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/otp/send": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/otp/verify": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/register": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/registration/verify": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/resend-verify": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/auth/verify-my-email/confirm": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/auth/verify-my-email/send": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/chat/message": {
+    "body": true,
+    "params": []
+  },
+  "POST /api/v1/kho-tri-thuc/do-truy-hoi": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "query:k"
+    ]
+  },
+  "POST /api/v1/kho-tri-thuc/nap-lai": {
+    "body": false,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/kho-tri-thuc/thu-truy-xuat": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/news/crawl": {
+    "body": false,
+    "params": []
+  },
+  "POST /api/v1/phan-hoi/danh-gia-app": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/posts/": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/posts/upload-image": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/comments": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/comments/{comment_id}/report": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:comment_id*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/comments/{comment_id}/upvote": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:comment_id*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/remind": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/report": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/posts/{post_id}/upvote": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "POST /api/v1/predict/explain-text": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/predict/recommend": {
+    "body": true,
+    "params": [
+      "header:authorization"
+    ]
+  },
+  "POST /api/v1/support/request": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "POST /api/v1/survey/submit": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "PUT /api/v1/admin/huan-luyen/cau-hinh": {
+    "body": true,
+    "params": [
+      "header:authorization*"
+    ]
+  },
+  "PUT /api/v1/admin/notifications/{notif_id}/resolve": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:notif_id*"
+    ]
+  },
+  "PUT /api/v1/admin/posts/{post_id}/approve": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "PUT /api/v1/admin/posts/{post_id}/dismiss-report": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "PUT /api/v1/admin/posts/{post_id}/reject": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "PUT /api/v1/admin/support/{request_id}": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:request_id*"
+    ]
+  },
+  "PUT /api/v1/admin/users/{uid}/lock": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "PUT /api/v1/admin/users/{uid}/premium": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "PUT /api/v1/phan-hoi/du-doan/{prediction_id}": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:prediction_id*"
+    ]
+  },
+  "PUT /api/v1/posts/{post_id}": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:post_id*"
+    ]
+  },
+  "PUT /api/v1/posts/{post_id}/comments/{comment_id}": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:comment_id*",
+      "path:post_id*"
+    ]
+  },
+  "PUT /api/v1/users/{uid}": {
+    "body": true,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "PUT /api/v1/users/{uid}/notifications/read-all": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:uid*"
+    ]
+  },
+  "PUT /api/v1/users/{uid}/notifications/{notif_id}/read": {
+    "body": false,
+    "params": [
+      "header:authorization*",
+      "path:notif_id*",
+      "path:uid*"
+    ]
+  }
+}

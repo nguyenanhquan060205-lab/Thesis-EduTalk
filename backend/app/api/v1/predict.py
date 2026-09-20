@@ -1,26 +1,28 @@
 # pyrefly: ignore [missing-import]
-from app.core.mongodb import get_db
+from bson import ObjectId
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
+from app.api.deps import (
+    Caller,
+    ensure_self_or_admin,
+    get_caller,
+    get_current_uid,
+    get_database,
+)
 from app.models.predict_models import (
     CatalogResponse,
-    PredictionResponse,
     RecommendRequest,
     RecommendResponse,
-    SurveySubmit,
 )
-from app.services.auth_service import AuthService
-from app.services.predict_service import predict_major
-from bson import ObjectId
-from pydantic import BaseModel
-from fastapi import APIRouter, Header, HTTPException
 
 router = APIRouter()
-auth_service = AuthService()
 
 DEFAULT_GENDER = "Nu"
 
 
 async def resolve_gender(
-    authorization: str | None, fallback: str | None
+    caller: Caller, fallback: str | None, db
 ) -> tuple[str, list[str]]:
     """Giới tính lấy theo thứ tự ưu tiên:
 
@@ -32,13 +34,10 @@ async def resolve_gender(
     """
     warnings: list[str] = []
 
-    if authorization:
-        try:
-            decoded = await auth_service.verify_token(
-                authorization.replace("Bearer ", "")
-            )
-            if decoded:
-                doc = await get_db()["users"].find_one({"_id": decoded["uid"]})
+    if caller.sent_token:
+        if caller.uid:
+            try:
+                doc = await db["users"].find_one({"_id": caller.uid})
                 gender = (doc or {}).get("gender")
                 if gender in ("Nam", "Nu"):
                     return gender, warnings
@@ -46,10 +45,10 @@ async def resolve_gender(
                     "Hồ sơ chưa có giới tính — hãy cập nhật trong phần tài khoản "
                     "để gợi ý chính xác hơn."
                 )
-            else:
-                warnings.append("Token không hợp lệ nên không đọc được hồ sơ.")
-        except Exception:  # noqa: BLE001 — thiếu hồ sơ không được làm hỏng gợi ý
-            warnings.append("Không đọc được hồ sơ người dùng.")
+            except Exception:  # noqa: BLE001 — thiếu hồ sơ không được làm hỏng gợi ý
+                warnings.append("Không đọc được hồ sơ người dùng.")
+        else:
+            warnings.append("Token không hợp lệ nên không đọc được hồ sơ.")
 
     if fallback in ("Nam", "Nu"):
         return fallback, warnings
@@ -59,40 +58,38 @@ async def resolve_gender(
 @router.post(
     "/recommend",
     response_model=RecommendResponse,
-    summary="Gợi ý ngành học (XGBoost, pipeline research3)",
+    summary="Gợi ý ngành học (XGBoost, mô hình Hướng 1)",
 )
 async def recommend_majors(
-    body: RecommendRequest, authorization: str | None = Header(None)
+    body: RecommendRequest,
+    caller: Caller = Depends(get_caller),
+    db=Depends(get_database),
 ):
-    """Mô hình XGBoost của Giai đoạn 10 (research3/) — 9 nhóm ngành, 63 đặc trưng.
+    """Mô hình XGBoost Hướng 1 (`research/`, Giai đoạn 10) — 9 nhóm ngành, 63 đặc trưng.
 
-    Đặt `EDUTALK_PIPELINE=legacy` để quay về mô hình 2 tầng cũ của `research/`.
+    Đặt `EDUTALK_PIPELINE=r3` để quay về mô hình `research3/`.
 
     **Hai chế độ** — khác nhau ở chỗ người dùng có chọn nhóm ngành hay không:
 
-    | Chế độ | Khi nào | Top-3 trên tập kiểm tra |
-    |---|---|---|
-    | `explore` | `fieldId` bỏ trống | 35,3% |
-    | `guided` | `fieldId` = 0..8 | **86,3%** |
+    | Chế độ | Khi nào | Nên hiện | Trên tập test | Trên người thật | Đoán bừa |
+    |---|---|---|---|---|---|
+    | `explore` | `fieldId` bỏ trống | 5 ngành (`limit=5`) | Top-5 81,8% | ~60% | 12,8% |
+    | `guided` | `fieldId` = 0..8 | 2 ngành (`limit=2`) | **Top-2 90,6%** | ~79% | 47,6% |
 
-    Chênh lệch rất lớn giữa hai chế độ: chọn nhóm ngành trước rồi mới xếp hạng là
-    bài toán khác hẳn chọn trong cả 39 ngành. Giao diện nên khuyến khích người dùng
-    chọn nhóm.
+    Tập test gồm 2.546 dòng, phần lớn là hồ sơ trúng tuyển có phần sở thích do mô hình
+    sinh; cột "người thật" đo trên phiếu khảo sát (Hướng 2), là mức nên kỳ vọng với
+    người dùng. Số trên tập test đo khi tắt lọc mềm theo tổ hợp.
 
-    Đo trên 102 sinh viên thật chưa từng dùng để huấn luyện. Đây là hệ **gợi ý** —
-    nên hiển thị 3–5 lựa chọn, và **không nên hiện `score`** cho người dùng cuối
-    (giá trị thật chỉ quanh 10–15%, hiện ra sẽ tưởng hệ thống hỏng).
+    Đây là hệ **gợi ý** — **không nên hiện `score`** cho người dùng cuối (xác suất
+    thật thường thấp, hiện ra sẽ tưởng hệ thống hỏng).
 
     Gửi kèm `Authorization: Bearer <token>` để server tự lấy giới tính từ hồ sơ.
     """
     from app.services.major_predictor import get_predictor
 
-    try:
-        predictor = get_predictor()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=503, detail=str(e)) from e
+    predictor = get_predictor()
 
-    gender, warnings = await resolve_gender(authorization, body.gender)
+    gender, warnings = await resolve_gender(caller, body.gender, db)
 
     try:
         result = predictor.recommend(
@@ -103,6 +100,7 @@ async def recommend_majors(
             scores=body.scores,
             field_id=body.fieldId,
             limit=body.limit,
+            loai_bo_ngoai_to_hop=True,
             soft_filter=body.softFilter,
         )
     except ValueError as e:
@@ -121,15 +119,12 @@ def get_catalog():
     """Bảng tra khối ngành / ngành lấy thẳng từ mô hình.
 
     Frontend nên dựng dropdown từ đây thay vì gõ tay danh sách ngành — gõ tay
-    chính là lý do bảng cứng trong `predict_service.py` lệch 9/39 mã so với mô hình.
+    chính là lý do bảng gõ tay cũ (đã xoá) lệch 9/39 mã so với mô hình.
     `id` trả về ở đây dùng được luôn cho `fieldId` khi gọi `/recommend`.
     """
     from app.services.major_predictor import get_predictor
 
-    try:
-        predictor = get_predictor()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=503, detail=str(e)) from e
+    predictor = get_predictor()
 
     groups: dict[int, dict] = {
         k: {"id": k, "name": v, "subjectGroups": set(), "majors": []}
@@ -151,29 +146,33 @@ def get_catalog():
     # để chỉ cho chọn tổ hợp thật sự xét tuyển vào khối người dùng đã chọn.
     for g in groups.values():
         g["subjectGroups"] = sorted(g["subjectGroups"])
-    return {"fields": list(groups.values())}
+    return {
+        "fields": list(groups.values()),
+        "soGoiY": {"tuVan": predictor.so_goi_y(0), "khamPha": predictor.so_goi_y(None)},
+    }
 
 
-@router.post(
-    "/",
-    response_model=PredictionResponse,
-    summary="[NGƯNG DÙNG] Xếp ngành theo tổ hợp, không dùng mô hình",
-    deprecated=True,
-)
-def predict_user_majors(survey: SurveySubmit):
-    """Endpoint cũ — **không có mô hình học máy nào**, chỉ chấm 0.85/0.45 theo
-    tổ hợp có khớp hay không, và 10 điểm khảo sát không hề được dùng.
+# ĐÃ XOÁ: `POST /api/v1/predict/` (19/09/2026).
+#
+# Endpoint đó không dùng mô hình học máy nào — chỉ chấm cứng 0.85/0.45 theo việc tổ
+# hợp có khớp hay không, và 10 điểm khảo sát người dùng nhập vào không hề được đụng
+# tới. Nó đọc bảng 39 ngành gõ tay trong `predict_service.py`, bảng này lệch **9/39
+# mã ngành** so với mô hình thật, nên client nào lấy mã từ đó rồi gọi sang
+# `/recommend` đều không khớp được.
+#
+# Đã grep toàn bộ `web/src` và `mobile/lib`: không chỗ nào gọi. Thay thế là
+# `POST /api/v1/predict/recommend`.
 
-    Trước đây còn lỗi `AttributeError` vì truyền `list` vào tham số kiểu `dict`.
-    Giữ lại để không phá client cũ. Hãy chuyển sang `POST /api/v1/predict/recommend`.
-    """
-    return {"results": predict_major({"scores": survey.scores, "block": "D01"})}
 
 @router.get(
     "/explain/{prediction_id}",
     summary="Đọc lại giải thích SHAP của một lượt tư vấn đã lưu",
 )
-async def get_explain(prediction_id: str, authorization: str = Header(...)):
+async def get_explain(
+    prediction_id: str,
+    uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
+):
     """Trả về phần giải thích XAI đã lưu kèm lượt tư vấn.
 
     Chỉ **chính chủ** hoặc **admin** đọc được: bản ghi tư vấn gắn với hồ sơ cá
@@ -184,16 +183,6 @@ async def get_explain(prediction_id: str, authorization: str = Header(...)):
     """
     from bson.errors import InvalidId
 
-    from app.core.mongodb import get_db
-    from app.services.auth_service import AuthService
-
-    token = authorization.replace("Bearer ", "")
-    decoded = await AuthService().verify_token(token)
-    if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
-    uid = decoded["uid"]
-
-    db = get_db()
     try:
         doc = await db["prediction_history"].find_one({"_id": ObjectId(prediction_id)})
     except (InvalidId, TypeError) as e:
@@ -202,12 +191,9 @@ async def get_explain(prediction_id: str, authorization: str = Header(...)):
         raise HTTPException(status_code=404, detail="Không tìm thấy lượt tư vấn.")
 
     la_chu = doc.get("user_id") == uid
-    if not la_chu:
-        nguoi_goi = await db["users"].find_one({"_id": uid})
-        if (nguoi_goi or {}).get("role") != "admin":
-            raise HTTPException(
-                status_code=403, detail="Không có quyền xem lượt tư vấn này."
-            )
+    await ensure_self_or_admin(
+        doc.get("user_id"), uid, db, "Không có quyền xem lượt tư vấn này."
+    )
     la_admin = not la_chu
 
     majors = []
@@ -239,8 +225,9 @@ class DienGiaiRequest(BaseModel):
 @router.post(
     "/explain-text",
     summary="Diễn giải bảng SHAP thành 2–3 câu tiếng Việt",
+    dependencies=[Depends(get_current_uid)],
 )
-async def explain_text(body: DienGiaiRequest, authorization: str = Header(...)):
+async def explain_text(body: DienGiaiRequest):
     """Chuyển bảng số thành lời cho học sinh dễ đọc.
 
     LLM **chỉ được** diễn đạt lại những con số trong `features` — prompt cấm thêm
@@ -251,10 +238,6 @@ async def explain_text(body: DienGiaiRequest, authorization: str = Header(...)):
     Gọi theo yêu cầu (bấm nút) chứ không tự chạy mỗi lần dự đoán — mỗi lượt là một
     lần gọi Gemini, bật sẵn cho cả 5 ngành thì vừa chậm vừa tốn.
     """
-    token = authorization.replace("Bearer ", "")
-    if not await AuthService().verify_token(token):
-        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
-
     from app.services.xai_service import XAIService
 
     try:

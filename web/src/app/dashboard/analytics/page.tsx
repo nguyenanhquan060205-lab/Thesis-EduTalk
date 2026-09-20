@@ -579,9 +579,10 @@ export default function AnalyticsPage() {
         <div>
           <h3 className="text-sm font-black text-slate-900">Chất lượng dữ liệu đầu vào</h3>
           <p className="text-[11px] text-slate-500 font-medium mt-0.5">
-            Hồ sơ thiếu thông tin làm giảm độ chính xác của gợi ý. Đo trên 102 sinh viên
-            thật: thiếu giới tính khiến Top-3 giảm từ 41,2% xuống 37,3%; không có điểm
-            thi thì Top-3 chế độ explore chỉ còn khoảng 28% thay vì 39%.
+            Hồ sơ thiếu thông tin làm giảm độ chính xác của gợi ý. Đo trên tập test 2.546
+            dòng của mô hình Hướng 1: thiếu giới tính khiến khám phá Top-5 giảm từ 81,8%
+            xuống 78,6% (tư vấn Top-2: 90,6% → 89,7%); không có điểm thi thì khám phá Top-5
+            chỉ còn 55,0% và tư vấn Top-2 còn 79,9%.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">

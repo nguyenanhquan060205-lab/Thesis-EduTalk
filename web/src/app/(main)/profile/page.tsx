@@ -20,7 +20,8 @@ import {
   User,
   ChevronRight,
   Clock,
-  Sparkle
+  Sparkle,
+  Crown
 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -348,8 +349,9 @@ function ProfileContent() {
                     {name}
                   </h1>
                   {p.isPremium && (
-                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                      ⭐ Premium
+                    <span className="inline-flex items-center gap-1 text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                      <Crown className="w-3.5 h-3.5 fill-amber-400 text-amber-500" aria-hidden />
+                      Premium
                     </span>
                   )}
                 </div>

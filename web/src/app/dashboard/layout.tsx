@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Cpu,
+  Database,
+  RefreshCw,
   History,
   Users,
   LifeBuoy,
@@ -27,6 +29,8 @@ const NAV_ITEMS = [
   { href: "/dashboard/analytics", label: "Thống Kê", icon: BarChart3 },
   { href: "/dashboard/posts", label: "Duyệt Bài Cộng Đồng", icon: MessageSquare },
   { href: "/dashboard/model", label: "Hiệu Suất Mô Hình", icon: Cpu },
+  { href: "/dashboard/rag", label: "Kho Tri Thức RAG", icon: Database },
+  { href: "/dashboard/retrain", label: "Huấn Luyện Lại", icon: RefreshCw },
   { href: "/dashboard/consultations", label: "Lịch Sử Tư Vấn", icon: History },
   { href: "/dashboard/users", label: "Người Dùng", icon: Users },
   { href: "/dashboard/support", label: "Hỗ Trợ & Thông Báo", icon: LifeBuoy },

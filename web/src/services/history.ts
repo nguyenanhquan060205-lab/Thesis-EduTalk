@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import type { PhanHoiDuDoan } from "@/services/phanHoi";
 
 /**
  * Lịch sử tư vấn ngành — MongoDB collection `prediction_history`,
@@ -34,6 +35,8 @@ export interface HistoryEntry {
   };
   /** ISO 8601 */
   createdAt: string;
+  /** Phản hồi người dùng đã gửi cho lượt này (gợi ý có sát không, ngành đã chọn) */
+  phan_hoi?: PhanHoiDuDoan | null;
 }
 
 export const HistoryService = {

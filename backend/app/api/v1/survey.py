@@ -2,41 +2,26 @@
 Survey Router (Python)
 Migrate từ: màn hình DuLieu.dart / PhanTich.dart trong mobile
 Xử lý bài khảo sát đánh giá sở thích để gợi ý ngành học phù hợp.
-Kết hợp với predict_service.py (ML model đã có sẵn).
 Sử dụng MongoDB thay cho Firestore.
 """
 
 from datetime import datetime, timezone
 
-from app.core.mongodb import get_db
-from app.services.auth_service import AuthService
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
-router = APIRouter()
-auth_service = AuthService()
-
-
+from app.api.deps import get_current_uid, get_database
 from app.models.survey_models import SurveySubmitRequest
 
-
-async def get_current_uid(authorization: str) -> str:
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded:
-        raise HTTPException(
-            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
-        )
-    return decoded["uid"]
-
-
-@router.get("/")
-def get_survey_status():
-    return {"message": "Survey API status OK"}
+router = APIRouter()
 
 
 @router.post("/submit")
-async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(...)):
-    """Chạy mô hình XGBoost 2 tầng ngay trong tiến trình này, tăng usageCount
+async def submit_survey(
+    body: SurveySubmitRequest,
+    uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
+):
+    """Chạy mô hình XGBoost đang phục vụ (Hướng 1) ngay trong tiến trình này, tăng usageCount
     (nếu không phải Premium), rồi lưu lịch sử vào MongoDB.
 
     Trước đây hàm này gọi ra `edutalk-7ndf.onrender.com` (mô hình cũ). Đã bỏ:
@@ -45,13 +30,7 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
     """
     from app.services.major_predictor import get_predictor
 
-    uid = await get_current_uid(authorization)
-    db = get_db()
-
-    try:
-        predictor = get_predictor()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=503, detail=str(e)) from e
+    predictor = get_predictor()
 
     # 1. Giới tính lấy từ hồ sơ đăng ký, không hỏi lại người dùng
     user_doc = await db["users"].find_one({"_id": uid})
@@ -78,6 +57,7 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
             scores=body.scores,
             field_id=body.fieldId,
             limit=body.limit,
+            loai_bo_ngoai_to_hop=True,
         )
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
@@ -90,7 +70,7 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
     # 4. Lưu lịch sử — giữ cả đầu vào để sau này dùng cho vòng lặp phản hồi.
     #    `majors` lưu nguyên khối nên đã bao gồm `explain` (giá trị SHAP) — đây
     #    chính là "XAI_Logs" trong đề cương, đọc lại qua GET /predict/explain/{id}.
-    await db["prediction_history"].insert_one(
+    luu = await db["prediction_history"].insert_one(
         {
             "user_id": uid,
             "mode": result["mode"],
@@ -110,17 +90,20 @@ async def submit_survey(body: SurveySubmitRequest, authorization: str = Header(.
         }
     )
 
-    return {"status": "success", "results": result}
+    # `predictionId` để client gắn phản hồi (hữu ích? ngành đã chọn?) vào đúng lượt này
+    return {"status": "success", "results": result, "predictionId": str(luu.inserted_id)}
 
 
 @router.get("/history/{uid}")
-async def get_survey_history(uid: str, authorization: str = Header(...)):
+async def get_survey_history(
+    uid: str,
+    current_uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
+):
     """Lấy lịch sử các bài khảo sát đã làm của người dùng."""
-    current_uid = await get_current_uid(authorization)
     if current_uid != uid:
         raise HTTPException(status_code=403, detail="Không có quyền xem lịch sử này.")
 
-    db = get_db()
     cursor = (
         db["prediction_history"].find({"user_id": uid}).sort("createdAt", -1).limit(20)
     )

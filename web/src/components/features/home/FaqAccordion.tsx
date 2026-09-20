@@ -7,7 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 const FAQS = [
   {
     q: "Hệ thống AI EduTalk hỗ trợ thí sinh chọn ngành học như thế nào?",
-    a: "EduTalk phân tích đa chiều điểm thi 3 môn theo 15 tổ hợp xét tuyển, kết hợp với kỳ vọng nghề nghiệp sau đại học và 10 chỉ số đánh giá thiên hướng cá nhân để đưa ra bảng đề xuất Top 3 ngành học sáng giá nhất kèm đánh giá khả năng trúng tuyển thực tế tại HUIT."
+    a: "EduTalk phân tích đa chiều điểm thi 3 môn theo 15 tổ hợp xét tuyển, kết hợp với kỳ vọng nghề nghiệp sau đại học và 10 chỉ số đánh giá thiên hướng cá nhân để gợi ý 2 ngành trong nhóm ngành bạn đã chọn, hoặc 5 ngành trên toàn trường nếu chưa chọn nhóm — kèm đối chiếu điểm chuẩn 3 năm gần nhất tại HUIT."
   },
   {
     q: "Điểm chuẩn và tổ hợp xét tuyển trên EduTalk lấy từ nguồn nào?",
@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     q: "Hai chế độ 'Khám phá toàn diện' và 'Tư vấn theo nhóm ngành' khác nhau thế nào?",
-    a: "Chế độ Khám phá toàn diện tự động tìm kiếm trên cả 39 chuyên ngành thuộc 9 nhóm ngành HUIT. Trong khi đó, chế độ Tư vấn theo nhóm ngành dành cho thí sinh đã xác định được nhóm ngành yêu thích (như CNTT hoặc Kinh tế), mô hình sẽ tập trung xếp hạng chuyên sâu trong nhóm đó."
+    a: "Chế độ Khám phá toàn diện xếp hạng cả 39 chuyên ngành thuộc 9 nhóm ngành HUIT và gợi ý 5 ngành. Chế độ Tư vấn theo nhóm ngành dành cho thí sinh đã xác định được nhóm ngành yêu thích (như CNTT hoặc Kinh tế): mô hình riêng của nhóm đó xếp hạng các ngành bên trong và gợi ý 2 ngành. Chọn đúng nhóm trước thì gợi ý chính xác hơn hẳn."
   }
 ];
 

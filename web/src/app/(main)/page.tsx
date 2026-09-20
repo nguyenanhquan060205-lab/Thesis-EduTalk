@@ -1,16 +1,20 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { 
-  Target, 
-  ShieldCheck, 
-  MessageSquare, 
-  ArrowRight, 
+import {
+  Target,
+  ShieldCheck,
+  MessageSquare,
+  ArrowRight,
   Sparkles,
   Award,
   CheckCircle2,
   Calculator,
-  Info
+  Info,
+  Landmark,
+  GraduationCap,
+  BrainCircuit,
+  Lightbulb
 } from "lucide-react";
 import { Marquee } from "@/components/motion/Marquee";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
@@ -24,23 +28,26 @@ import { ADMISSION_BLOCKS, ADMISSION_SOURCE } from "@/lib/admission";
 
 export const metadata: Metadata = {
   title: "HUIT EduTalk — Cổng Tư Vấn Tuyển Sinh & Định Hướng Ngành Học AI",
-  description: "Cổng tư vấn tuyển sinh và định hướng chuyên ngành thông minh Đại học Công Thương TP.HCM (HUIT), ứng dụng pipeline học máy XGBoost (research3) và giải thích minh bạch XAI SHAP.",
+  description: "Cổng tư vấn tuyển sinh và định hướng chuyên ngành thông minh Đại học Công Thương TP.HCM (HUIT), ứng dụng mô hình học máy XGBoost và giải thích minh bạch XAI SHAP.",
 };
 
+// Icon lấy từ lucide-react thay vì emoji. Emoji do hệ điều hành vẽ nên mỗi máy một
+// kiểu (macOS khác Windows khác Android), không theo được bảng màu, và không chỉnh
+// được độ dày nét — đặt cạnh icon thật là lộ ngay.
 const MARQUEE_ITEMS = [
-  "🏛️ 44 Năm Truyền Thống Phát Triển & Khởi Nghiệp Đổi Mới",
-  "🎓 39 Chuyên Ngành Đào Tạo Chuẩn Kiểm Định Quốc Tế (AUN-QA, MOET)",
-  "📊 15 Tổ Hợp Môn Xét Tuyển Đa Dạng & Linh Hoạt",
-  "🤖 Pipeline Trí Tuệ Nhân Tạo XGBoost Phân Tích Khả Năng Trúng Tuyển 9 Nhóm Ngành",
-  "💡 Giải Thích Minh Bạch XAI SHAP Hỗ Trợ Ra Quyết Định Đúng Đắn",
-  "💬 Trợ Lý Tư Vấn Tuyển Sinh AI EduTalk Trực Tuyến 24/7",
+  { icon: Landmark, text: "44 Năm Truyền Thống Phát Triển & Khởi Nghiệp Đổi Mới" },
+  { icon: GraduationCap, text: "39 Chuyên Ngành Đào Tạo Chuẩn Kiểm Định Quốc Tế (AUN-QA, MOET)" },
+  { icon: Calculator, text: "15 Tổ Hợp Môn Xét Tuyển Đa Dạng & Linh Hoạt" },
+  { icon: BrainCircuit, text: "Mô Hình XGBoost Gợi Ý Ngành Phù Hợp Trong 39 Ngành Thuộc 9 Nhóm Ngành" },
+  { icon: Lightbulb, text: "Giải Thích Minh Bạch XAI SHAP Hỗ Trợ Ra Quyết Định Đúng Đắn" },
+  { icon: MessageSquare, text: "Trợ Lý Tư Vấn Tuyển Sinh AI EduTalk Trực Tuyến 24/7" },
 ];
 
 const HIGHLIGHT_STRIPS = [
   {
     id: "predict",
     title: "Tư Vấn Chọn Ngành AI",
-    desc: "Đối soát 15 tổ hợp môn & 10 thiên hướng cá nhân để gợi ý Top 3 ngành phù hợp nhất tại HUIT.",
+    desc: "Đối soát 15 tổ hợp môn & 10 thiên hướng cá nhân để gợi ý 2 ngành trong nhóm bạn chọn, hoặc 5 ngành trên toàn trường.",
     tag: "Khảo sát AI",
     icon: Target,
     href: "/predict",
@@ -82,12 +89,13 @@ export default function HomePage() {
       {/* ==================================================================== */}
       <div className="w-full bg-slate-100/80 border-y border-slate-200/80 py-3.5 overflow-hidden">
         <Marquee repeat={5} duration="40s">
-          {MARQUEE_ITEMS.map((item, idx) => (
-            <span 
-              key={idx} 
-              className="inline-flex items-center text-xs font-black text-slate-700 px-6 tracking-wide"
+          {MARQUEE_ITEMS.map(({ icon: Icon, text }, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center gap-2 text-xs font-black text-slate-700 px-6 tracking-wide"
             >
-              {item}
+              <Icon className="w-4 h-4 text-[#0054A6] shrink-0" strokeWidth={2.25} aria-hidden />
+              {text}
             </span>
           ))}
         </Marquee>

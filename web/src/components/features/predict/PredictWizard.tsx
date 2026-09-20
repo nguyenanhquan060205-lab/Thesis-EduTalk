@@ -37,7 +37,7 @@ import {
   Dna
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { PredictService, type CatalogField } from "@/services/predict";
+import { PredictService, type CatalogField, type SoGoiY } from "@/services/predict";
 import { ADMISSION_BLOCKS } from "@/lib/admission";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
 
@@ -220,11 +220,15 @@ export function PredictWizard() {
   // 10 câu sở thích
   const [likertScores, setLikertScores] = useState<Record<string, number>>({});
 
-  // Catalog tổ hợp từ backend
+  // Catalog tổ hợp từ backend, kèm số ngành mô hình gợi ý ở mỗi chế độ
   const [catalog, setCatalog] = useState<CatalogField[] | null>(null);
+  const [soGoiY, setSoGoiY] = useState<SoGoiY | null>(null);
   useEffect(() => {
     PredictService.catalog()
-      .then((d) => setCatalog(d.fields))
+      .then((d) => {
+        setCatalog(d.fields);
+        setSoGoiY(d.soGoiY ?? null);
+      })
       .catch(() => setCatalog(null));
   }, []);
 
@@ -345,7 +349,7 @@ export function PredictWizard() {
         goalId: postGradGoal,
         facultyId: predictMode === "guided" ? selectedFaculty : null,
         gender,
-        limit: 3,
+        // Không gửi limit: backend trả đúng số gợi ý mô hình được đánh giá (tư vấn 2, khám phá 5)
         save: !!user?.id,
       });
 
@@ -547,7 +551,8 @@ export function PredictWizard() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      Phù hợp khi bạn chưa chọn ngành cụ thể. Mô hình tự động phân tích cả nhóm ngành lẫn 39 chuyên ngành để tìm ra ngành học phù hợp nhất.
+                      Phù hợp khi bạn chưa chọn ngành cụ thể. Mô hình xếp hạng cả 39 chuyên ngành của trường
+                      {soGoiY ? ` và gợi ý ${soGoiY.khamPha} ngành phù hợp nhất.` : " để tìm ra ngành học phù hợp nhất."}
                     </p>
                   </div>
                   {predictMode === "auto" && (
@@ -579,7 +584,8 @@ export function PredictWizard() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      Dành cho bạn đã chọn sẵn 1 trong 9 nhóm ngành HUIT (CNTT, Kinh tế, Du lịch, Kỹ thuật...). Mô hình sẽ xếp hạng sâu bên trong nhóm đó.
+                      Dành cho bạn đã chọn sẵn 1 trong 9 nhóm ngành HUIT (CNTT, Kinh tế, Du lịch, Kỹ thuật...). Mô hình riêng của nhóm xếp hạng các ngành bên trong nhóm đó
+                      {soGoiY ? ` và gợi ý ${soGoiY.tuVan} ngành phù hợp nhất.` : "."}
                     </p>
                   </div>
                   {predictMode === "guided" && (

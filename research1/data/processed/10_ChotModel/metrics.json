@@ -1,0 +1,236 @@
+{
+  "huong": 2,
+  "n_hoc": 13851,
+  "n_test": 2445,
+  "n_khaosat_niemphong": 676,
+  "n_khaosat_34_nganh": 624,
+  "thiet_ke": "HƯỚNG 2 — 676 phiếu khảo sát niêm phong từ Giai đoạn 6, mô hình phân loại chưa từng thấy. Bộ sinh copula ở Giai đoạn 3 thì có.",
+  "hp": {
+    "n_estimators": 150,
+    "max_depth": 3,
+    "min_child_weight": 10,
+    "reg_lambda": 5.0,
+    "colsample_bytree": 0.4
+  },
+  "rieng_nhom": true,
+  "rang_buoc_gd9": {
+    "do_tren": "khám phá (xếp hạng cả 39 ngành)",
+    "kp_train_toi_da": 0.95,
+    "kp_gap_toi_da": 0.1
+  },
+  "test_noi_bo": {
+    "tu_van": {
+      "top1": 0.7313,
+      "top2": 0.9133,
+      "top3": 0.9755,
+      "top5": 0.9975
+    },
+    "kham_pha": {
+      "top1": 0.4274,
+      "top2": 0.6016,
+      "top3": 0.7141,
+      "top5": 0.8274
+    }
+  },
+  "khaosat_niemphong": {
+    "tu_van": {
+      "top1": 0.5888,
+      "top2": 0.7855,
+      "top3": 0.8846,
+      "top5": 0.9808
+    },
+    "kham_pha": {
+      "top1": 0.3062,
+      "top2": 0.4305,
+      "top3": 0.5133,
+      "top5": 0.5991
+    }
+  },
+  "khaosat_34_nganh": {
+    "tu_van": {
+      "top1": 0.5673,
+      "top2": 0.7724,
+      "top3": 0.875,
+      "top5": 0.9792
+    },
+    "kham_pha": {
+      "top1": 0.2692,
+      "top2": 0.4022,
+      "top3": 0.4888,
+      "top5": 0.5769
+    }
+  },
+  "lac_quan_test_vs_nguoi_that": {
+    "tu_van_top2": 0.1278,
+    "kham_pha_top3": 0.2008
+  },
+  "phan_do_5_nganh_vong_tron": {
+    "tu_van_top2": 0.0131,
+    "kham_pha_top3": 0.0245
+  },
+  "train_val": {
+    "tu_van": {
+      "top1": 0.8149,
+      "top2": 0.9508,
+      "top3": 0.988,
+      "top5": 0.9995
+    },
+    "kham_pha": {
+      "top1": 0.5068,
+      "top2": 0.6801,
+      "top3": 0.7776,
+      "top5": 0.8807
+    }
+  },
+  "diem_van_hanh": {
+    "tu_van": 2,
+    "kham_pha": 5
+  },
+  "gap_train_test": {
+    "tu_van": 0.0375,
+    "kham_pha": 0.0635,
+    "k": {
+      "tu_van": 2,
+      "kham_pha": 3
+    }
+  },
+  "gap_train_nguoi_that": {
+    "tu_van": 0.1653,
+    "kham_pha": 0.2643
+  },
+  "doan_bua": {
+    "tu_van_trong_nhom": {
+      "top1": 0.2336,
+      "top2": 0.4672,
+      "top3": 0.7008,
+      "top5": 0.9317
+    },
+    "tu_van_nganh_dong_nhat": {
+      "top1": 0.3314,
+      "top2": 0.5858,
+      "top3": 0.8077,
+      "top5": 0.966
+    },
+    "kham_pha": {
+      "top1": 0.0256,
+      "top2": 0.0513,
+      "top3": 0.0769,
+      "top5": 0.1282
+    }
+  },
+  "ky_nang_nguoi_that": {
+    "tu_van_top2": 0.5974,
+    "kham_pha_top3": 0.4728,
+    "kham_pha_top5": 0.5402
+  },
+  "chi_so_xep_hang": {
+    "TƯ VẤN · test": {
+      "k": 2,
+      "hit_k": 0.9133,
+      "macro_hit_k": 0.8259,
+      "mrr": 0.8486,
+      "ndcg_k": 0.8461,
+      "hang_trung_vi": 1.0,
+      "hang_trung_binh": 1.3918,
+      "n_nganh_duoi_50": 4,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.5012
+    },
+    "TƯ VẤN · NGƯỜI THẬT ⭐": {
+      "k": 2,
+      "hit_k": 0.7855,
+      "macro_hit_k": 0.7597,
+      "mrr": 0.7465,
+      "ndcg_k": 0.7129,
+      "hang_trung_vi": 1.0,
+      "hang_trung_binh": 1.8033,
+      "n_nganh_duoi_50": 6,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.4946
+    },
+    "KHÁM PHÁ · test": {
+      "k": 5,
+      "hit_k": 0.8274,
+      "macro_hit_k": 0.7086,
+      "mrr": 0.5978,
+      "ndcg_k": 0.6404,
+      "hang_trung_vi": 2.0,
+      "hang_trung_binh": 3.389,
+      "n_nganh_duoi_50": 7,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.1091
+    },
+    "KHÁM PHÁ · NGƯỜI THẬT ⭐": {
+      "k": 5,
+      "hit_k": 0.5991,
+      "macro_hit_k": 0.5745,
+      "mrr": 0.4513,
+      "ndcg_k": 0.4612,
+      "hang_trung_vi": 3.0,
+      "hang_trung_binh": 7.1287,
+      "n_nganh_duoi_50": 13,
+      "n_nganh": 39,
+      "mrr_doan_bua": 0.1091
+    }
+  },
+  "chi_so_lop": {
+    "tư vấn · TRAIN+VAL": {
+      "acc_top1": 0.8149,
+      "f1_macro": 0.7597,
+      "f1_weighted": 0.8092,
+      "precision_macro": 0.8305,
+      "recall_macro": 0.7366,
+      "auc_ovr": null
+    },
+    "tư vấn · TEST": {
+      "acc_top1": 0.7313,
+      "f1_macro": 0.6367,
+      "f1_weighted": 0.7206,
+      "precision_macro": 0.6949,
+      "recall_macro": 0.6239,
+      "auc_ovr": null
+    },
+    "tư vấn · NGƯỜI THẬT": {
+      "acc_top1": 0.5888,
+      "f1_macro": 0.5292,
+      "f1_weighted": 0.5661,
+      "precision_macro": 0.6017,
+      "recall_macro": 0.559,
+      "auc_ovr": null
+    },
+    "khám phá · TRAIN+VAL": {
+      "acc_top1": 0.5068,
+      "f1_macro": 0.48,
+      "f1_weighted": 0.4964,
+      "precision_macro": 0.5838,
+      "recall_macro": 0.4521,
+      "auc_ovr": 0.9593
+    },
+    "khám phá · TEST": {
+      "acc_top1": 0.4274,
+      "f1_macro": 0.3702,
+      "f1_weighted": 0.4137,
+      "precision_macro": 0.4285,
+      "recall_macro": 0.3487,
+      "auc_ovr": 0.9352
+    },
+    "khám phá · NGƯỜI THẬT": {
+      "acc_top1": 0.3062,
+      "f1_macro": 0.2702,
+      "f1_weighted": 0.2766,
+      "precision_macro": 0.2995,
+      "recall_macro": 0.3032,
+      "auc_ovr": 0.8716
+    }
+  },
+  "sai_so_95_nguoi_that": {
+    "tu_van_top2": 3.1,
+    "kham_pha_top3": 3.8
+  },
+  "han_che": [
+    "Mô hình phân loại chưa từng thấy phiếu nào trong 676 phiếu niêm phong, nhưng bộ sinh copula ở Giai đoạn 3 CÓ học từ chúng. Không tránh được: ngành ít phiếu nhất chỉ có 6 phiếu, chia đôi thì không ước lượng nổi ma trận hiệp phương sai. Đừng viết 'hoàn toàn độc lập'.",
+    "5 ngành (Luật, Trí tuệ nhân tạo, Quản lý Công nghiệp, Logistics, Du lịch) không có hồ sơ trúng tuyển nào; dòng huấn luyện của chúng sinh từ chính 52 phiếu bị niêm phong — rò rỉ vòng tròn. Cột 'khaosat_34_nganh' loại bỏ chúng.",
+    "Mất cân bằng theo ngành: 10 ngành ít dữ liệu nhất đạt Hit@5 khám phá 43.5%, 10 ngành nhiều nhất 69.1%. macro-F1 0.270 so với weighted-F1 0.277 đo cùng hiện tượng đó.",
+    "Phần Likert của 15.696 hồ sơ TTTH do copula sinh, không phải các em tự điền; điểm, tổ hợp và ngành trúng tuyển là thật."
+  ]
+}

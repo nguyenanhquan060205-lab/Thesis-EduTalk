@@ -22,6 +22,9 @@ export default function ChatWidget() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  // Bong bóng mời chào chỉ hiện lúc đầu rồi tự ẩn. Để hiện mãi thì nó là một lớp
+  // phủ cố định che chữ ở MỌI trang — đã thấy nó đè lên tiêu đề ở trang chủ.
+  const [hienLoiMoi, setHienLoiMoi] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Chào bạn! Mình là Trợ lý EduTalk. Mình có thể giúp gì cho bạn?", sender: "bot" }
   ]);
@@ -31,6 +34,17 @@ export default function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
+
+  // Chốt chặn gửi trùng. Phải là ref chứ KHÔNG dùng state `isTyping`: state chỉ
+  // đổi sau khi render lại, nên hai lời gọi trong cùng một nhịp sự kiện đều đọc
+  // được giá trị cũ và cùng lọt qua. Ref đổi ngay lập tức.
+  const dangGui = useRef(false);
+
+  // Ẩn lời mời sau 8 giây — đủ để đọc, không đủ lâu để thành vật cản.
+  useEffect(() => {
+    const t = setTimeout(() => setHienLoiMoi(false), 8000);
+    return () => clearTimeout(t);
+  }, []);
 
   // Lắng nghe phím ESC để thu nhỏ khung chat về robot
   useEffect(() => {
@@ -61,8 +75,9 @@ export default function ChatWidget() {
   if (pathname === "/chat") return null;
 
   const sendMessageText = async (text: string) => {
-    if (!text.trim()) return;
-    
+    if (!text.trim() || dangGui.current) return;
+    dangGui.current = true;
+
     // Thêm tin nhắn của user
     const newUserMsg: Message = { id: Date.now(), text: text.trim(), sender: "user" };
     setMessages(prev => [...prev, newUserMsg]);
@@ -100,6 +115,7 @@ export default function ChatWidget() {
       }]);
     } finally {
       setIsTyping(false);
+      dangGui.current = false;
     }
   };
 
@@ -163,8 +179,8 @@ export default function ChatWidget() {
                   className={`flex gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.sender === 'bot' && (
-                    <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 -ml-1 mr-0.5">
-                      <Lottie animationData={animationData} loop={true} className="w-14 h-14 scale-125" />
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 mr-0.5">
+                      <Lottie animationData={animationData} loop={true} className="w-full h-full" />
                     </div>
                   )}
                   <div className={`max-w-[85%] rounded-2xl p-3.5 text-[14px] leading-relaxed shadow-sm ${
@@ -187,8 +203,8 @@ export default function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex gap-2 justify-start"
                 >
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 -ml-1 mr-0.5">
-                    <Lottie animationData={animationData} loop={true} className="w-14 h-14 scale-125" />
+                  <div className="w-10 h-10 flex items-center justify-center shrink-0 mt-1 mr-0.5">
+                    <Lottie animationData={animationData} loop={true} className="w-full h-full" />
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-2 shadow-sm items-center">
                     <div className="flex gap-1.5">
@@ -225,6 +241,15 @@ export default function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {
+                    // `isComposing` — bắt buộc khi người dùng gõ tiếng Việt.
+                    // Bộ gõ dùng chính phím Enter để chốt chữ đang gõ dở, nên
+                    // trình duyệt bắn keydown Enter HAI lần: một lần chốt bộ gõ,
+                    // một lần Enter thật. Thiếu kiểm tra này thì gõ "hú" rồi Enter
+                    // sẽ gửi đi hai tin nhắn giống hệt nhau.
+                    // `keyCode === 229` là cách một số trình duyệt cũ báo cùng
+                    // trạng thái đó.
+                    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       handleSend();
@@ -265,21 +290,26 @@ export default function ChatWidget() {
             onDragEnd={() => setTimeout(() => setIsDragging(false), 150)}
             className="fixed bottom-6 right-6 z-50 flex items-end gap-4 pointer-events-auto"
           >
-          {/* Tooltip Bubble */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20, scale: 0.8 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
-            className="hidden sm:flex items-center bg-white rounded-2xl py-2 px-3.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] border border-slate-100 cursor-pointer mb-6"
-            onClick={() => !isDragging && setIsOpen(true)}
-          >
-            <div>
-              <p className="text-[13px] font-black text-slate-800 leading-tight">Trợ lý EduTalk</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Bạn cần tư vấn tuyển sinh gì không?</p>
-            </div>
-            {/* Triangle pointing right */}
-            <div className="absolute -right-2 top-1/2 -translate-y-1/2 border-t-[6px] border-b-[6px] border-l-[8px] border-transparent border-l-white drop-shadow-sm"></div>
-          </motion.div>
+          {/* Tooltip Bubble — chỉ chào lúc đầu rồi tự rút đi */}
+          <AnimatePresence>
+            {hienLoiMoi && (
+              <motion.div
+                initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 12, scale: 0.9 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
+                className="hidden sm:flex items-center bg-white rounded-2xl py-2 px-3.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] border border-slate-100 cursor-pointer mb-6"
+                onClick={() => !isDragging && setIsOpen(true)}
+              >
+                <div>
+                  <p className="text-[13px] font-black text-slate-800 leading-tight">Trợ lý EduTalk</p>
+                  <p className="text-[11px] text-slate-500 font-medium mt-0.5">Bạn cần tư vấn tuyển sinh gì không?</p>
+                </div>
+                {/* Triangle pointing right */}
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 border-t-[6px] border-b-[6px] border-l-[8px] border-transparent border-l-white drop-shadow-sm"></div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Icon Button (With Ambient pulse glow) */}
           <motion.div

@@ -1,7 +1,8 @@
 import api from "@/lib/api";
 
 /**
- * Chỉ số đánh giá mô hình — đọc từ `research3/data/processed/10_ChotModel/`.
+ * Chỉ số đánh giá mô hình ĐANG PHỤC VỤ — mặc định Hướng 1, đọc từ gói
+ * `backend/data/mo_hinh/huong1/` (đóng gói từ `research/data/processed/10_ChotModel/`).
  *
  * Khác hẳn `/admin/analytics`: bên đó là số liệu **sử dụng thực tế** của người
  * dùng, bên này là kết quả **huấn luyện và kiểm thử** mô hình.
@@ -13,6 +14,21 @@ export interface BoChiSo {
   top5?: number;
   macro_f1?: number;
   balanced_acc?: number;
+}
+
+/** Chỉ số xếp hạng ở điểm vận hành k (tư vấn k=2, khám phá k=5) */
+export interface ChiSoXepHang {
+  k: number;
+  hit_k: number;
+  /** Trung bình Hit@k của TỪNG ngành — ngành nhỏ nặng ngang ngành lớn */
+  macro_hit_k: number;
+  mrr: number;
+  mrr_doan_bua: number;
+  ndcg_k: number;
+  hang_trung_vi: number;
+  hang_trung_binh: number;
+  n_nganh_duoi_50: number;
+  n_nganh: number;
 }
 
 export interface ModelMetrics {
@@ -42,6 +58,38 @@ export interface ModelMetrics {
     tang1_tung_khoi?: Record<string, number>;
   };
   canhBao?: string[] | string;
+  cachNhom?: string | null;
+
+  // ── Chỉ có ở mô hình Hướng 1 ────────────────────────────────────────────────
+  pipeline?: "h1";
+  /** Số gợi ý mà hệ thống hiển thị — mọi chỉ số chính đo đúng ở đây */
+  diemVanHanh?: { tu_van: number; kham_pha: number };
+  /** Mốc đối chứng theo từng Top-k: bốc bừa trong nhóm, gợi ý ngành đông nhất, bốc bừa 39 ngành */
+  doanBua?: {
+    tu_van_trong_nhom: BoChiSo;
+    tu_van_nganh_dong_nhat: BoChiSo;
+    kham_pha: BoChiSo;
+  };
+  /** Khoá: "TƯ VẤN (biết nhóm)" · "KHÁM PHÁ (cả 39)" */
+  chiSoXepHang?: Record<string, ChiSoXepHang>;
+  kyNang?: Record<string, number>;
+  saiSo95?: Record<string, number>;
+  /** Hướng 2 đo trên 676 phiếu khảo sát niêm phong — mức nên kỳ vọng với người dùng thật */
+  nguoiThat?: {
+    nguon: string;
+    n: number;
+    n_34_nganh: number;
+    tu_van: BoChiSo;
+    kham_pha: BoChiSo;
+    tu_van_34_nganh: BoChiSo;
+    kham_pha_34_nganh: BoChiSo;
+    doan_bua: {
+      tu_van_trong_nhom: BoChiSo;
+      tu_van_nganh_dong_nhat: BoChiSo;
+      kham_pha: BoChiSo;
+    };
+  } | null;
+
   /** null = chưa train Random Forest để so sánh */
   baselineRandomForest: Record<string, unknown> | null;
   /** null = mô hình mới train một lần, chưa có chu kỳ retrain */

@@ -1,20 +1,19 @@
 # pyrefly: ignore [missing-import]
 
-from app.api.v1.admin import require_admin
-from app.core.mongodb import get_db
-
 # pyrefly: ignore [missing-import]
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
-router = APIRouter()
+from app.api.deps import get_database, require_admin
+
+# Mọi endpoint dưới đây đòi quyền admin — gác ở cấp router để không thể quên
+# một route mới. Handler nào cần uid thì vẫn khai Depends(require_admin).
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 
 @router.get("/pending")
-async def get_pending_news(authorization: str = Header(...)):
+async def get_pending_news(db=Depends(get_database)):
     """Lấy danh sách các bài viết đang chờ duyệt."""
-    await require_admin(authorization)
-    db = get_db()
     cursor = db["news"].find({"status": "pending"}).sort("createdAt", -1)
     news_list = await cursor.to_list(length=100)
 
@@ -27,10 +26,8 @@ async def get_pending_news(authorization: str = Header(...)):
 
 
 @router.post("/{news_id}/approve")
-async def approve_news(news_id: str, authorization: str = Header(...)):
+async def approve_news(news_id: str, db=Depends(get_database)):
     """Duyệt bài viết."""
-    await require_admin(authorization)
-    db = get_db()
 
     result = await db["news"].update_one(
         {"_id": ObjectId(news_id)}, {"$set": {"status": "published"}}
@@ -46,10 +43,8 @@ async def approve_news(news_id: str, authorization: str = Header(...)):
 
 
 @router.delete("/{news_id}/reject")
-async def reject_news(news_id: str, authorization: str = Header(...)):
+async def reject_news(news_id: str, db=Depends(get_database)):
     """Từ chối/Xóa bài viết."""
-    await require_admin(authorization)
-    db = get_db()
 
     result = await db["news"].delete_one({"_id": ObjectId(news_id)})
 

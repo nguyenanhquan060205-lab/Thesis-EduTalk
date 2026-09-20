@@ -98,9 +98,15 @@ export function FacultyGrid() {
             <Link
               key={fac.id}
               href={`/majors?faculty=${encodeURIComponent(fac.name)}`}
-              className="group block"
+              // h-full ở đây mới là thứ cho SpotlightCard bên trong cao bằng nhau:
+              // ô lưới có kéo giãn, nhưng Link lại cao theo nội dung nên `h-full`
+              // của thẻ con không có gì để bám → thẻ nào tiêu đề 2 dòng là lệch đáy.
+              className="group block h-full"
             >
-              <SpotlightCard className="h-full flex flex-col justify-between p-6 hover:border-[#0054A6]/60">
+              <SpotlightCard
+                className="h-full p-6 hover:border-[#0054A6]/60"
+                contentClassName="flex h-full flex-col justify-between"
+              >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="w-11 h-11 rounded-2xl bg-blue-50 group-hover:bg-[#0054A6] text-[#0054A6] group-hover:text-white flex items-center justify-center font-black transition-all shadow-xs group-hover:scale-105">

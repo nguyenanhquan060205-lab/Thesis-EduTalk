@@ -29,6 +29,10 @@ import {
   ReferenceLine 
 } from "recharts";
 import { GOAL_BY_ID } from "@/services/predict";
+import { PhanHoiService } from "@/services/phanHoi";
+import { useAuthStore } from "@/store/useAuthStore";
+import { PhanHoiGoiY } from "@/components/features/phan-hoi/PhanHoiGoiY";
+import { DanhGiaAppModal } from "@/components/features/phan-hoi/DanhGiaAppModal";
 import GiaiThichSHAP from "@/components/features/predict/GiaiThichSHAP";
 import { BorderBeam } from "@/components/motion/BorderBeam";
 
@@ -182,13 +186,50 @@ export function ResultReport() {
 
   const apiResult = reportData?.result ?? null;
   const input = reportData?.input ?? null;
+  const predictionId: string | null = apiResult?.predictionId ?? null;
+
+  // ── Hỏi đánh giá app sau lần dự đoán ĐẦU TIÊN ─────────────────────────────
+  // Backend quyết định có nên hỏi (`canHoiDanhGia`); "Để sau" hoãn 3 ngày trên trình
+  // duyệt này. localStorage có thể bị chặn (trình duyệt ẩn danh) — lỗi thì cứ hỏi.
+  const userId = useAuthStore((s) => s.user?.id);
+  const [moDanhGia, setMoDanhGia] = useState(false);
+  useEffect(() => {
+    if (!userId || !predictionId) return;
+    let huy = false;
+    const KHOA_HOAN = "edutalk_hoan_danh_gia_app";
+    try {
+      if (Number(localStorage.getItem(KHOA_HOAN) ?? 0) > Date.now()) return;
+    } catch {
+      /* không đọc được thì bỏ qua bước hoãn */
+    }
+    PhanHoiService.trangThai()
+      .then((t) => {
+        // Đợi người dùng xem kết quả đã, đừng bật hộp thoại đè lên ngay lập tức
+        if (t.canHoiDanhGia && !huy) setTimeout(() => !huy && setMoDanhGia(true), 2500);
+      })
+      .catch(() => {});
+    return () => {
+      huy = true;
+    };
+  }, [userId, predictionId]);
+
+  const dongDanhGia = (daGui: boolean) => {
+    setMoDanhGia(false);
+    if (!daGui) {
+      try {
+        localStorage.setItem("edutalk_hoan_danh_gia_app", String(Date.now() + 3 * 24 * 3600 * 1000));
+      } catch {
+        /* bỏ qua */
+      }
+    }
+  };
 
   const totalScore = apiResult?.totalScore ?? parseFloat(input?.totalScore ?? "0");
   const block = input?.block || "A00";
   const mode = apiResult?.mode === "guided" ? "guided" : "auto";
   const goalLabel = GOAL_BY_ID[input?.postGradGoal as number] ?? "Chưa chọn";
 
-  const { primaryFaculty, top3Majors, featureImpacts, personalizedNarrative } = useMemo(() => {
+  const { primaryFaculty, dsNganh, featureImpacts, personalizedNarrative } = useMemo(() => {
     if (apiResult?.majors?.length) {
       const NHAN: Record<string, string> = {
         an_toan: "Trong tầm với (trên mức cao nhất 3 năm)",
@@ -198,7 +239,11 @@ export function ResultReport() {
 
       const majors = apiResult.majors.map((m: any, idx: number) => {
         const info = MAJORS_DB[m.code] || {};
-        const ad = m.admission;
+        // Ngành KHÔNG xét tổ hợp thí sinh khai thì tổng điểm tổ hợp đó không dùng được
+        // cho ngành này — so nó với điểm chuẩn rồi báo "trong tầm với" là sai. Bỏ mức
+        // an toàn, thay bằng lời nhắc về phương thức khác.
+        const khongXetToHop = m.xetToHop === false;
+        const ad = khongXetToHop && m.admission ? { ...m.admission, level: null } : m.admission;
         return {
           ...info,
           code: m.code,
@@ -206,9 +251,14 @@ export function ResultReport() {
           faculty: m.field,
           rank: m.rank ?? idx + 1,
           admission: ad,
+          khongXetToHop,
           explain: m.explain ?? null,
           cutoffs: ad?.cutoffs ?? null,
-          safetyStatus: ad?.level ? NHAN[ad.level] : "Chưa có dữ liệu điểm chuẩn",
+          safetyStatus: khongXetToHop
+            ? `Không xét tổ hợp ${block} bằng điểm thi THPT`
+            : ad?.level
+            ? NHAN[ad.level]
+            : "Chưa có dữ liệu điểm chuẩn",
           blocks: m.subjectGroups?.length ? m.subjectGroups : (info.blocks ?? []),
           desc: info.desc ?? null,
           careers: info.careers ?? [],
@@ -240,7 +290,7 @@ export function ResultReport() {
                 name: chosenField ?? "Chưa xác định",
                 match: topFieldProb != null ? Math.round(topFieldProb * 1000) / 10 : null,
               },
-        top3Majors: majors,
+        dsNganh: majors,
         featureImpacts: impacts,
         personalizedNarrative:
           mode === "guided"
@@ -251,7 +301,7 @@ export function ResultReport() {
 
     return {
       primaryFaculty: { name: "Chưa có dữ liệu", match: 0 },
-      top3Majors: [] as any[],
+      dsNganh: [] as any[],
       featureImpacts: [] as any[],
       personalizedNarrative: "Chưa có kết quả khảo sát. Vui lòng làm bài khảo sát để nhận gợi ý ngành học.",
     };
@@ -269,7 +319,7 @@ export function ResultReport() {
   }
 
   // Trạng thái chưa làm khảo sát
-  if (!top3Majors.length) {
+  if (!dsNganh.length) {
     return (
       <div className="max-w-2xl mx-auto px-4 mt-16 pb-28">
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm text-center space-y-5">
@@ -331,7 +381,7 @@ export function ResultReport() {
             <Printer className="w-4 h-4" /> In / Tải PDF
           </button>
           <Link 
-            href={`/chat?q=${encodeURIComponent(`Tư vấn chi tiết về ngành ${top3Majors[0].name} tại Trường Đại học Công Thương TP.HCM (HUIT)`)}`}
+            href={`/chat?q=${encodeURIComponent(`Tư vấn chi tiết về ngành ${dsNganh[0].name} tại Trường Đại học Công Thương TP.HCM (HUIT)`)}`}
             className="justify-center px-4 py-2.5 rounded-xl bg-[#0054A6] hover:bg-[#003B73] text-white text-xs font-black transition flex items-center gap-2 shadow-md shadow-[#0054A6]/20 hover:scale-[1.02] active:scale-[0.97]"
           >
             <MessageSquare className="w-4 h-4" /> Hỏi Trợ Lý AI Về Ngành Này
@@ -354,26 +404,26 @@ export function ResultReport() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 relative z-10">
           <div className="space-y-3 min-w-0">
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-              {top3Majors[0].name}
+              {dsNganh[0].name}
             </h2>
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-1 rounded-lg bg-white/15 text-white text-[11px] font-bold">
-                Mã ngành {top3Majors[0].code}
+                Mã ngành {dsNganh[0].code}
               </span>
               <span className="px-2.5 py-1 rounded-lg bg-cyan-300/20 text-cyan-100 text-[11px] font-bold">
-                Nhóm {top3Majors[0].faculty}
+                Nhóm {dsNganh[0].faculty}
               </span>
-              {top3Majors[0].admission?.level && (
+              {dsNganh[0].admission?.level && (
                 <span
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-black ${
-                    top3Majors[0].admission.level === "an_toan"
+                    dsNganh[0].admission.level === "an_toan"
                       ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                      : top3Majors[0].admission.level === "co_kha_nang"
+                      : dsNganh[0].admission.level === "co_kha_nang"
                       ? "bg-amber-50 text-amber-800 border border-amber-200"
                       : "bg-rose-50 text-rose-800 border border-rose-200"
                   }`}
                 >
-                  {top3Majors[0].safetyStatus}
+                  {dsNganh[0].safetyStatus}
                 </span>
               )}
             </div>
@@ -381,7 +431,7 @@ export function ResultReport() {
               {mode === "guided"
                 ? `Xếp hạng trong nhóm ${primaryFaculty.name} mà bạn đã chọn — không ngành nào ngoài nhóm này được đề xuất.`
                 : "Xếp hạng trên toàn bộ 39 ngành của trường. Hệ thống phân tích đa chiều để đưa ra thứ tự gợi ý tối ưu."}{" "}
-              {top3Majors.length > 1 && `Còn ${top3Majors.length - 1} ngành tiềm năng khác ngay bên dưới.`}
+              {dsNganh.length > 1 && `Còn ${dsNganh.length - 1} ngành tiềm năng khác ngay bên dưới.`}
             </p>
           </div>
 
@@ -414,7 +464,7 @@ export function ResultReport() {
       {/* ==================================================================== */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { n: "1", t: "Danh sách ngành gợi ý", d: `${top3Majors.length} ngành xếp theo mức phù hợp giảm dần — đây là câu trả lời trọng tâm.`, icon: Award },
+          { n: "1", t: "Danh sách ngành gợi ý", d: `${dsNganh.length} ngành xếp theo mức phù hợp giảm dần — đây là câu trả lời trọng tâm.`, icon: Award },
           { n: "2", t: "Khả năng trúng tuyển", d: "Đối chiếu mức điểm của bạn với điểm chuẩn 3 năm gần nhất của trường HUIT.", icon: BadgeCheck },
           { n: "3", t: "Mức độ phù hợp nhóm", d: "Mô hình ước lượng tỷ trọng thiên hướng với từng nhóm ngành để tham khảo.", icon: Compass },
         ].map((s) => (
@@ -440,15 +490,15 @@ export function ResultReport() {
         <div className="border-b border-slate-200 pb-3">
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <Award className="w-5 h-5 text-[#0054A6]" />
-            Danh Sách {top3Majors.length} Chuyên Ngành Bạn Nên Tìm Hiểu
+            Danh Sách {dsNganh.length} Chuyên Ngành Bạn Nên Tìm Hiểu
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Xếp hạng theo độ tương thích giảm dần từ thuật toán. Hãy đối chiếu cả {top3Majors.length} ngành trước khi đưa ra quyết định đặt nguyện vọng:
+            Xếp hạng theo độ tương thích giảm dần từ thuật toán. Hãy đối chiếu cả {dsNganh.length} ngành trước khi đưa ra quyết định đặt nguyện vọng:
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5">
-          {top3Majors.map((major: any, idx: number) => {
+          {dsNganh.map((major: any, idx: number) => {
             const isTop1 = idx === 0;
             return (
               <div 
@@ -590,7 +640,7 @@ export function ResultReport() {
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
             {mode === "guided"
-              ? "Ở chế độ tư vấn, kết quả được xếp hạng trong nhóm ngành bạn chọn. Biểu đồ dưới đây là xác suất dự đoán khách quan của tầng 1."
+              ? "Ở chế độ tư vấn, kết quả được xếp hạng trong nhóm ngành bạn chọn. Biểu đồ dưới đây cộng xác suất của mô hình 39 ngành theo từng nhóm — tức nhóm mô hình tự nghiêng về nếu bạn không chọn trước."
               : "Tổng hợp mức độ phù hợp của các ngành trong cùng một nhóm. Có đường đối chứng so với mốc đoán ngẫu nhiên (11.1% = 1/9 nhóm)."}
           </p>
         </div>
@@ -672,6 +722,15 @@ export function ResultReport() {
       </div>
 
       {/* ==================================================================== */}
+      {/* VÙNG 5b: PHẢN HỒI — đầu vào của vòng lặp huấn luyện lại               */}
+      {/* ==================================================================== */}
+      <PhanHoiGoiY
+        predictionId={predictionId}
+        goiY={dsNganh.map((m: any) => ({ code: m.code, name: m.name }))}
+      />
+      <DanhGiaAppModal open={moDanhGia} onClose={dongDanhGia} predictionId={predictionId} />
+
+      {/* ==================================================================== */}
       {/* VÙNG 6: FOOTER CTA — HỎI AI & TRA CỨU NGÀNH                          */}
       {/* ==================================================================== */}
       <div className="bg-gradient-to-r from-[#002855] via-[#0054A6] to-[#0072CE] text-white rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
@@ -689,7 +748,7 @@ export function ResultReport() {
             Xem 39 Ngành HUIT
           </Link>
           <Link
-            href={`/chat?q=${encodeURIComponent(`Tư vấn chương trình đào tạo và học phí ngành ${top3Majors[0].name} HUIT`)}`}
+            href={`/chat?q=${encodeURIComponent(`Tư vấn chương trình đào tạo và học phí ngành ${dsNganh[0].name} HUIT`)}`}
             className="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#0054A6] text-xs font-black transition shadow-md flex items-center gap-2 hover:scale-[1.02] active:scale-[0.97]"
           >
             <span>Trò Chuyện Với AI</span>

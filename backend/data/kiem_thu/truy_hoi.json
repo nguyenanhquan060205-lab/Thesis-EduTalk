@@ -1,0 +1,52 @@
+{
+  "mo_ta": "Bộ câu hỏi đo tầng truy hồi. Gán nhãn TAY — đáp án là phán đoán của người làm đồ án, không phải chân lý tuyệt đối. Câu nào nhiều ngành cùng hợp lý thì liệt kê hết vào `dap_an`, tính là đúng nếu trúng bất kỳ mã nào.",
+  "muc_do": {
+    "A_nguyen_van": "Nêu nguyên văn tên ngành — mốc dễ nhất, dùng làm trần trên",
+    "B_viet_tat": "Viết tắt hoặc tên gọi thông dụng thí sinh hay dùng",
+    "C_khong_dau": "Gõ không dấu — rất phổ biến khi chat trên điện thoại",
+    "D_y_dinh": "Chỉ nói nguyện vọng/nghề nghiệp, KHÔNG nêu tên ngành — khó nhất, và cũng là kiểu câu duy nhất mà tra bảng bó tay"
+  },
+  "cau_hoi": [
+    {"muc": "A_nguyen_van", "hoi": "Ngành Công nghệ thông tin của HUIT xét tổ hợp nào?", "dap_an": ["7480201"]},
+    {"muc": "A_nguyen_van", "hoi": "Điểm chuẩn ngành Quản trị khách sạn năm 2026?", "dap_an": ["7810201"]},
+    {"muc": "A_nguyen_van", "hoi": "Cho em hỏi về ngành Luật kinh tế", "dap_an": ["7380107"]},
+    {"muc": "A_nguyen_van", "hoi": "Ngành Khoa học dữ liệu học những gì?", "dap_an": ["7460108"]},
+    {"muc": "A_nguyen_van", "hoi": "Ngành Công nghệ chế biến thủy sản lấy bao nhiêu điểm?", "dap_an": ["7540105"]},
+
+    {"muc": "B_viet_tat", "hoi": "Ngành CNTT của trường mình lấy bao nhiêu điểm?", "dap_an": ["7480201"]},
+    {"muc": "B_viet_tat", "hoi": "QTKD xét những khối nào ạ?", "dap_an": ["7340101"]},
+    {"muc": "B_viet_tat", "hoi": "Em muốn học TMĐT thì điểm chuẩn bao nhiêu?", "dap_an": ["7340122"]},
+    {"muc": "B_viet_tat", "hoi": "Trường có ngành AI không ạ?", "dap_an": ["7480107"]},
+    {"muc": "B_viet_tat", "hoi": "Ngành CNTP điểm chuẩn thế nào?", "dap_an": ["7540101"]},
+    {"muc": "B_viet_tat", "hoi": "Ngành tự động hóa của HUIT ra sao?", "dap_an": ["7510303"]},
+    {"muc": "B_viet_tat", "hoi": "Em quan tâm ngành cơ điện tử", "dap_an": ["7510203"]},
+    {"muc": "B_viet_tat", "hoi": "Ngành tiếng Trung của trường điểm bao nhiêu?", "dap_an": ["7220204"]},
+    {"muc": "B_viet_tat", "hoi": "Ngành tiếng Anh xét khối gì?", "dap_an": ["7220201"]},
+
+    {"muc": "C_khong_dau", "hoi": "nganh cong nghe thong tin xet to hop nao", "dap_an": ["7480201"]},
+    {"muc": "C_khong_dau", "hoi": "diem chuan nganh ke toan nam 2026", "dap_an": ["7340301"]},
+    {"muc": "C_khong_dau", "hoi": "nganh quan tri khach san hoc gi", "dap_an": ["7810201"]},
+    {"muc": "C_khong_dau", "hoi": "cho em hoi nganh luat kinh te", "dap_an": ["7380107"]},
+    {"muc": "C_khong_dau", "hoi": "nganh ngon ngu anh lay bao nhieu diem", "dap_an": ["7220201"]},
+    {"muc": "C_khong_dau", "hoi": "nganh marketing diem chuan the nao", "dap_an": ["7340115"]},
+
+    {"muc": "D_y_dinh", "hoi": "Em muốn sau này làm lập trình viên thì nên học ngành nào ở HUIT?", "dap_an": ["7480201", "7480107", "7460108"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích nấu ăn, muốn làm đầu bếp thì học ngành gì?", "dap_an": ["7819010", "7819009", "7810202"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn vào làm ngân hàng thì học ngành nào?", "dap_an": ["7340201", "7340205", "7340301"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn mở nhà hàng riêng, nên chọn ngành gì?", "dap_an": ["7810202", "7810201", "7340101"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn làm hướng dẫn viên dẫn khách đi tour", "dap_an": ["7810103", "7810101"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích tìm hiểu về bảo mật, chống hacker tấn công", "dap_an": ["7480202", "7480201"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích phân tích số liệu, làm việc với dữ liệu lớn", "dap_an": ["7460108", "7480107", "7480201"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn trở thành luật sư", "dap_an": ["7380101", "7380107"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích thiết kế quần áo, theo ngành thời trang được không?", "dap_an": ["7340123", "7540204"]},
+    {"muc": "D_y_dinh", "hoi": "Em quan tâm việc xử lý nước thải và bảo vệ môi trường", "dap_an": ["7510406", "7850101"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích lắp mạch điện, sửa đồ điện tử", "dap_an": ["7510301", "7510203", "7510303"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn làm về chatbot và máy học", "dap_an": ["7480107", "7480201", "7460108"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn làm xuất nhập khẩu, vận chuyển hàng hoá quốc tế", "dap_an": ["7510605", "7340120"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích làm về sữa, đồ hộp, sản xuất đồ ăn công nghiệp", "dap_an": ["7540101", "7540106", "7340129"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn bán hàng online, kinh doanh trên mạng", "dap_an": ["7340122", "7340115", "7340101"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn làm việc trong nhà máy sản xuất, quản lý dây chuyền", "dap_an": ["7510601", "7510202", "7520115"]},
+    {"muc": "D_y_dinh", "hoi": "Em thích nghiên cứu vi sinh vật, tế bào", "dap_an": ["7420201"]},
+    {"muc": "D_y_dinh", "hoi": "Em muốn làm về chế tạo máy móc thiết bị", "dap_an": ["7510202", "7510203", "7520115"]}
+  ]
+}

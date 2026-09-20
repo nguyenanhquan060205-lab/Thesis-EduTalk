@@ -1,0 +1,61 @@
+{
+  "n_train": 11407,
+  "n_val": 2444,
+  "k": {
+    "tu_van": 2,
+    "kham_pha": 3
+  },
+  "ghi_chu": "HƯỚNG 2 — 676 phiếu khảo sát niêm phong từ GĐ 6, không có trong bảng huấn luyện. sample_weight = 1.0 cho mọi dòng.",
+  "moc": {
+    "1 · ngành đông nhất": {
+      "tv_val": 0.7119,
+      "kp_val": 0.2304,
+      "tv_train": null,
+      "kp_train": null
+    },
+    "2 · bừa trong nhóm": {
+      "tv_val": 0.4763,
+      "kp_val": 0.0769,
+      "tv_train": null,
+      "kp_train": null
+    },
+    "3 · chỉ 15 cột tổ hợp": {
+      "tv_val": 0.752,
+      "kp_val": 0.3118,
+      "tv_train": 0.7617,
+      "kp_train": 0.3123
+    },
+    "4 · bỏ 5 ngành vòng tròn (10.987 dòng)": {
+      "tv_val": 0.8707,
+      "kp_val": 0.707,
+      "tv_train": 0.9549,
+      "kp_train": 0.9146
+    },
+    "MÔ HÌNH đủ dữ liệu": {
+      "tv_val": 0.9047,
+      "kp_val": 0.7582,
+      "tv_train": 0.9994,
+      "kp_train": 0.9918
+    }
+  },
+  "phan_do_5_nganh_vong_tron": {
+    "tv": 0.034,
+    "kp": 0.0511
+  },
+  "dong_gop_48_dac_trung": {
+    "tv": 0.1526,
+    "kp": 0.4464
+  },
+  "gap_train_val": {
+    "tv": 0.0947,
+    "kp": 0.2337
+  },
+  "chi_so_lop_khampha_val": {
+    "acc_top1": 0.4763,
+    "f1_macro": 0.4499,
+    "f1_weighted": 0.4679,
+    "precision_macro": 0.4916,
+    "recall_macro": 0.4296,
+    "auc_ovr": 0.945
+  }
+}

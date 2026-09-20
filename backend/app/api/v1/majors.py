@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 router = APIRouter()
 
@@ -7,7 +7,7 @@ router = APIRouter()
 def get_all_majors():
     """Danh mục ngành dựng từ đúng nguồn mà mô hình đang dùng.
 
-    Trước đây endpoint này trả bảng `HUIT_MAJORS` gõ tay trong `predict_service.py`.
+    Trước đây endpoint này trả bảng `HUIT_MAJORS` gõ tay (đã xoá 19/09/2026).
     Bảng đó lệch với mô hình **9/39 mã ngành** (Khoa học dữ liệu ghi 7480108 thay vì
     7460108, Trí tuệ nhân tạo 7480109 thay vì 7480107, Công nghệ chế tạo máy 7510201
     thay vì 7510202...) và sai tổ hợp xét tuyển của 2 ngành. Client nào tra cứu theo
@@ -18,10 +18,7 @@ def get_all_majors():
     """
     from app.services.major_predictor import get_predictor
 
-    try:
-        predictor = get_predictor()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=503, detail=str(e)) from e
+    predictor = get_predictor()
 
     return {
         "majors": {

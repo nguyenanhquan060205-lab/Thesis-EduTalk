@@ -4,13 +4,14 @@ Migrate từ: mobile/lib/services/post_service.dart
 Xử lý CRUD bài viết, comment, like, report và notification.
 """
 
-import os
 from datetime import datetime, timedelta, timezone
 
 import cloudinary
 import cloudinary.uploader
-from app.core.mongodb import get_db
 from bson import ObjectId
+
+from app.core.config import settings
+from app.core.mongodb import get_db
 
 
 class PostService:
@@ -22,9 +23,9 @@ class PostService:
     def __init__(self):
         # Cấu hình Cloudinary
         cloudinary.config(
-            cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME", "edutalk-app"),
-            api_key=os.getenv("CLOUDINARY_API_KEY"),
-            api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+            cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+            api_key=settings.CLOUDINARY_API_KEY,
+            api_secret=settings.CLOUDINARY_API_SECRET,
         )
 
     @property

@@ -6,51 +6,29 @@ Sử dụng MongoDB thay cho Firestore.
 
 from datetime import datetime
 
-from app.core.mongodb import get_db
-from app.core.privacy import che_email, che_ho_so
-from app.services.auth_service import AuthService
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
-router = APIRouter()
-auth_service = AuthService()
-
-
+from app.api.deps import ensure_self_or_admin, get_current_uid, get_database
+from app.core.privacy import che_email, che_ho_so
 from app.models.user_models import UpdateProfileRequest
 
-
-async def get_current_uid(authorization: str) -> str:
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded:
-        raise HTTPException(
-            status_code=401, detail="Token không hợp lệ hoặc đã hết hạn."
-        )
-    return decoded["uid"]
-
-
-@router.get("/")
-def get_users_status():
-    return {"message": "Users API status OK"}
+router = APIRouter()
 
 
 @router.get("/{uid}")
-async def get_user_profile(uid: str, authorization: str = Header(...)):
+async def get_user_profile(
+    uid: str,
+    current_uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
+):
     """Lấy hồ sơ của **chính mình** (hoặc bất kỳ ai, nếu là admin).
 
     Bản trước gọi `get_current_uid()` rồi **vứt kết quả đi**, không so với `uid`
     trên URL — nghĩa là bất kỳ ai đăng nhập cũng đọc được email, số điện thoại,
     ngày sinh của người khác chỉ bằng cách đổi uid trên đường dẫn.
     """
-    current_uid = await get_current_uid(authorization)
-    db = get_db()
-
-    if current_uid != uid:
-        nguoi_goi = await db["users"].find_one({"_id": current_uid})
-        if (nguoi_goi or {}).get("role") != "admin":
-            raise HTTPException(
-                status_code=403, detail="Không có quyền xem hồ sơ này."
-            )
+    await ensure_self_or_admin(uid, current_uid, db, "Không có quyền xem hồ sơ này.")
 
     user_doc = await db["users"].find_one({"_id": uid})
     if not user_doc:
@@ -76,10 +54,12 @@ async def get_user_profile(uid: str, authorization: str = Header(...)):
 
 @router.put("/{uid}")
 async def update_user_profile(
-    uid: str, body: UpdateProfileRequest, authorization: str = Header(...)
+    uid: str,
+    body: UpdateProfileRequest,
+    current_uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
 ):
     """Cập nhật thông tin profile (tên, bật/tắt thông báo...)."""
-    current_uid = await get_current_uid(authorization)
     if current_uid != uid:
         raise HTTPException(
             status_code=403, detail="Không có quyền chỉnh sửa tài khoản này."
@@ -89,16 +69,17 @@ async def update_user_profile(
     if not update_data:
         raise HTTPException(status_code=400, detail="Không có dữ liệu cần cập nhật.")
 
-    db = get_db()
     await db["users"].update_one({"_id": uid}, {"$set": update_data})
     return {"status": "success"}
 
 
-@router.get("/{uid}/premium")
-async def get_premium_status(uid: str, authorization: str = Header(...)):
-    """Kiểm tra trạng thái Premium của người dùng."""
-    await get_current_uid(authorization)
-    db = get_db()
+@router.get("/{uid}/premium", dependencies=[Depends(get_current_uid)])
+async def get_premium_status(uid: str, db=Depends(get_database)):
+    """Kiểm tra trạng thái Premium của người dùng.
+
+    ⚠️ Chỉ đòi "đã đăng nhập", KHÔNG so `uid` trên URL với người gọi — giữ đúng hành vi
+    cũ để không phá client. Trả về chỉ có trạng thái gói, không có dữ liệu cá nhân.
+    """
     user_doc = await db["users"].find_one({"_id": uid})
     if not user_doc:
         raise HTTPException(status_code=404, detail="Không tìm thấy người dùng.")
@@ -119,13 +100,15 @@ async def get_premium_status(uid: str, authorization: str = Header(...)):
 
 
 @router.get("/{uid}/notifications")
-async def get_notifications(uid: str, authorization: str = Header(...)):
+async def get_notifications(
+    uid: str,
+    current_uid: str = Depends(get_current_uid),
+    db=Depends(get_database),
+):
     """Lấy danh sách thông báo của người dùng."""
-    current_uid = await get_current_uid(authorization)
     if current_uid != uid:
         raise HTTPException(status_code=403, detail="Không có quyền xem thông báo này.")
 
-    db = get_db()
     cursor = (
         db["notifications"].find({"receiverId": uid}).sort("createdAt", -1).limit(50)
     )
@@ -139,13 +122,13 @@ async def get_notifications(uid: str, authorization: str = Header(...)):
     return {"data": notifications}
 
 
-@router.put("/{uid}/notifications/{notif_id}/read")
-async def mark_notification_read(
-    uid: str, notif_id: str, authorization: str = Header(...)
-):
-    """Đánh dấu một thông báo là đã đọc."""
-    await get_current_uid(authorization)
-    db = get_db()
+@router.put("/{uid}/notifications/{notif_id}/read", dependencies=[Depends(get_current_uid)])
+async def mark_notification_read(uid: str, notif_id: str, db=Depends(get_database)):
+    """Đánh dấu một thông báo là đã đọc.
+
+    ⚠️ Như `/premium`: chỉ đòi đã đăng nhập, không so `uid` với người gọi — hành vi cũ,
+    giữ nguyên trong đợt dọn cấu trúc này.
+    """
     try:
         await db["notifications"].update_one(
             {"_id": ObjectId(notif_id)}, {"$set": {"isRead": True}}
@@ -155,11 +138,9 @@ async def mark_notification_read(
         return {"status": "error", "message": str(e)}
 
 
-@router.put("/{uid}/notifications/read-all")
-async def mark_all_notifications_read(uid: str, authorization: str = Header(...)):
-    """Đánh dấu tất cả thông báo là đã đọc."""
-    await get_current_uid(authorization)
-    db = get_db()
+@router.put("/{uid}/notifications/read-all", dependencies=[Depends(get_current_uid)])
+async def mark_all_notifications_read(uid: str, db=Depends(get_database)):
+    """Đánh dấu tất cả thông báo là đã đọc. (Cùng lưu ý quyền như hai endpoint trên.)"""
     await db["notifications"].update_many(
         {"receiverId": uid, "isRead": False}, {"$set": {"isRead": True}}
     )

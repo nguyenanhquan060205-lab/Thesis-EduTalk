@@ -4,7 +4,7 @@ import { PredictWizard } from "@/components/features/predict/PredictWizard";
 
 export const metadata: Metadata = {
   title: "Khảo Sát Chọn Ngành Học AI — Tuyển Sinh HUIT 2026",
-  description: "Cổng khảo sát định hướng ngành học thông minh Đại học Công Thương TP.HCM (HUIT), ứng dụng pipeline học máy XGBoost (research3) và giải thích minh bạch XAI SHAP.",
+  description: "Cổng khảo sát định hướng ngành học thông minh Đại học Công Thương TP.HCM (HUIT), ứng dụng mô hình học máy XGBoost và giải thích minh bạch XAI SHAP.",
 };
 
 export default function PredictPage() {

@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { PhanHoiGoiY } from "@/components/features/phan-hoi/PhanHoiGoiY";
 import {
   HistoryService,
   totalScoreOf,
@@ -221,6 +222,16 @@ export default function HistoryPage() {
                   </div>
                 </div>
               )}
+
+              {/* Nhãn "ngành đã chọn" thường chỉ biết sau kỳ xét tuyển — quay lại cập nhật ở đây */}
+              <div className="pt-3 border-t border-slate-100">
+                <PhanHoiGoiY
+                  gonGang
+                  predictionId={e.id}
+                  goiY={(e.majors ?? []).map((m) => ({ code: m.code, name: m.name }))}
+                  banDau={e.phan_hoi}
+                />
+              </div>
             </motion.div>
           );
         })}

@@ -237,7 +237,7 @@ export default function DashboardPage() {
             {
               href: "/dashboard/model",
               label: "Hiệu Suất AI",
-              desc: "Giám sát chỉ số Top-1, Top-3, AUC-ROC XGBoost",
+              desc: "Tư vấn Top-2, khám phá Top-5, mốc đoán bừa & AUC XGBoost",
               icon: Cpu,
               badge: "Pipeline XGBoost",
             },
@@ -282,7 +282,7 @@ export default function DashboardPage() {
       {/* VÙNG 4: HAI CỘT CHUYÊN MÔN (HIỆU NĂNG AI VÀ NGUỒN DỮ LIỆU) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Khối trái: Trạng thái Mô hình XGBoost (Pipeline research3) */}
+        {/* Khối trái: Trạng thái Mô hình XGBoost (Hướng 1 — research/) */}
         <div className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
           <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
             <div>
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                 <Sparkles className="w-5 h-5 text-[#0054A6]" /> Mô Hình Tư Vấn AI HUIT
               </h2>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Pipeline XGBoost nạp từ research3/data/processed/10_ChotModel.
+                Mô hình Hướng 1 (research/), nạp từ gói backend/data/mo_hinh/huong1.
               </p>
             </div>
             <Link
@@ -306,7 +306,7 @@ export default function DashboardPage() {
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
               <span className="text-[10px] text-slate-500 font-bold uppercase block">Kiến trúc</span>
               <strong className="text-slate-900 font-black text-sm block mt-0.5">Pipeline XGBoost</strong>
-              <span className="text-[10px] text-slate-400 font-medium">Model nhóm / Phẳng</span>
+              <span className="text-[10px] text-slate-400 font-medium">Mô hình nhóm / 39 ngành</span>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
               <span className="text-[10px] text-slate-500 font-bold uppercase block">Phạm vi</span>
@@ -314,9 +314,9 @@ export default function DashboardPage() {
               <span className="text-[10px] text-slate-400 font-medium">9 Nhóm ngành (0..8)</span>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 col-span-2 sm:col-span-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase block">Mốc ngẫu nhiên</span>
-              <strong className="text-slate-700 font-black text-sm block mt-0.5">11.1% (1/9)</strong>
-              <span className="text-[10px] text-slate-400 font-medium">Đối chứng đoán bừa</span>
+              <span className="text-[10px] text-slate-500 font-bold uppercase block">Số gợi ý</span>
+              <strong className="text-slate-700 font-black text-sm block mt-0.5">2 · 5 ngành</strong>
+              <span className="text-[10px] text-slate-400 font-medium">Tư vấn · Khám phá</span>
             </div>
           </div>
 
@@ -343,7 +343,7 @@ export default function DashboardPage() {
             {[
               {
                 t: "Gợi ý ngành & SHAP Explainer",
-                d: "Pipeline XGBoost + TreeExplainer (research3/data/processed/10_ChotModel)",
+                d: "Mô hình Hướng 1 + TreeSHAP (backend/data/mo_hinh/huong1, đóng gói từ research/)",
                 status: "Hoạt động",
                 icon: Cpu,
               },

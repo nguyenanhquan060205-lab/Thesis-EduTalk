@@ -5,8 +5,10 @@ Migrate từ: mobile/lib/services/auth_service.dart
 """
 
 # pyrefly: ignore [missing-import]
-from app.services.auth_service import AuthService
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.deps import get_current_uid
+from app.services.auth import auth_service
 
 router = APIRouter()
 
@@ -26,7 +28,6 @@ def chi_tiet_otp(result: dict) -> dict:
         "deleted": bool(result.get("deleted")),
         "attemptsLeft": result.get("attemptsLeft"),
     }
-auth_service = AuthService()
 
 
 from app.models.auth_models import (
@@ -45,11 +46,6 @@ from app.models.auth_models import (
 )
 
 # ==================== Endpoints ====================
-
-
-@router.get("/")
-def get_auth_status():
-    return {"message": "Auth API status OK"}
 
 
 @router.post("/register")
@@ -96,15 +92,14 @@ async def sign_in_with_google(body: GoogleSignInRequest):
 
 
 @router.delete("/delete/{uid}")
-async def delete_account(uid: str, authorization: str = Header(...)):
+async def delete_account(uid: str, current_uid: str = Depends(get_current_uid)):
     """
     Xóa tài khoản hoàn toàn: lịch sử, Firestore document và Firebase Auth.
     Tương đương: auth_service.deleteAccount() trong Dart.
     """
-    # Xác thực token trước khi cho phép xóa
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded or decoded.get("uid") != uid:
+    # Chỉ chính chủ được xoá tài khoản của mình — kể cả admin cũng đi đường khác
+    # (`DELETE /api/v1/admin/users/{uid}`).
+    if current_uid != uid:
         raise HTTPException(
             status_code=403, detail="Không có quyền thực hiện hành động này."
         )
@@ -131,17 +126,12 @@ async def resend_verification_email(body: ResendVerifyRequest):
 
 @router.post("/change-password")
 async def change_password(
-    body: ChangePasswordRequest, authorization: str = Header(...)
+    body: ChangePasswordRequest, uid: str = Depends(get_current_uid)
 ):
     """
     Đổi mật khẩu: xác minh mật khẩu cũ, sau đó cập nhật mật khẩu mới.
     Migrate từ: ChangePass.dart — _handleChangePassword().
     """
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
-    uid = decoded["uid"]
 
     result = await auth_service.change_password(
         uid=uid,
@@ -151,14 +141,6 @@ async def change_password(
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=result.get("message"))
     return result
-
-
-async def _uid_tu_token(authorization: str) -> str:
-    token = authorization.replace("Bearer ", "")
-    decoded = await auth_service.verify_token(token)
-    if not decoded:
-        raise HTTPException(status_code=401, detail="Token không hợp lệ.")
-    return decoded["uid"]
 
 
 # ==================== ĐỔI EMAIL — 4 bước ====================
@@ -175,13 +157,12 @@ async def _uid_tu_token(authorization: str) -> str:
 
 @router.post("/email-change/start", summary="Bước 1 — xác nhận email hiện tại")
 async def email_change_start(
-    body: EmailChangeStartRequest, authorization: str = Header(...)
+    body: EmailChangeStartRequest, uid: str = Depends(get_current_uid)
 ):
     """Đối chiếu email người dùng gõ với email thật, đúng thì gửi mã về hộp thư cũ.
 
     Sai 3 lần → huỷ phiên, trả `reset: true`.
     """
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.bat_dau_doi_email(uid, body.currentEmail)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
@@ -190,10 +171,9 @@ async def email_change_start(
 
 @router.post("/email-change/verify-old", summary="Bước 2 — mã của hộp thư cũ")
 async def email_change_verify_old(
-    body: OtpOnlyRequest, authorization: str = Header(...)
+    body: OtpOnlyRequest, uid: str = Depends(get_current_uid)
 ):
     """Sai 3 lần → huỷ phiên, email **không** đổi, phải làm lại từ bước 1."""
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.xac_minh_email_cu(uid, body.otp)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
@@ -202,10 +182,9 @@ async def email_change_verify_old(
 
 @router.post("/email-change/set-new", summary="Bước 3 — nhận email mới")
 async def email_change_set_new(
-    body: EmailChangeSetNewRequest, authorization: str = Header(...)
+    body: EmailChangeSetNewRequest, uid: str = Depends(get_current_uid)
 ):
     """Chỉ chạy được sau khi bước 2 thành công. Gửi mã tới địa chỉ mới."""
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.dat_email_moi(uid, body.newEmail)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
@@ -213,13 +192,12 @@ async def email_change_set_new(
 
 
 @router.post("/verify-my-email/send", summary="Gửi mã xác minh cho chính mình")
-async def verify_my_email_send(authorization: str = Header(...)):
+async def verify_my_email_send(uid: str = Depends(get_current_uid)):
     """Dành cho người đã đăng nhập nhưng chưa xác minh email (đóng popup lúc đăng ký).
 
     Địa chỉ nhận mã do server tra từ token, **không nhận từ client** — phía người
     dùng chỉ có bản đã che nên gửi lên sẽ thành địa chỉ rác.
     """
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.gui_ma_xac_minh_cua_toi(uid)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
@@ -228,11 +206,10 @@ async def verify_my_email_send(authorization: str = Header(...)):
 
 @router.post("/verify-my-email/confirm", summary="Xác minh email của chính mình")
 async def verify_my_email_confirm(
-    body: OtpOnlyRequest, authorization: str = Header(...)
+    body: OtpOnlyRequest, uid: str = Depends(get_current_uid)
 ):
     """Khác `/registration/verify`: sai quá số lần **không xoá tài khoản**, vì
     người dùng ở đây đã đăng nhập được và chỉ đang xác minh muộn."""
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.xac_minh_email_cua_toi(uid, body.otp)
     if result["status"] != "success":
         raise HTTPException(status_code=400, detail=chi_tiet_otp(result))
@@ -240,20 +217,20 @@ async def verify_my_email_confirm(
 
 
 @router.post("/email-change/cancel", summary="Huỷ phiên đổi email")
-async def email_change_cancel(authorization: str = Header(...)):
+async def email_change_cancel(uid: str = Depends(get_current_uid)):
     """Gọi khi người dùng đóng hộp thoại giữa chừng hoặc sai quá số lần."""
-    uid = await _uid_tu_token(authorization)
     return await auth_service.huy_phien_doi_email(uid)
 
 
 @router.post("/change-email", summary="Bước 4 — mã của hộp thư mới, ghi thay đổi")
-async def change_email(body: ChangeEmailRequest, authorization: str = Header(...)):
+async def change_email(
+    body: ChangeEmailRequest, uid: str = Depends(get_current_uid)
+):
     """Bước cuối. **Từ chối** nếu phiên chưa qua bước 2 xác minh hộp thư cũ.
 
     Sai 3 lần → huỷ phiên, giữ nguyên email cũ. Email chỉ được ghi ở bước này nên
     không có gì phải hoàn tác.
     """
-    uid = await _uid_tu_token(authorization)
     result = await auth_service.change_email(
         uid=uid, new_email=body.newEmail, otp=body.otp
     )

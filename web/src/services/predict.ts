@@ -1,7 +1,11 @@
 import api from "@/lib/api";
 
 /**
- * Gọi pipeline XGBoost (research3) ở backend.
+ * Gọi mô hình XGBoost đang phục vụ ở backend (Hướng 1 — `research/`).
+ *
+ * Số ngành gợi ý KHÔNG gõ cứng ở web: bỏ trống `limit` thì backend tự dùng đúng điểm
+ * vận hành mà mô hình được đánh giá (tư vấn 2, khám phá 5). Muốn hiện con số đó trên
+ * giao diện thì đọc `soGoiY` từ `catalog()`.
  *
  * Giới tính KHÔNG gửi từ đây — backend tự lấy từ hồ sơ người dùng đã đăng ký.
  * Chỉ truyền `gender` khi test không có token đăng nhập.
@@ -43,13 +47,14 @@ export interface AdmissionInfo {
 export interface ExplainFeature {
   ten: string;
   giaTri: string;
-  /** φ₂ + β·φ₁ — dương là đẩy lên, âm là kéo xuống */
+  /** Đóng góp SHAP của mục này (tổng các cột mã hoá nó) — dương là đẩy lên, âm là kéo xuống */
   dongGop: number;
   phanTram: number;
   /** "rất mạnh" | "mạnh" | "vừa" | "không đáng kể" — do backend chấm, đừng tự tính lại */
   mucDo: string;
+  /** Giữ để tương thích — mô hình hiện tại chỉ một tầng nên bằng dongGop */
   tang2: number;
-  /** Phần do tầng 1; chế độ guided luôn bằng 0 */
+  /** Giữ để tương thích — mô hình hiện tại chỉ một tầng nên luôn bằng 0 */
   tang1: number;
   /**
    * Không hiển thị cho thí sinh — hiện chỉ có giới tính. Nêu một đặc điểm không
@@ -82,6 +87,14 @@ export interface MajorSuggestion {
   name: string;
   field: string;
   score: number;
+  /** Tổ hợp ngành này xét tuyển (đề án 2026) */
+  subjectGroups?: string[];
+  /**
+   * Ngành có xét tổ hợp thí sinh đã khai không. `false` = điểm thi tổ hợp đó KHÔNG dùng
+   * được cho ngành này (chỉ còn học bạ / ĐGNL) — đừng hiện nhãn "trong tầm với" dựa
+   * trên tổng điểm ấy. `null` = backend thiếu bảng tuyển sinh, không biết.
+   */
+  xetToHop?: boolean | null;
   admission: AdmissionInfo | null;
   explain?: MajorExplain | null;
 }
@@ -92,6 +105,8 @@ export interface RecommendResponse {
   majors: MajorSuggestion[];
   totalScore: number | null;
   warnings: string[];
+  /** Chỉ có khi `save: true` — mã lượt tư vấn đã lưu, dùng để gắn phản hồi */
+  predictionId?: string | null;
 }
 
 export interface RecommendInput {
@@ -104,6 +119,7 @@ export interface RecommendInput {
   goalId: number;
   facultyId: number | null;
   gender?: string;
+  /** Bỏ trống = số gợi ý chuẩn của mô hình (tư vấn 2, khám phá 5) */
   limit?: number;
   /**
    * true → gọi `POST /api/v1/survey/submit`: cùng mô hình, cùng kết quả, nhưng
@@ -132,8 +148,15 @@ export interface CatalogMajor {
   cutoffs: Record<string, number>;
 }
 
+/** Số ngành hiển thị ở mỗi chế độ — đúng điểm vận hành mà mô hình được đánh giá */
+export interface SoGoiY {
+  tuVan: number;
+  khamPha: number;
+}
+
 export interface CatalogResponse {
   fields: CatalogField[];
+  soGoiY?: SoGoiY | null;
 }
 
 export const PredictService = {
@@ -156,17 +179,18 @@ export const PredictService = {
       scores,
       goal: GOAL_BY_ID[input.goalId] ?? "Chưa xác định",
       fieldId: input.facultyId,
-      limit: input.limit ?? 5,
+      // undefined bị bỏ khỏi JSON → backend dùng số gợi ý chuẩn của chế độ đang chọn
+      limit: input.limit,
       gender: input.gender,
     };
 
     if (input.save) {
       // `/survey/submit` bọc kết quả trong { status, results }
-      const { data } = await api.post<{ results: RecommendResponse }>(
+      const { data } = await api.post<{ results: RecommendResponse; predictionId?: string }>(
         "/api/v1/survey/submit",
         body
       );
-      return data.results;
+      return { ...data.results, predictionId: data.predictionId ?? null };
     }
 
     const { data } = await api.post<RecommendResponse>(

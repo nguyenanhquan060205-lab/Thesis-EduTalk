@@ -4,7 +4,7 @@ import { ResultReport } from "@/components/features/predict/ResultReport";
 
 export const metadata: Metadata = {
   title: "Báo Cáo Định Hướng Ngành Học & Tuyển Sinh HUIT 2026",
-  description: "Báo cáo phân tích chuyên sâu gợi ý ngành học đại học dựa trên pipeline học máy XGBoost (research3) và giải thích minh bạch XAI SHAP tại Trường Đại học Công Thương TP.HCM.",
+  description: "Báo cáo phân tích chuyên sâu gợi ý ngành học đại học dựa trên mô hình học máy XGBoost và giải thích minh bạch XAI SHAP tại Trường Đại học Công Thương TP.HCM.",
 };
 
 export default function ResultPage() {
