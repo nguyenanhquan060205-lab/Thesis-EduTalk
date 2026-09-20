@@ -171,20 +171,20 @@ export default function ChatPage() {
         {/* Input Bar */}
         {!user ? (
           <div className="p-4 bg-white/95 dark:bg-[#0D1729]/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 z-10">
-            <div className="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-blue-50/70 dark:bg-[#070E1E]/80 border border-blue-100 dark:border-[#1E3454]">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-slate-50/80 dark:bg-[#070E1E]/80 border border-slate-200 dark:border-[#1E3454]">
               <div className="text-center sm:text-left">
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                  Đăng nhập tài khoản để gửi câu hỏi
+                <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                  Đăng nhập tài khoản để đặt câu hỏi cho AI
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Tra cứu điểm chuẩn, học phí và thông tin tuyển sinh HUIT 2026.
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Tra cứu điểm chuẩn, học phí và nhận tư vấn chi tiết về 39 ngành học HUIT 2026.
                 </p>
               </div>
               <Link
                 href="/auth/login?redirect=/chat"
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0054A6] to-[#0072CE] hover:from-[#00488F] hover:to-[#005FA3] text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
               >
-                <LogIn className="w-3.5 h-3.5" />
+                <LogIn className="w-4 h-4" />
                 <span>Đăng nhập ngay</span>
               </Link>
             </div>
