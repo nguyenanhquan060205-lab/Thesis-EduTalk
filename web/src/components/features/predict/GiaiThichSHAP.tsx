@@ -67,9 +67,8 @@ export default function GiaiThichSHAP({
         onClick={() => setMo((v) => !v)}
         className="w-full flex items-center justify-between gap-3 text-left group cursor-pointer py-1"
       >
-        <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-[#0054A6]" />
-          <span>Vì sao mô hình xếp ngành này (XAI SHAP)</span>
+        <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+          <span>Căn cứ đề xuất ngành này</span>
         </span>
         <span className="flex items-center gap-1.5 text-xs font-black text-[#0054A6] bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-full transition-colors shrink-0">
           {mo ? "Thu gọn" : "Xem giải thích chi tiết"}
@@ -124,7 +123,7 @@ export default function GiaiThichSHAP({
 
               {muc.some((f) => f.dongGop < 0) && (
                 <p className="text-[11px] text-slate-500 font-medium leading-relaxed pt-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
-                  <strong className="text-slate-700 font-black">Lưu ý chuyên môn:</strong> Thanh màu hồng/đỏ <strong className="text-slate-700">không phải điểm yếu</strong>. Hệ thống đang đối chiếu bạn với hồ sơ sinh viên tiêu chuẩn của ngành này để đánh giá độ tương đồng đặc trưng.
+                  <strong className="text-slate-700 font-black">Lưu ý:</strong> Các thanh màu biểu thị mức độ ảnh hưởng của từng tiêu chí (điểm thi, sở thích) đến thứ hạng gợi ý của ngành.
                 </p>
               )}
 
@@ -133,7 +132,7 @@ export default function GiaiThichSHAP({
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="w-4 h-4 text-[#0054A6]" />
                     <span className="text-xs font-black text-[#0054A6] uppercase tracking-wide">
-                      Diễn giải trực quan từ Trợ lý AI
+                      Tóm tắt căn cứ gợi ý
                     </span>
                   </div>
 

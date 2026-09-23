@@ -690,14 +690,12 @@ export default function CommunityPage() {
       {/* HEADER */}
       <div className="border-b border-slate-200/80 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-black uppercase mb-2">
-            <Users className="w-3.5 h-3.5" /> Diễn đàn HUIT
-          </div>
+          
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Giao Lưu &amp; Hỏi Đáp Tuyển Sinh
           </h1>
           <p className="text-slate-600 text-xs sm:text-sm font-medium mt-1">
-            Bài viết được quản trị viên duyệt trước khi hiển thị công khai.
+            Không gian chia sẻ kinh nghiệm học tập, thắc mắc tuyển sinh và đời sống sinh viên HUIT.
           </p>
         </div>
 

@@ -40,7 +40,7 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Tổng quan", href: "/" },
-    { name: "Tư vấn chọn ngành", href: "/predict", isHot: true },
+    { name: "Tư vấn chọn ngành", href: "/predict" },
     { name: "39 Ngành học", href: "/majors" },
     { name: "Trợ lý AI", href: "/chat" },
     { name: "Tin tức tuyển sinh", href: "/news" },
@@ -65,30 +65,27 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 left-0 right-0 z-50 bg-white/85 dark:bg-[#070E1E]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 text-slate-900 dark:text-slate-100 transition-colors duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] dark:shadow-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* LOGO THƯƠNG HIỆU HUIT */}
           <Link href="/" className="flex items-center gap-3 group shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0054A6] to-[#003B73] flex items-center justify-center text-white shadow-md shadow-[#0054A6]/25 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#0054A6]/35 transition-all">
-              <GraduationCap className="w-5 h-5 text-white" />
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0054A6] to-[#003B73] flex items-center justify-center text-white shadow-md shadow-[#0054A6]/25 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#0054A6]/35 transition-all">
+              <GraduationCap className="w-6 h-6 text-white" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white leading-none">
+                <span className="font-black text-xl sm:text-2xl tracking-tight text-slate-900 dark:text-white leading-none">
                   HUIT <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] dark:from-sky-400 to-[#0084FF] dark:to-cyan-300">EduTalk</span>
                 </span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-red-50 dark:bg-red-950/40 text-[#D71920] dark:text-red-400 border border-red-200 dark:border-red-800/60 leading-none shadow-xs">
-                  2026
-                </span>
               </div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider leading-none mt-1 hidden xs:block">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider leading-none mt-1 hidden xs:block">
                 Đại học Công Thương TP.HCM
               </span>
             </div>
           </Link>
 
           {/* MENU ĐIỀU HƯỚNG CHÍNH (DESKTOP) */}
-          <nav className="hidden lg:flex items-center gap-2">
+          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               
@@ -97,18 +94,13 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className={`relative px-3.5 py-2 text-[13px] font-bold rounded-full transition-all flex items-center gap-1.5 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 ${
+                  className={`relative px-4 py-2.5 text-[14px] font-bold rounded-full transition-all flex items-center gap-1.5 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 ${
                     isActive 
                       ? "text-[#0054A6] dark:text-sky-400 font-black bg-blue-50/80 dark:bg-sky-500/10 shadow-xs" 
                       : "text-slate-600 dark:text-slate-300 hover:text-[#0054A6] dark:hover:text-sky-300"
                   }`}
                 >
                   <span>{item.name}</span>
-                  {item.isHot && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-red-500 text-white shadow-xs shadow-red-500/30 animate-pulse">
-                      HOT
-                    </span>
-                  )}
                   {isActive && (
                     <motion.div
                       layoutId="activeNavbarIndicatorClean"
@@ -130,19 +122,19 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2.5 py-1.5 px-3 rounded-full bg-[#F5F8FA] dark:bg-[#0D1729] hover:bg-slate-100 dark:hover:bg-[#162540] transition border border-slate-200 dark:border-[#1E3454] shadow-xs cursor-pointer"
+                  className="flex items-center gap-2.5 py-2 px-3.5 rounded-full bg-[#F5F8FA] dark:bg-[#0D1729] hover:bg-slate-100 dark:hover:bg-[#162540] transition border border-slate-200 dark:border-[#1E3454] shadow-xs cursor-pointer"
                 >
-                  <div className="w-7 h-7 rounded-full bg-[#0054A6] text-white flex items-center justify-center text-xs font-black shadow-xs overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-[#0054A6] text-white flex items-center justify-center text-xs font-black shadow-xs overflow-hidden">
                     {user.avatar ? (
                       <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <span>{(user.name || "U").charAt(0).toUpperCase()}</span>
                     )}
                   </div>
-                  <span className="text-xs font-black text-slate-900 dark:text-slate-100 hidden sm:block max-w-[180px] lg:max-w-[240px] truncate">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100 hidden sm:block max-w-[180px] lg:max-w-[240px] truncate">
                     {user.name || "Tài khoản"}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
                 </button>
 
                 <AnimatePresence>
@@ -202,9 +194,9 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <Link 
                   href="/auth/login"
-                  className="px-4 py-2 rounded-xl text-xs font-black bg-[#0054A6] hover:bg-[#0072CE] text-white transition shadow-sm shadow-[#0054A6]/20 cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-black bg-[#0054A6] hover:bg-[#0072CE] text-white transition shadow-md shadow-[#0054A6]/20 cursor-pointer flex items-center gap-2 active:scale-95"
                 >
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-4 h-4" />
                   <span>Đăng nhập</span>
                 </Link>
               </div>
@@ -250,11 +242,6 @@ export default function Navbar() {
                   }`}
                 >
                   <span>{item.name}</span>
-                  {item.isHot && (
-                    <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-red-50 dark:bg-red-950/40 text-[#D71920] dark:text-red-400 border border-red-200 dark:border-red-800/60">
-                      HOT
-                    </span>
-                  )}
                 </Link>
               );
             })}

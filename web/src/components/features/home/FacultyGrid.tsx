@@ -77,9 +77,6 @@ export function FacultyGrid() {
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
             9 Nhóm Ngành Trọng Điểm Tại HUIT
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">
-            Chương trình đào tạo thực nghiệm ứng dụng, gắn liền với nhu cầu thực tiễn của thị trường lao động:
-          </p>
         </div>
 
         <Link

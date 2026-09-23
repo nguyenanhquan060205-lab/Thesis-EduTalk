@@ -282,17 +282,11 @@ export default function MajorsPage() {
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/70 text-[#0054A6] text-xs font-black">
-              <GraduationCap className="w-4 h-4 text-[#0054A6]" />
-              <span>Dữ Liệu Tuyển Sinh Chính Thức Đại Học Công Thương TP.HCM (HUIT)</span>
-            </div>
+            
             <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Danh Mục 39 Ngành Đào Tạo Đại Học
             </h1>
-            <p className="text-slate-600 text-xs sm:text-sm font-medium leading-relaxed">
-              Tra cứu mã ngành chính thức, tổ hợp xét tuyển 2026 và điểm chuẩn 3 năm liên tiếp theo{" "}
-              <strong className="text-slate-900">phương thức thi tốt nghiệp THPT</strong> tại HUIT.
-            </p>
+            
           </div>
 
           {/* Quick Stat Widgets */}
@@ -348,7 +342,6 @@ export default function MajorsPage() {
       <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-600">
-            <Layers className="w-4 h-4 text-[#0054A6]" />
             <span>Lọc theo nhóm ngành đào tạo</span>
           </div>
           {selectedField !== ALL && (
@@ -417,7 +410,7 @@ export default function MajorsPage() {
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm theo tên ngành (VD: Công nghệ thông tin...) hoặc mã ngành (7480201)..."
+              placeholder="Tìm theo tên ngành hoặc mã ngành..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-9 py-2.5 text-xs sm:text-sm font-medium text-slate-900 outline-hidden focus:bg-white focus:border-[#0054A6] focus:ring-2 focus:ring-blue-500/10 transition"
@@ -716,11 +709,9 @@ export default function MajorsPage() {
       {/* ==================================================================== */}
       {/* 6. GHI CHÚ NGUỒN DỮ LIỆU CHÍNH THỨC                                  */}
       {/* ==================================================================== */}
-      <div className="flex items-start gap-3 text-xs text-slate-500 font-medium bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5">
-        <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
-        <p className="leading-relaxed">
-          Nguồn dữ liệu: <strong className="text-slate-700">{ADMISSION_SOURCE}</strong>. Trường Đại học Công Thương TP.HCM xét tuyển bằng nhiều phương thức (học bạ THPT, điểm thi ĐGNL ĐHQG-HCM, xét tuyển thẳng). Điểm chuẩn trên bảng này áp dụng đối với phương thức xét kết quả thi tốt nghiệp THPT qua các năm.
-        </p>
+      <div className="flex items-center gap-2 text-xs text-slate-500 font-medium bg-slate-50 border border-slate-200 rounded-2xl p-3.5 sm:p-4">
+        <Info className="w-4 h-4 shrink-0 text-slate-400" />
+        <span>Ghi chú: Điểm chuẩn hiển thị áp dụng đối với phương thức xét kết quả thi tốt nghiệp THPT qua các năm tại HUIT.</span>
       </div>
 
       {/* ==================================================================== */}
@@ -728,7 +719,7 @@ export default function MajorsPage() {
       {/* ==================================================================== */}
       <Modal open={!!detail} onClose={() => setDetail(null)}>
         {detail && (
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6 no-scrollbar">
             
             {/* Header Modal */}
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
@@ -876,8 +867,7 @@ export default function MajorsPage() {
                 href={user ? "/predict" : "/auth/login?redirect=/predict"}
                 className="px-6 py-3 rounded-2xl bg-[#0054A6] hover:bg-[#00478F] text-white font-black text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Khảo sát xem bạn có hợp ngành này không</span>
+                <span>Đánh giá mức độ phù hợp ngành học</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

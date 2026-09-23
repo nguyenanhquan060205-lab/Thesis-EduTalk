@@ -304,10 +304,7 @@ function ProfileContent() {
 
           {/* Top Bar on Banner */}
           <div className="relative z-10 flex items-center justify-between">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-black tracking-wider uppercase">
-              <GraduationCap className="w-3.5 h-3.5 text-cyan-300" />
-              <span>Cổng Hồ Sơ Thí Sinh · HUIT EduTalk 2026</span>
-            </div>
+            
 
             {p.role === "admin" && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-900 text-[11px] font-black shadow-xs">
@@ -320,7 +317,7 @@ function ProfileContent() {
           {/* Join Date Watermark */}
           {joined && (
             <div className="relative z-10 text-right text-[11px] font-semibold text-white/80">
-              Gia nhập từ {joined}
+              Tham gia từ {joined}
             </div>
           )}
         </div>
@@ -727,10 +724,8 @@ function ProfileContent() {
 
           {!p.gender && !editing && (
             <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
-              <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-xs text-amber-900 font-medium leading-relaxed">
-                Hồ sơ chưa có thông tin giới tính. Mô hình Machine Learning có dùng trường này để xếp hạng — vui lòng bấm
-                <strong> Chỉnh sửa hồ sơ</strong> để bổ sung giúp kết quả tư vấn chuẩn xác hơn.
+                Hồ sơ chưa cập nhật giới tính. Bạn vui lòng bấm <strong>Chỉnh sửa hồ sơ</strong> để bổ sung giúp kết quả tư vấn được sát nhất.
               </p>
             </div>
           )}

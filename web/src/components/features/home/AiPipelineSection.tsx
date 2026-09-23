@@ -29,16 +29,13 @@ export function AiPipelineSection() {
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0054A6] text-xs font-black uppercase tracking-wider shadow-xs">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Kiến Trúc AI Độc Quyền</span>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-sky-950/50 border border-blue-200 dark:border-sky-800 text-[#0054A6] dark:text-sky-300 text-xs font-black uppercase tracking-wider shadow-xs">
+          <Sparkles className="w-3.5 h-3.5 text-[#0054A6] dark:text-sky-400" />
+          <span>Cơ Sở Khoa Học & Quy Trình Dự Báo Ngành Học</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Hệ Thống Tư Vấn Tuyển Sinh <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] to-[#0084FF]">Pipeline XGBoost & XAI SHAP</span>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          Quy Trình Định Hướng & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0054A6] dark:from-sky-400 to-[#0084FF] dark:to-cyan-300">Xử Lý Dữ Liệu HUIT</span>
         </h2>
-        <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          Sự kết hợp giữa mô hình XGBoost học từ phiếu khảo sát và hồ sơ trúng tuyển HUIT, giải thích minh bạch quyết định (TreeSHAP), và cơ sở dữ liệu tri thức tuyển sinh HUIT 2026.
-        </p>
       </div>
 
       {/* Interactive Pipeline Diagram with Beams */}
@@ -62,13 +59,13 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/10 shrink-0">
               <UserCheck className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">1. Dữ Liệu Thí Sinh</span>
+            <span className="text-xs font-black text-white">1. Khảo Sát Năng Lực</span>
             <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
-              15 tổ hợp môn + 10 câu trắc nghiệm sở thích Likert
+              15 tổ hợp môn xét tuyển & 10 chỉ số thiên hướng nghề nghiệp
             </p>
           </div>
 
-          {/* Node 2: Pipeline XGBoost */}
+          {/* Node 2: Mô hình phân tích */}
           <div
             ref={nodeXgboostRef}
             className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-blue-400/40 transition-all group"
@@ -76,13 +73,13 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/10 shrink-0">
               <Cpu className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">2. Pipeline XGBoost</span>
+            <span className="text-xs font-black text-white">2. Mô Hình Phân Tích</span>
             <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
-              Mô hình 2 tầng: 39 ngành (Top 5) hoặc theo nhóm (Top 2)
+              Đánh giá tỷ lệ trúng tuyển trên toàn bộ 39 chuyên ngành HUIT
             </p>
           </div>
 
-          {/* Node 3: XAI SHAP */}
+          {/* Node 3: Giải thích minh bạch */}
           <div
             ref={nodeShapRef}
             className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-purple-400/40 transition-all group"
@@ -90,13 +87,13 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/10 shrink-0">
               <BrainCircuit className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">3. Minh Bạch XAI SHAP</span>
+            <span className="text-xs font-black text-white">3. Minh Bạch Kết Quả</span>
             <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
-              TreeSHAP giải thích đóng góp 63 đặc trưng cho từng gợi ý
+              Phân tích mức độ đóng góp điểm số của từng môn học (SHAP)
             </p>
           </div>
 
-          {/* Node 4: ChromaDB + RAG */}
+          {/* Node 4: Kho tri thức tuyển sinh */}
           <div
             ref={nodeRagRef}
             className="h-full flex flex-col items-center text-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-amber-400/40 transition-all group"
@@ -104,9 +101,9 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 flex items-center justify-center text-amber-300 mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/10 shrink-0">
               <Database className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">4. Tri Thức Tuyển Sinh</span>
+            <span className="text-xs font-black text-white">4. Kho Tri Thức HUIT</span>
             <p className="text-[11px] text-slate-300 mt-2 leading-relaxed flex-1 flex items-center justify-center">
-              ChromaDB RAG truy xuất điểm chuẩn & đề án HUIT 2026
+              Truy xuất điểm chuẩn 3 năm & đề án tuyển sinh mới nhất
             </p>
           </div>
 
@@ -118,9 +115,9 @@ export function AiPipelineSection() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0054A6] to-[#00B4D8] text-white flex items-center justify-center mb-3 shadow-lg shadow-cyan-500/25 shrink-0 group-hover:scale-110 transition-transform">
               <GraduationCap className="w-7 h-7" />
             </div>
-            <span className="text-xs font-black text-white">5. Đề Xuất Ngành Phù Hợp</span>
+            <span className="text-xs font-black text-white">5. Đề Xuất Ngành Học</span>
             <p className="text-[11px] text-cyan-200 mt-2 leading-relaxed font-semibold flex-1 flex items-center justify-center">
-              Kèm tổ hợp xét tuyển & điểm chuẩn 3 năm của từng ngành
+              Gợi ý 2-5 ngành phù hợp kèm tổ hợp & điểm chuẩn tương ứng
             </p>
           </div>
 
@@ -163,20 +160,7 @@ export function AiPipelineSection() {
           delay={2.4}
         />
 
-        {/* Action Button below diagram */}
-        <div className="mt-10 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>Mô hình kiểm định chéo K-Fold đạt độ chính xác cao trên tập dữ liệu tuyển sinh HUIT</span>
-          </div>
-          <Link
-            href={user ? "/predict" : "/auth/login?redirect=/predict"}
-            className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-[#0054A6] hover:from-cyan-400 hover:to-[#0072CE] text-white text-xs font-black transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2 shrink-0 group active:scale-95"
-          >
-            <span>Trải Nghiệm Khảo Sát Ngay</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
+
 
       </div>
     </section>

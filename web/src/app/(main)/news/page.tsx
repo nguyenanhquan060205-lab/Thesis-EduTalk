@@ -79,24 +79,12 @@ export default function NewsPage() {
       <div className="bg-white rounded-3xl p-6 sm:p-9 border border-slate-200/90 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
           <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
-              <Newspaper className="w-4 h-4" />
-              <span>Tin tuyển sinh chính thức</span>
-            </div>
+            
             <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Tin Tức Tuyển Sinh HUIT
             </h1>
             <p className="text-slate-600 text-xs sm:text-sm font-medium leading-relaxed">
-              Toàn bộ tin lấy trực tiếp từ cổng tuyển sinh{" "}
-              <a
-                href="https://ts.huit.edu.vn/tin-tuyen-sinh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#0054A6] font-bold hover:underline"
-              >
-                ts.huit.edu.vn
-              </a>{" "}
-              của trường. Mỗi bài đều kèm liên kết về bản gốc để bạn đối chiếu.
+              Cập nhật thông tin tuyển sinh, thông báo chính thức và quy chế mới nhất từ HUIT.
             </p>
           </div>
           <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-3 text-center shrink-0">

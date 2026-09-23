@@ -132,7 +132,7 @@ const SUBJECT_ICONS: Record<string, any> = {
 // ============================================================================
 const LIKERT_ITEMS = [
   { id: "likert_nang_dong", group: "Tính cách", label: "Năng động & Hoạt bát",
-    desc: "Bạn thấy mình là người năng động, hoạt bát, thích vận động và chủ động tham gia nhiều hoạt động xã hội." },
+    desc: "Bạn là người sôi nổi, thích giao lưu và chủ động tham gia các hoạt động tập thể." },
   { id: "likert_huong_noi", group: "Tính cách", label: "Thiên về hướng nội",
     desc: "Bạn thấy thoải mái, tập trung và làm việc hiệu quả nhất khi ở một mình hoặc trong không gian nhóm nhỏ yên tĩnh." },
   { id: "likert_sang_tao", group: "Tư duy", label: "Sáng tạo & Đổi mới",
@@ -164,7 +164,7 @@ const LIKERT_GROUPS = [
 const LIKERT_OPTIONS = [
   { num: 1, text: "Hoàn toàn không", short: "Rất thấp" },
   { num: 2, text: "Ít hứng thú", short: "Thấp" },
-  { num: 3, text: "Bình thường", short: "Trung bình" },
+  { num: 3, text: "Bình thường", short: "T.Bình" },
   { num: 4, text: "Khá phù hợp", short: "Khá cao" },
   { num: 5, text: "Rất đam mê", short: "Rất cao" },
 ];
@@ -176,8 +176,8 @@ const CAREER_GOALS = [
   { 
     id: 1, 
     title: "Doanh Nghiệp & Tập Đoàn", 
-    tag: "Thực chiến chuyên môn",
-    desc: "Tập trung tích lũy kỹ năng thực tế, làm việc trong môi trường chuyên nghiệp, thăng tiến lên các vị trí quản lý hoặc chuyên gia chuyên sâu.",
+    tag: "Thực chiến & Thăng tiến",
+    desc: "Làm việc tại các doanh nghiệp, tập đoàn lớn; tích lũy kinh nghiệm thực tế và thăng tiến theo lộ trình quản lý hoặc chuyên gia.",
     icon: Briefcase
   },
   { 
@@ -344,7 +344,7 @@ export function PredictWizard() {
       return;
     }
     if (!step3Done) {
-      const msg = `Bạn đã trả lời ${likertAnswered}/${LIKERT_ITEMS.length} câu. Vui lòng hoàn thành tất cả 10 câu để mô hình AI phân tích chính xác nhất.`;
+      const msg = `Bạn đã trả lời ${likertAnswered}/${LIKERT_ITEMS.length} câu. Vui lòng hoàn thành tất cả 10 câu để hệ thống phân tích chính xác nhất.`;
       toast.error(msg);
       setSubmitError(msg);
       setIsSubmitting(false);
@@ -434,16 +434,9 @@ export function PredictWizard() {
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm relative overflow-hidden space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0054A6] text-xs font-black">
-              <GraduationCap className="w-4 h-4 text-[#0054A6]" />
-              <span>Tuyển Sinh Đại Học Công Thương TP.HCM (HUIT) 2026</span>
-            </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Tư Vấn & Khảo Sát Định Hướng Ngành Học
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium">
-              Pipeline XGBoost phân tích điểm thi THPT, mục tiêu nghề nghiệp và thiên hướng cá nhân trên 63 đặc trưng.
-            </p>
           </div>
 
           {/* User profile info */}
@@ -467,7 +460,6 @@ export function PredictWizard() {
                 <NumberFlow value={overallProgress} />%
               </span>
             </span>
-            <span className="text-[11px] font-bold text-slate-500">Bước {currentStep} trên 3</span>
           </div>
 
           {/* Stepper bar with buttons */}
@@ -544,11 +536,8 @@ export function PredictWizard() {
               <div>
                 <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
                   <Compass className="w-5 h-5 text-[#0054A6]" />
-                  <span>Chọn Cơ Chế Tư Vấn Phù Hợp:</span>
+                  <span>Bạn Muốn Khám Phá Ngành Học Theo Hướng Nào?</span>
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
-                  EduTalk hỗ trợ 2 cơ chế phân tích dựa trên mức độ định hình ngành nghề ban đầu của bạn:
-                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -574,8 +563,7 @@ export function PredictWizard() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      Phù hợp khi bạn chưa chọn ngành cụ thể. Mô hình xếp hạng cả 39 chuyên ngành của trường
-                      {soGoiY ? ` và gợi ý ${soGoiY.khamPha} ngành phù hợp nhất.` : " để tìm ra ngành học phù hợp nhất."}
+                      Gợi ý {soGoiY ? soGoiY.khamPha : "5"} ngành tốt nhất trên toàn bộ 39 chuyên ngành HUIT dựa trên điểm thi và thiên hướng.
                     </p>
                   </div>
                   {predictMode === "auto" && (
@@ -607,8 +595,7 @@ export function PredictWizard() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      Dành cho bạn đã chọn sẵn 1 trong 9 nhóm ngành HUIT (CNTT, Kinh tế, Du lịch, Kỹ thuật...). Mô hình riêng của nhóm xếp hạng các ngành bên trong nhóm đó
-                      {soGoiY ? ` và gợi ý ${soGoiY.tuVan} ngành phù hợp nhất.` : "."}
+                      Gợi ý {soGoiY ? soGoiY.tuVan : "2"} ngành hàng đầu trong 1 nhóm ngành bạn quan tâm.
                     </p>
                   </div>
                   {predictMode === "guided" && (
@@ -626,9 +613,6 @@ export function PredictWizard() {
                     <div className="text-xs font-black text-slate-900 uppercase tracking-wider">
                       Chọn 1 Trong 9 Nhóm Ngành Định Hướng:
                     </div>
-                    <span className="text-[11px] font-bold text-[#0054A6]">
-                      Đang chọn: {FACULTIES[selectedFaculty]?.name}
-                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2.5">
@@ -675,11 +659,6 @@ export function PredictWizard() {
                     <Calculator className="w-5 h-5 text-[#0054A6]" />
                     <span>Tổ Hợp Xét Tuyển & Nhập Điểm 3 Môn:</span>
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                    {predictMode === "guided" && allowedBlocks.length < Object.keys(ADMISSION_BLOCKS).length
-                      ? `Hiển thị ${allowedBlocks.length} tổ hợp có xét tuyển ngành thuộc "${FACULTIES[selectedFaculty]?.name}".`
-                      : "15 tổ hợp chính thức theo đề án tuyển sinh HUIT 2026. Chọn tổ hợp phù hợp thế mạnh của bạn:"}
-                  </p>
                 </div>
 
                 {/* Score Summary Badge with NumberFlow */}
@@ -707,9 +686,6 @@ export function PredictWizard() {
               <div className="space-y-2">
                 <div className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center justify-between">
                   <span>Chọn Tổ Hợp Xét Tuyển:</span>
-                  <span className="text-slate-500 font-bold normal-case text-[11px]">
-                    Đang chọn: <strong className="text-[#0054A6] font-black">{selectedBlock}</strong> ({ADMISSION_BLOCKS[selectedBlock]?.name})
-                  </span>
                 </div>
 
                 <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-2">
@@ -743,7 +719,6 @@ export function PredictWizard() {
                   <div className="text-xs font-black text-slate-900 uppercase tracking-wider">
                     Bảng Điểm 3 Môn Tổ Hợp {selectedBlock}:
                   </div>
-                  <span className="text-[11px] font-semibold text-slate-500">Thang điểm 10 · Nhập từ 0 đến 10</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -823,17 +798,7 @@ export function PredictWizard() {
               </div>
 
               {/* ACTION FOOTER BƯỚC 1 */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-slate-100">
-                <div className="text-xs font-semibold text-slate-500">
-                  {step1Done ? (
-                    <span className="text-[#0054A6] font-black flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4" /> Đã nhập hợp lệ điểm 3 môn tổ hợp {selectedBlock}.
-                    </span>
-                  ) : (
-                    <span>Cần nhập đủ điểm 3 môn (từ 0 đến 10) để tiếp tục sang Bước 2.</span>
-                  )}
-                </div>
-
+              <div className="flex justify-end pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   disabled={!step1Done}
@@ -865,10 +830,6 @@ export function PredictWizard() {
             className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 shadow-sm space-y-6"
           >
             <div className="border-b border-slate-100 pb-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0054A6] text-xs font-black mb-2">
-                <Briefcase className="w-3.5 h-3.5" />
-                <span>Bước 2 trên 3</span>
-              </div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
                 Kỳ Vọng & Mục Tiêu Phát Triển Sau Khi Tốt Nghiệp:
               </h2>
@@ -965,10 +926,6 @@ export function PredictWizard() {
             <div className="border-b border-slate-100 pb-4 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0054A6] text-xs font-black mb-2">
-                    <Brain className="w-3.5 h-3.5" />
-                    <span>Bước 3 trên 3 · Khảo Sát Thiên Hướng</span>
-                  </div>
                   <h2 className="text-base sm:text-lg font-black text-slate-900">
                     10 Câu Hỏi Trắc Nghiệm Tính Cách, Tư Duy & Sở Thích:
                   </h2>
@@ -1053,14 +1010,14 @@ export function PredictWizard() {
                                     type="button"
                                     title={`${opt.num} - ${opt.text}`}
                                     onClick={() => handleLikertChange(item.id, opt.num)}
-                                    className={`flex-1 sm:flex-initial w-auto sm:w-11 h-10 sm:h-11 rounded-xl text-xs font-black transition-all cursor-pointer flex flex-col items-center justify-center hover:scale-105 active:scale-95 ${
+                                    className={`flex-1 sm:flex-initial w-auto sm:w-12 h-10 sm:h-11 px-1 rounded-xl text-xs font-black transition-all cursor-pointer flex flex-col items-center justify-center hover:scale-105 active:scale-95 ${
                                       isSelected
                                         ? "bg-[#0054A6] text-white shadow-md scale-105"
                                         : "text-slate-600 bg-slate-50 hover:bg-slate-100 hover:text-slate-900"
                                     }`}
                                   >
                                     <span className="text-sm leading-none">{opt.num}</span>
-                                    <span className={`text-[8px] mt-0.5 font-bold leading-none truncate max-w-[36px] ${
+                                    <span className={`text-[8px] mt-0.5 font-bold leading-none truncate max-w-[44px] text-center ${
                                       isSelected ? "text-blue-100" : "text-slate-400"
                                     }`}>
                                       {opt.short}
@@ -1101,12 +1058,11 @@ export function PredictWizard() {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 animate-spin" />
-                    <span>Đang nạp mô hình AI XGBoost & phân tích hồ sơ...</span>
+                    <span>Đang phân tích hồ sơ xét tuyển...</span>
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Hoàn Tất & Xem Báo Cáo Định Hướng Ngay</span>
+                    <span>Xem Kết Quả Phân Tích</span>
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 )}

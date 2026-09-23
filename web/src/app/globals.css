@@ -947,8 +947,14 @@ body {
   margin-bottom: 0.25rem !important;
 }
 
-.recharts-tooltip-cursor {
-  fill: var(--dash-active-bg) !important;
-  opacity: 0.5 !important;
+
+/* Utility to hide scrollbars while keeping element scrollable */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 

@@ -239,7 +239,7 @@ export default function ChatWidget() {
                       }
                     }}
                     data-lenis-prevent
-                    placeholder="Hỏi AI bất kỳ điều gì..."
+                    placeholder="Đặt câu hỏi tuyển sinh HUIT..."
                     className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition shadow-inner resize-none min-h-[46px] max-h-[100px]"
                     rows={1}
                   />
@@ -253,7 +253,7 @@ export default function ChatWidget() {
                   </motion.button>
                 </div>
                 <p className="text-center text-[10px] text-slate-400">
-                  Trợ lý AI HUIT tham khảo từ dữ liệu tuyển sinh chính thức.
+                  Trợ lý Tuyển sinh HUIT tham khảo từ dữ liệu đề án tuyển sinh chính thức.
                 </p>
               </div>
             )}

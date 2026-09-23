@@ -8,26 +8,23 @@ import { Award, GraduationCap, Layers } from "lucide-react";
 const STATS = [
   {
     id: "history",
-    label: "Năm Truyền Thống",
+    label: "Truyền Thống Đào Tạo",
     target: 44,
     suffix: " Năm",
-    subtext: "1982 — 2026",
     icon: Award,
   },
   {
     id: "majors",
-    label: "Chuyên Ngành Đào Tạo",
+    label: "Chuyên Ngành Chính Quy",
     target: 39,
     suffix: " Ngành",
-    subtext: "Chuẩn kiểm định quốc tế",
     icon: GraduationCap,
   },
   {
     id: "blocks",
-    label: "Tổ Hợp Xét Tuyển",
+    label: "Môn Thi Xét Tuyển",
     target: 15,
     suffix: " Tổ hợp",
-    subtext: "Linh hoạt xét theo thế mạnh",
     icon: Layers,
   },
 ];
@@ -64,9 +61,6 @@ export function StatsCounter() {
 
                 <span className="text-xs font-black text-slate-700 dark:text-slate-300 mt-1">
                   {stat.label}
-                </span>
-                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
-                  {stat.subtext}
                 </span>
               </div>
             );

@@ -39,6 +39,35 @@ import { BorderBeam } from "@/components/motion/BorderBeam";
 // ============================================================================
 // DỮ LIỆU CƠ BẢN 39 NGÀNH HUIT
 // ============================================================================
+
+const getMajorInfo = (code: string, name: string, faculty: string) => {
+  if (MAJORS_DB[code]) return MAJORS_DB[code];
+  let desc = `Chương trình đào tạo chính quy HUIT, trang bị kiến thức chuyên sâu và kỹ năng thực hành ứng dụng trong lĩnh vực ${name}.`;
+  let careers = ["Chuyên viên chuyên môn", "Quản lý kỹ thuật & Vận hành", "Chuyên viên tư vấn & Phát triển"];
+
+  if (faculty.includes("CNTT") || faculty.includes("Máy tính")) {
+    desc = "Đào tạo kiến thức công nghệ hiện đại, phát triển phần mềm, phân tích hệ thống và ứng dụng CNTT trong doanh nghiệp.";
+    careers = ["Kỹ sư phần mềm & Giải pháp", "Chuyên viên phân tích hệ thống", "Quản trị hệ thống dữ liệu"];
+  } else if (faculty.includes("Kinh") || faculty.includes("Quản") || faculty.includes("Tài chính") || faculty.includes("Kế toán")) {
+    desc = "Trang bị tư duy quản trị, hoạch định chiến lược kinh doanh và phát triển kỹ năng điều hành tổ chức trong môi trường hiện đại.";
+    careers = ["Chuyên viên phát triển kinh doanh", "Quản lý dự án & Vận hành", "Chuyên viên hoạch định chiến lược"];
+  } else if (faculty.includes("Thực phẩm") || faculty.includes("Sinh") || faculty.includes("Hoá") || faculty.includes("Môi trường") || faculty.includes("Vật liệu")) {
+    desc = "Chương trình trọng điểm HUIT, nghiên cứu quy trình công nghệ, kiểm soát chất lượng và phát triển sản phẩm an toàn bền vững.";
+    careers = ["Chuyên viên R&D phát triển sản phẩm", "Kỹ sư kiểm soát chất lượng (QA/QC)", "Quản đốc dây chuyền sản xuất"];
+  } else if (faculty.includes("Cơ khí") || faculty.includes("Điện") || faculty.includes("Tự động")) {
+    desc = "Đào tạo kỹ thuật ứng dụng, thiết kế hệ thống cơ - điện - điều khiển tự động và quản lý dây chuyền sản xuất công nghiệp.";
+    careers = ["Kỹ sư thiết kế & Tự động hóa", "Kỹ sư vận hành hệ thống", "Chuyên viên quản lý kỹ thuật"];
+  } else if (faculty.includes("Luật") || faculty.includes("Ngôn ngữ")) {
+    desc = "Chương trình đào tạo chuyên sâu về pháp lý thương mại, kỹ năng giao tiếp chuyên nghiệp và ứng dụng thực tiễn trong doanh nghiệp.";
+    careers = ["Chuyên viên pháp chế & Đối ngoại", "Chuyên viên tư vấn thương mại", "Biên - Phiên dịch viên chuyên ngành"];
+  } else if (faculty.includes("Du lịch") || faculty.includes("Khách sạn") || faculty.includes("Ẩm thực")) {
+    desc = "Đào tạo nghiệp vụ dịch vụ cao cấp, quản trị trải nghiệm khách hàng và vận hành mô hình du lịch - nhà hàng - khách sạn hiện đại.";
+    careers = ["Quản lý vận hành dịch vụ", "Chuyên viên điều hành du lịch & Sự kiện", "Giám sát trải nghiệm khách hàng"];
+  }
+
+  return { name, code, faculty, facultyId: 0, desc, careers, blocks: [] };
+};
+
 const MAJORS_DB: Record<string, {
   name: string;
   code: string;
@@ -51,7 +80,7 @@ const MAJORS_DB: Record<string, {
   "7480201": { 
     name: "Công Nghệ Thông Tin", 
     code: "7480201", 
-    faculty: "CNTT & AI", 
+    faculty: "CNTT & Máy tính", 
     facultyId: 0, 
     careers: ["Kỹ sư phát triển phần mềm", "Kỹ sư giải pháp đám mây (Cloud)", "Quản trị hệ thống doanh nghiệp"], 
     desc: "Đào tạo chuyên sâu về kỹ thuật phần mềm, lập trình ứng dụng di động, hệ thống phân tán và kiến trúc dữ liệu hiện đại.", 
@@ -60,7 +89,7 @@ const MAJORS_DB: Record<string, {
   "7480107": { 
     name: "Trí Tuệ Nhân Tạo", 
     code: "7480107", 
-    faculty: "CNTT & AI", 
+    faculty: "CNTT & Máy tính", 
     facultyId: 0, 
     careers: ["Kỹ sư Machine Learning", "Chuyên viên Computer Vision & NLP", "Kỹ sư AI tạo sinh"], 
     desc: "Nghiên cứu các thuật toán học máy tiên tiến, xử lý ngôn ngữ tự nhiên và tích hợp giải pháp AI vào công nghiệp 4.0.", 
@@ -69,7 +98,7 @@ const MAJORS_DB: Record<string, {
   "7460108": { 
     name: "Khoa Học Dữ Liệu", 
     code: "7460108", 
-    faculty: "CNTT & AI", 
+    faculty: "CNTT & Máy tính", 
     facultyId: 0, 
     careers: ["Data Analyst", "Data Scientist", "Chuyên viên phân tích chiến lược kinh doanh"], 
     desc: "Thu thập, làm sạch và khai phá dữ liệu lớn (Big Data) nhằm hỗ trợ ra quyết định chiến lược cho doanh nghiệp.", 
@@ -78,7 +107,7 @@ const MAJORS_DB: Record<string, {
   "7480202": { 
     name: "An Toàn Thông Tin", 
     code: "7480202", 
-    faculty: "CNTT & AI", 
+    faculty: "CNTT & Máy tính", 
     facultyId: 0, 
     careers: ["Chuyên viên an ninh mạng", "Kỹ sư bảo mật hệ thống", "SOC Analyst"], 
     desc: "Chuyên sâu về mật mã học, phòng thủ không gian mạng, kiểm thử xâm nhập và ứng cứu sự cố bảo mật.", 
@@ -232,13 +261,13 @@ export function ResultReport() {
   const { primaryFaculty, dsNganh, featureImpacts, personalizedNarrative } = useMemo(() => {
     if (apiResult?.majors?.length) {
       const NHAN: Record<string, string> = {
-        an_toan: "Trong tầm với (trên mức cao nhất 3 năm)",
-        co_kha_nang: "Có khả năng (trong khoảng dao động 3 năm)",
-        rui_ro_cao: "Cần cố gắng (dưới mức thấp nhất 3 năm)",
+        an_toan: "Trong tầm với",
+        co_kha_nang: "Có khả năng",
+        rui_ro_cao: "Cần bứt phá",
       };
 
       const majors = apiResult.majors.map((m: any, idx: number) => {
-        const info = MAJORS_DB[m.code] || {};
+        const info = getMajorInfo(m.code, m.name, m.field);
         // Ngành KHÔNG xét tổ hợp thí sinh khai thì tổng điểm tổ hợp đó không dùng được
         // cho ngành này — so nó với điểm chuẩn rồi báo "trong tầm với" là sai. Bỏ mức
         // an toàn, thay bằng lời nhắc về phương thức khác.
@@ -369,7 +398,7 @@ export function ResultReport() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
-            Báo Cáo Định Hướng Ngành Học & Tuyển Sinh HUIT
+            Báo Cáo Định Hướng Ngành Học
           </h1>
         </div>
 
@@ -384,7 +413,7 @@ export function ResultReport() {
             href={`/chat?q=${encodeURIComponent(`Tư vấn chi tiết về ngành ${dsNganh[0].name} tại Trường Đại học Công Thương TP.HCM (HUIT)`)}`}
             className="justify-center px-4 py-2.5 rounded-xl bg-[#0054A6] hover:bg-[#003B73] text-white text-xs font-black transition flex items-center gap-2 shadow-md shadow-[#0054A6]/20 hover:scale-[1.02] active:scale-[0.97]"
           >
-            <MessageSquare className="w-4 h-4" /> Hỏi Trợ Lý AI Về Ngành Này
+            <MessageSquare className="w-4 h-4" /> Hỏi Tư Vấn Về Ngành Này
           </Link>
         </div>
       </div>
@@ -397,7 +426,6 @@ export function ResultReport() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-[11px] font-black backdrop-blur-xs mb-4 border border-white/20">
-          <Award className="w-3.5 h-3.5 text-cyan-300" />
           <span>Chuyên ngành phù hợp nhất với hồ sơ của bạn</span>
         </div>
 
@@ -430,7 +458,7 @@ export function ResultReport() {
             <p className="text-xs sm:text-sm text-blue-50/90 font-medium leading-relaxed max-w-2xl">
               {mode === "guided"
                 ? `Xếp hạng trong nhóm ${primaryFaculty.name} mà bạn đã chọn — không ngành nào ngoài nhóm này được đề xuất.`
-                : "Xếp hạng trên toàn bộ 39 ngành của trường. Hệ thống phân tích đa chiều để đưa ra thứ tự gợi ý tối ưu."}{" "}
+                : "Hệ thống gợi ý Top 5 chuyên ngành HUIT phù hợp nhất với điểm thi và thiên hướng của bạn."}{" "}
               {dsNganh.length > 1 && `Còn ${dsNganh.length - 1} ngành tiềm năng khác ngay bên dưới.`}
             </p>
           </div>
@@ -442,16 +470,16 @@ export function ResultReport() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 lg:gap-2 text-xs">
               <div>
-                <span className="text-blue-200 font-semibold">Tổ hợp </span>
+                <span className="text-blue-200 font-semibold">Tổ hợp: </span>
                 <strong className="font-black">{block}</strong>
                 {totalScore ? <strong className="font-black"> · {totalScore}đ</strong> : null}
               </div>
               <div>
-                <span className="text-blue-200 font-semibold">Mục tiêu </span>
+                <span className="text-blue-200 font-semibold">Mục tiêu: </span>
                 <strong className="font-black">{goalLabel}</strong>
               </div>
               <div>
-                <span className="text-blue-200 font-semibold">Khảo sát </span>
+                <span className="text-blue-200 font-semibold">Khảo sát: </span>
                 <strong className="font-black">10/10 câu</strong>
               </div>
             </div>
@@ -459,42 +487,18 @@ export function ResultReport() {
         </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* VÙNG 3: 3 THẺ HƯỚNG DẪN ĐỌC BÁO CÁO                                  */}
-      {/* ==================================================================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { n: "1", t: "Danh sách ngành gợi ý", d: `${dsNganh.length} ngành xếp theo mức phù hợp giảm dần — đây là câu trả lời trọng tâm.`, icon: Award },
-          { n: "2", t: "Khả năng trúng tuyển", d: "Đối chiếu mức điểm của bạn với điểm chuẩn 3 năm gần nhất của trường HUIT.", icon: BadgeCheck },
-          { n: "3", t: "Mức độ phù hợp nhóm", d: "Mô hình ước lượng tỷ trọng thiên hướng với từng nhóm ngành để tham khảo.", icon: Compass },
-        ].map((s) => (
-          <div 
-            key={s.n} 
-            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex items-start gap-3.5 hover:shadow-md transition-all hover:scale-[1.01]"
-          >
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0054A6] flex items-center justify-center shrink-0 font-black">
-              <s.icon className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-black text-slate-900">{s.t}</div>
-              <div className="text-[11px] text-slate-500 font-medium leading-relaxed mt-1">{s.d}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      
+
 
       {/* ==================================================================== */}
       {/* VÙNG 4: DANH SÁCH CÁC NGÀNH ĐƯỢC ĐỀ XUẤT                             */}
       {/* ==================================================================== */}
       <div className="space-y-4">
         <div className="border-b border-slate-200 pb-3">
-          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Award className="w-5 h-5 text-[#0054A6]" />
+          <h2 className="text-lg font-black text-slate-900">
             Danh Sách {dsNganh.length} Chuyên Ngành Bạn Nên Tìm Hiểu
           </h2>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Xếp hạng theo độ tương thích giảm dần từ thuật toán. Hãy đối chiếu cả {dsNganh.length} ngành trước khi đưa ra quyết định đặt nguyện vọng:
-          </p>
+          
         </div>
 
         <div className="grid grid-cols-1 gap-5">
@@ -629,20 +633,13 @@ export function ResultReport() {
       {/* ==================================================================== */}
       <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-sm space-y-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#0054A6] text-xs font-black mb-2 border border-blue-200">
-            <Brain className="w-4 h-4" />
-            <span>Đối Chiếu Khoa Học & Phân Bổ Nhóm Ngành</span>
-          </div>
+          
           <h2 className="text-lg font-black text-slate-900">
             {mode === "guided"
               ? "Nếu Không Chọn Trước, Mô Hình Sẽ Nghiêng Về Nhóm Nào?"
               : "Mức Độ Tương Thích Với Từng Nhóm Ngành"}
           </h2>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            {mode === "guided"
-              ? "Ở chế độ tư vấn, kết quả được xếp hạng trong nhóm ngành bạn chọn. Biểu đồ dưới đây cộng xác suất của mô hình 39 ngành theo từng nhóm — tức nhóm mô hình tự nghiêng về nếu bạn không chọn trước."
-              : "Tổng hợp mức độ phù hợp của các ngành trong cùng một nhóm. Có đường đối chứng so với mốc đoán ngẫu nhiên (11.1% = 1/9 nhóm)."}
-          </p>
+          
         </div>
 
         {/* Lời giải thích tự nhiên */}
@@ -656,10 +653,8 @@ export function ResultReport() {
         {/* Bar Chart phân tích đóng góp với MỐC ĐOÁN BỪA (11.1%) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs font-black text-slate-500 uppercase tracking-wider">
-            <span>Xác Suất Mô Hình Gán Cho Từng Nhóm Ngành (%)</span>
-            <span className="text-[11px] font-bold normal-case text-slate-400">
-              Đường nét đứt: Mốc đoán ngẫu nhiên (11.1%)
-            </span>
+            <span>Mức Độ Phù Hợp Theo Nhóm Ngành (%)</span>
+            
           </div>
           <div className="h-64 sm:h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -703,7 +698,7 @@ export function ResultReport() {
                   strokeDasharray="4 4" 
                   strokeWidth={1.5}
                   label={{ 
-                    value: "Mốc đoán bừa: 11.1%", 
+                    value: "Mốc trung bình: 11.1%", 
                     fill: "#0054A6", 
                     fontSize: 10, 
                     position: "top",
@@ -737,7 +732,7 @@ export function ResultReport() {
         <div className="space-y-1.5 text-center sm:text-left">
           <h3 className="text-lg font-black">Bạn Cần Tìm Hiểu Thêm Về Học Phí & Chỉ Tiêu Tuyển Sinh?</h3>
           <p className="text-xs text-blue-100 font-medium">
-            Trợ lý AI EduTalk luôn sẵn sàng giải đáp chi tiết về chương trình đào tạo và đời sống sinh viên HUIT 24/7.
+            Trợ lý Tuyển sinh HUIT sẵn sàng giải đáp chi tiết về chương trình đào tạo và đời sống sinh viên HUIT 24/7.
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -751,7 +746,7 @@ export function ResultReport() {
             href={`/chat?q=${encodeURIComponent(`Tư vấn chương trình đào tạo và học phí ngành ${dsNganh[0].name} HUIT`)}`}
             className="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#0054A6] text-xs font-black transition shadow-md flex items-center gap-2 hover:scale-[1.02] active:scale-[0.97]"
           >
-            <span>Trò Chuyện Với AI</span>
+            <span>Hỏi Đáp Tuyển Sinh</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

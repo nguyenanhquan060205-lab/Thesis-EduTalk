@@ -3,7 +3,6 @@
 import {  
   Lock, 
   Bell,  
-  LogOut, 
   Shield, 
   Check, 
   ShieldAlert,  
@@ -11,7 +10,6 @@ import {
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function SettingsPage() {
@@ -25,8 +23,7 @@ export default function SettingsPage() {
   const [notifOn, setNotifOn] = useState<boolean | null>(null);
   const [notifSaving, setNotifSaving] = useState(false);
   
-  const router = useRouter();
-  const { logout, user } = useAuthStore();
+  const { user } = useAuthStore();
 
 
   // Đọc trạng thái thông báo thật từ hồ sơ (bản cũ dùng defaultChecked gán cứng).
@@ -69,28 +66,16 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogout = () => {
-    if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-      logout();
-      router.push("/auth/login");
-    }
-  };
-
   return (
     <div className="max-w-4xl mx-auto mt-2 pb-24 animate-fade-in-up space-y-8">
       
       {/* Top Header */}
       <div className="border-b border-slate-200/80 pb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase">
-            Hồ Sơ & Tùy Chọn
-          </span>
-        </div>
         <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
           Cài Đặt Tài Khoản & Bảo Mật
         </h1>
         <p className="text-slate-600 text-xs sm:text-sm font-medium mt-1">
-          Quản lý mật khẩu đăng nhập, quyền riêng tư và tùy chỉnh thông báo tuyển sinh HUIT 2026.
+          Quản lý mật khẩu, bảo mật tài khoản và cài đặt cá nhân.
         </p>
       </div>
 
@@ -123,17 +108,6 @@ export default function SettingsPage() {
             <Bell className="w-4 h-4" />
             <span>Thông báo</span>
           </motion.button>
-
-          <div className="pt-3 border-t border-slate-100">
-            <motion.button 
-              whileTap={{ scale: 0.96 }}
-              onClick={handleLogout}
-              className="w-full text-left px-4 py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition flex items-center gap-3 border border-rose-100 cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Đăng Xuất Khỏi Hệ Thống</span>
-            </motion.button>
-          </div>
         </div>
 
         {/* Content Area */}

@@ -24,7 +24,7 @@ const HERO_SLIDES = [
     id: 1,
     tag: "39 CHUYÊN NGÀNH ĐÀO TẠO CHÍNH QUY",
     titleLine1: "Chào Đón Tân Sinh Viên &",
-    titleLine2: "Làm Chủ Kỷ Nguyên Mới",
+    titleLine2: "Kiến Tạo Tương Lai",
     desc: "Tra cứu 39 ngành đào tạo chính quy tại HUIT kèm tổ hợp xét tuyển và điểm chuẩn ba năm gần nhất.",
     primaryBtn: { text: "Xem Danh Mục Ngành", href: "/majors" },
     secondaryBtn: { text: "Tra Cứu Điểm Chuẩn", href: "/majors" },
@@ -37,7 +37,7 @@ const HERO_SLIDES = [
     titleLine1: "Môi Trường Năng Động &",
     titleLine2: "Học Bổng Toàn Phần HUIT",
     desc: "Không gian học tập hiện đại, khuôn viên hồ cá Koi và hệ sinh thái đào tạo ứng dụng hàng đầu tại Trường Đại học Công Thương TP.HCM.",
-    primaryBtn: { text: "Trò Chuyện Với AI", href: "/chat" },
+    primaryBtn: { text: "Hỏi Đáp Tuyển Sinh HUIT", href: "/chat" },
     secondaryBtn: { text: "Tin Tức Tuyển Sinh", href: "/news" },
     gradient: "from-indigo-300 via-blue-200 to-white",
     image: "/images/huit_banner_2_koi.png"
@@ -74,7 +74,7 @@ export function HeroBanner() {
   const slide = HERO_SLIDES[currentSlide];
 
   return (
-    <section className="relative w-full min-h-[560px] sm:min-h-[640px] bg-[#001833] overflow-hidden flex items-center">
+    <section className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] max-h-[680px] bg-[#001833] overflow-hidden flex items-center">
       {/* Background Image with Multi-layered Overlay */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
@@ -114,7 +114,7 @@ export function HeroBanner() {
       </button>
 
       {/* Inner Content Centered to max-w-7xl Container */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 z-10 py-12 sm:py-20 text-left">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 z-10 py-12 sm:py-16 lg:py-20 text-left">
         <div className="max-w-3xl space-y-6">
           <AnimatePresence mode="wait">
             <motion.div

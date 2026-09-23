@@ -27,28 +27,27 @@ import { FaqAccordion } from "@/components/features/home/FaqAccordion";
 import { ADMISSION_BLOCKS, ADMISSION_SOURCE } from "@/lib/admission";
 
 export const metadata: Metadata = {
-  title: "HUIT EduTalk — Cổng Tư Vấn Tuyển Sinh & Định Hướng Ngành Học AI",
-  description: "Cổng tư vấn tuyển sinh và định hướng chuyên ngành thông minh Đại học Công Thương TP.HCM (HUIT), ứng dụng mô hình học máy XGBoost và giải thích minh bạch XAI SHAP.",
+  title: "HUIT EduTalk — Cổng Tư Vấn Tuyển Sinh & Định Hướng Ngành Học",
+  description: "Cổng tư vấn tuyển sinh và định hướng chuyên ngành thông minh Đại học Công Thương TP.HCM (HUIT), hỗ trợ thí sinh đánh giá năng lực và chọn lựa chuyên ngành đào tạo.",
 };
 
 // Icon lấy từ lucide-react thay vì emoji. Emoji do hệ điều hành vẽ nên mỗi máy một
 // kiểu (macOS khác Windows khác Android), không theo được bảng màu, và không chỉnh
 // được độ dày nét — đặt cạnh icon thật là lộ ngay.
 const MARQUEE_ITEMS = [
-  { icon: Landmark, text: "44 Năm Truyền Thống Phát Triển & Khởi Nghiệp Đổi Mới" },
-  { icon: GraduationCap, text: "39 Chuyên Ngành Đào Tạo Chuẩn Kiểm Định Quốc Tế (AUN-QA, MOET)" },
-  { icon: Calculator, text: "15 Tổ Hợp Môn Xét Tuyển Đa Dạng & Linh Hoạt" },
-  { icon: BrainCircuit, text: "Mô Hình XGBoost Gợi Ý Ngành Phù Hợp Trong 39 Ngành Thuộc 9 Nhóm Ngành" },
-  { icon: Lightbulb, text: "Giải Thích Minh Bạch XAI SHAP Hỗ Trợ Ra Quyết Định Đúng Đắn" },
-  { icon: MessageSquare, text: "Trợ Lý Tư Vấn Tuyển Sinh AI EduTalk Trực Tuyến 24/7" },
+  { icon: Landmark, text: "44 Năm Truyền Thống Đào Tạo HUIT" },
+  { icon: GraduationCap, text: "39 Chuyên Ngành Đạt Chuẩn Kiểm Định" },
+  { icon: Calculator, text: "15 Tổ Hợp Môn Xét Tuyển Linh Hoạt" },
+  { icon: BrainCircuit, text: "Gợi Ý Ngành Phù Hợp Theo Năng Lực" },
+  { icon: Lightbulb, text: "Minh Bạch Kết Quả Với Công Cụ SHAP" },
+  { icon: MessageSquare, text: "Trợ Lý Tuyển Sinh HUIT Trực Tuyến 24/7" },
 ];
 
 const HIGHLIGHT_STRIPS = [
   {
     id: "predict",
-    title: "Tư Vấn Chọn Ngành AI",
+    title: "Tư Vấn Chọn Ngành",
     desc: "Đối soát 15 tổ hợp môn & 10 thiên hướng cá nhân để gợi ý 2 ngành trong nhóm bạn chọn, hoặc 5 ngành trên toàn trường.",
-    tag: "Khảo sát AI",
     icon: Target,
     href: "/predict",
   },
@@ -56,7 +55,6 @@ const HIGHLIGHT_STRIPS = [
     id: "majors",
     title: "Dữ Liệu Chuẩn HUIT 2026",
     desc: "Tra cứu điểm chuẩn các năm & chỉ tiêu xét tuyển 39 chuyên ngành đào tạo chính quy.",
-    tag: "Chính thống",
     icon: ShieldCheck,
     href: "/majors",
   },
@@ -64,7 +62,6 @@ const HIGHLIGHT_STRIPS = [
     id: "chat",
     title: "Trợ Lý Tuyển Sinh 24/7",
     desc: "Hỏi đáp tức thì về học phí, học bổng, phương thức xét tuyển & môi trường học tập HUIT.",
-    tag: "Trợ lý 24/7",
     icon: MessageSquare,
     href: "/chat",
   },
@@ -89,12 +86,12 @@ export default function HomePage() {
       {/* ==================================================================== */}
       <div className="w-full bg-slate-100/80 dark:bg-[#0D1729]/80 border-y border-slate-200/80 dark:border-slate-800 py-3.5 overflow-hidden transition-colors duration-300">
         <Marquee repeat={5} duration="40s">
-          {MARQUEE_ITEMS.map(({ icon: Icon, text }, idx) => (
+          {MARQUEE_ITEMS.map(({ text }, idx) => (
             <span
               key={idx}
               className="inline-flex items-center gap-2 text-xs font-black text-slate-700 dark:text-slate-300 px-6 tracking-wide"
             >
-              <Icon className="w-4 h-4 text-[#0054A6] dark:text-sky-400 shrink-0" strokeWidth={2.25} aria-hidden />
+              <span className="text-[#0054A6] dark:text-sky-400 font-bold">•</span>
               {text}
             </span>
           ))}
@@ -116,9 +113,6 @@ export default function HomePage() {
                       <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-blue-200 dark:border-sky-800/60 bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 shadow-2xs group-hover:scale-110 group-hover:bg-[#0054A6] group-hover:text-white transition-all">
                         <Icon className="w-6 h-6" />
                       </div>
-                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        {strip.tag}
-                      </span>
                     </div>
 
                     <div>
@@ -157,15 +151,9 @@ export default function HomePage() {
       {/* ==================================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8 text-left">
         <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
-          <span className="text-xs font-black text-[#0054A6] dark:text-sky-400 uppercase tracking-wider">
-            Cơ Sở Tuyển Sinh Áp Dụng
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Xét Điểm Thi Tốt Nghiệp THPT 2026
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">
-            Hệ thống phân tích và ước lượng khả năng trúng tuyển dựa trên kết quả thi tốt nghiệp THPT 2026 theo đề án tuyển sinh chính thức của HUIT.
-          </p>
         </div>
 
         {/* Khối trình bày chủ đích 1 phương thức: chia cột thoáng, có quy tắc tính và 15 tổ hợp thực tế */}
@@ -186,9 +174,6 @@ export default function HomePage() {
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
                   Xét Theo Điểm Thi Tốt Nghiệp THPT
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-                  Sử dụng tổng điểm 3 môn thi tốt nghiệp THPT năm 2026 theo tổ hợp môn tương ứng của từng ngành để xét tuyển vào 39 chuyên ngành đào tạo chính quy tại HUIT.
-                </p>
               </div>
 
               {/* Chi tiết cách tính điểm */}
@@ -227,17 +212,9 @@ export default function HomePage() {
             {/* Cột phải: 15 Tổ hợp môn áp dụng từ dữ liệu thật (7 cột) */}
             <div className="lg:col-span-7 space-y-4 lg:pl-6 lg:border-l lg:border-slate-100 dark:lg:border-slate-800">
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                    15 Tổ Hợp Môn Xét Tuyển Được Hỗ Trợ
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                    Thí sinh có thể đối soát và nhận gợi ý ngành phù hợp theo các tổ hợp sau:
-                  </p>
-                </div>
-                <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-blue-50 dark:bg-sky-950/40 text-[#0054A6] dark:text-sky-400 border border-blue-200 dark:border-sky-800 text-[10px] font-black shrink-0">
-                  {Object.keys(ADMISSION_BLOCKS).length} Tổ hợp
-                </span>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  15 Tổ Hợp Môn Xét Tuyển Được Hỗ Trợ
+                </h4>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -264,11 +241,11 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Dòng ghi chú phạm vi trung thực */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-start gap-3">
-            <Info className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
+          {/* Dòng ghi chú phạm vi ngắn gọn tự nhiên */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center gap-3">
+            <Info className="w-4 h-4 text-[#0054A6] dark:text-sky-400 shrink-0" />
             <div className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-              <strong className="text-slate-800 dark:text-slate-200 font-bold">Lưu ý về phạm vi hệ thống:</strong> EduTalk hiện chỉ phân tích và tư vấn theo phương thức <strong>Xét điểm thi tốt nghiệp THPT 2026</strong> dựa trên dữ liệu điểm chuẩn đã công bố. Các phương thức xét tuyển khác của Nhà trường (như Xét học bạ THPT, Điểm thi ĐGNL ĐHQG-HCM, Tuyển thẳng) vẫn có hiệu lực trong đề án tuyển sinh chính thức nhưng nằm ngoài phạm vi mô hình dự báo của công cụ này.
+              <strong className="text-slate-800 dark:text-slate-200 font-bold">Lưu ý tuyển sinh:</strong> EduTalk phân tích và đối soát theo phương thức <strong>Xét điểm thi THPT 2026</strong>. Các phương thức xét tuyển khác (Học bạ, ĐGNL), thí sinh tham khảo tại <a href="https://tuyensinh.huit.edu.vn" target="_blank" rel="noreferrer" className="text-[#0054A6] dark:text-sky-400 font-bold hover:underline">tuyensinh.huit.edu.vn</a>.
             </div>
           </div>
         </SpotlightCard>
@@ -288,10 +265,6 @@ export default function HomePage() {
           <div className="absolute -top-16 -right-16 w-80 h-80 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="space-y-2 text-center md:text-left max-w-xl relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-cyan-300 text-[10px] font-black uppercase tracking-wider border border-white/20 mb-1">
-              <Sparkles className="w-3 h-3" />
-              <span>Tuyển Sinh Khóa 2026 - 2030</span>
-            </div>
             <h3 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
               Sẵn Sàng Trở Thành Tân Sinh Viên HUIT?
             </h3>

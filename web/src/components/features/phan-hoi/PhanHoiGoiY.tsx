@@ -135,8 +135,7 @@ export function PhanHoiGoiY({
         <div>
           <h3 className="text-base font-black text-slate-900">Kết quả này có giúp được bạn không?</h3>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Góp ý của bạn được dùng để mô hình học lại theo định kỳ — chỉ dùng câu trả lời khảo sát và ngành bạn chọn,
-            không dùng tên hay email.
+            Ý kiến đóng góp của bạn giúp EduTalk ngày càng hoàn thiện chất lượng tư vấn.
           </p>
         </div>
       )}

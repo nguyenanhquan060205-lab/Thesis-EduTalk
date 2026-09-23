@@ -80,9 +80,7 @@ export default function HistoryPage() {
     <div className="max-w-4xl mx-auto mt-2 pb-24 animate-fade-in-up space-y-6">
       <div className="border-b border-slate-200/80 pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-black uppercase mb-2">
-            <History className="w-3.5 h-3.5" /> Lịch sử tư vấn
-          </div>
+          
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Các Lần Bạn Đã Làm Khảo Sát
           </h1>
@@ -97,7 +95,7 @@ export default function HistoryPage() {
           href="/predict"
           className="px-5 py-2.5 rounded-xl bg-[#0054A6] hover:bg-[#0072CE] text-white text-xs font-black transition flex items-center gap-2 shrink-0"
         >
-          <Sparkles className="w-4 h-4" /> Làm khảo sát mới
+          Làm khảo sát mới
         </Link>
       </div>
 
